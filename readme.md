@@ -3,6 +3,12 @@
 This is a baseline of the 2021 Robotics Code. This code seeks to provide the team with a strong baseline entering the 2021 Build season.
 This readme highlights portions of the architecture, ideas, and best practices.
 
+## Meta
+
+[Find issues & PRs without a project](https://github.com/Team138Entropy/Entropy2021/issues?q=no%3Alabel)
+[Find issues & PRs without a label](https://github.com/Team138Entropy/Entropy2021/issues?q=no%3Aproject)
+[Find open issues & PRs without comments](https://github.com/Team138Entropy/Entropy2021/issues?q=is%3Aopen+comments%3A0)
+
 ### Code Formatting
 We have a git hook that will format your code according to Google's style guide whenever you commit. To enable it, you will need to run
 `update-hooks.bat` on Windows or `gradlew installGitHooks` on Linux and macOS.
