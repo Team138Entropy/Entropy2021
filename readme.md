@@ -1,6 +1,6 @@
-# Entropy 2020
+# Entropy 2021
 
-This is a baseline of the 2020 Robotics Code. This code seeks to provide the team with a strong baseline entering the 2020 Build season.
+This is a baseline of the 2021 Robotics Code. This code seeks to provide the team with a strong baseline entering the 2021 Build season.
 This readme highlights portions of the architecture, ideas, and best practices.
 
 ### Code Formatting
@@ -100,5 +100,3 @@ We want our code to execute as efficiently as possible.
 - Use a leading 's' on static ("class") variables `int sClassVariable = 0;`
 - Use a leading k on Constants `kDriveSpeed`
 - Define all constants in Constants.java, to avoid reusing memory on the stack as needed
-
-
