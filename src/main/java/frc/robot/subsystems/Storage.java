@@ -29,10 +29,6 @@ public class Storage extends Subsystem {
       Config.getInstance().getDouble(Key.STORAGE__ROLLER_EJECT_SPEED);
   private final double BALL_DISTANCE_IN_ENCODER_TICKS;
 
-  private final int INTAKE_SENSOR_PORT = 0;
-
-  private DigitalInput mIntakeSensor;
-
   private final WPI_TalonSRX mBottomRoller;
   private final WPI_TalonSRX mTopRoller;
 
@@ -66,8 +62,6 @@ public class Storage extends Subsystem {
 
     mBottomRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
     mBottomRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-
-    mIntakeSensor = new DigitalInput(INTAKE_SENSOR_PORT);
 
     if (Robot.getIsPracticeBot()) {
       BALL_DISTANCE_IN_ENCODER_TICKS =
@@ -105,7 +99,7 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean getIntakeSensor() {
-    return Robot.getIsPracticeBot() ? mIntakeSensor.get() : !mIntakeSensor.get();
+    return false;
   }
 
   public synchronized boolean isBallDetected() {
