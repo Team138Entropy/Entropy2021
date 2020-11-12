@@ -16,7 +16,7 @@ runFormatter() {
     java -jar $JARFILE --replace src/**/*.java
 }
 
-if [ -f $jarfile ] && [ $(java -jar "$JARFILE" --version 2>&1 | cut -d ' ' -f 3-) != "1.9" ]; then
+if [ -f $jarfile ] && [ "$(java -jar "$JARFILE" --version 2>&1 | cut -d ' ' -f 3-)" != "1.9" ]; then
     echo "Old formatter version detected, updating it..."
     downloadJar || echo >&2 "Error updating jar"
 fi
