@@ -9,16 +9,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run Git Refresh (if this step fails then you need to run the linter)
-      run: git update-index --refresh
-    - name: Check for Linter Changes (if this step fails then you need to run the linter)
-      run: git diff-index --quiet HEAD --
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
         java-version: '11.0.4'
     - name: Run Linter
       run: .githooks/pre-commit
+    - name: Run Git Refresh (if this step fails then you need to run the linter)
+      run: git update-index --refresh
+    - name: Check for Linter Changes (if this step fails then you need to run the linter)
+      run: git diff-index --quiet HEAD --
     - name: Cache Gradle dependendies
       uses: actions/cache@v1
       with:
