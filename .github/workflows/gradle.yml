@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run Linter
-      run: ./githooks/pre-commit
+      run: .githooks/pre-commit
     - name: Run Git Refresh
       run: git update-index --refresh
     - name: Check for Linter Changes
