@@ -49,7 +49,6 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
-    new TimeOfFlight(0);
     mLidar = new TimeOfFlight(0);
 
     mBottomRoller = new WPI_TalonSRX(ROLLER_BOTTOM_PORT);
@@ -103,7 +102,7 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean getIntakeSensor() {
-    return mLidar.getRange() < 5;
+    return mLidar.getRange() < Config.getInstance().getDouble(Key.STORAGE__LIDAR_MINDISTANCE);
   }
 
   public synchronized boolean isBallDetected() {
