@@ -46,7 +46,6 @@ public class Turret extends Subsystem {
     public double angle;
     public double feedforward;
   }
-  ;
 
   public static Turret getInstance() {
     if (sInstance == null) {
