@@ -45,7 +45,8 @@ public class Turret extends Subsystem {
     public double demand; // motor output, could be a position, or percent
     public double angle;
     public double feedforward;
-  };
+  }
+  ;
 
   public static Turret getInstance() {
     if (sInstance == null) {
