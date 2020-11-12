@@ -9,6 +9,8 @@ import frc.robot.Config;
 import frc.robot.Config.Key;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import com.playingwithfusion.CANVenom;
+import com.playingwithfusion.TimeOfFlight;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
@@ -30,6 +32,7 @@ public class Storage extends Subsystem {
 
   private final WPI_TalonSRX mBottomRoller;
   private final WPI_TalonSRX mTopRoller;
+  private final TimeOfFlight mLidar;
 
   private int mBallCount = 0;
 
@@ -47,6 +50,9 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
+    new TimeOfFlight(0);
+    mLidar = new TimeOfFlight(0);
+
     mBottomRoller = new WPI_TalonSRX(ROLLER_BOTTOM_PORT);
     mTopRoller = new WPI_TalonSRX(ROLLER_TOP_PORT);
 
@@ -98,7 +104,7 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean getIntakeSensor() {
-    return false;
+    return mLidar.getRange() < 5;
   }
 
   public synchronized boolean isBallDetected() {
