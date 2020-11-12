@@ -85,7 +85,6 @@ public class Robot extends TimedRobot {
   // Vision Related Valuables
   private double LastDistance = -1;
   private int LastTurretVisionID = -1; // use IDs to filter out bad ideas
-  private int LastFeederStationVisionID = -1;
 
   private double mTurretAdjust = 0;
 
@@ -114,7 +113,6 @@ public class Robot extends TimedRobot {
   private boolean mIsPracticeBot = true;
 
   private final int AUTONOMOUS_BALL_COUNT = 3;
-  private final double FIRE_DURATION_SECONDS = 0.3;
   private final int BARF_TIMER_DURATION = 3;
 
   private final int ShotCooldown = 15; // each loop is 20 secs.. 200 ms cooldown
@@ -156,12 +154,9 @@ public class Robot extends TimedRobot {
   // Looper - Running on a set period
   private final Looper mEnabledLooper = new Looper(Constants.kLooperDt);
 
-  private boolean startedHoming = false;
-  private BallIndicator mBallIndicator;
   private CameraManager mCameraManager;
 
   private final RobotTracker mRobotTracker = RobotTracker.getInstance();
-  private final RobotTrackerUpdater mRobotTrackerUpdater = RobotTrackerUpdater.getInstance();
 
   /**
    * The robot's gyro. Don't use this for absolute measurements. See {@link #getGyro()} for more
@@ -173,15 +168,10 @@ public class Robot extends TimedRobot {
 
   public Relay visionLight = new Relay(0);
 
-  // Control Variables
-  private LatchedBoolean AutoAim = new LatchedBoolean();
-  private LatchedBoolean HarvestAim = new LatchedBoolean();
   static NetworkTable mTable;
 
   private static boolean sIsSpinningUp = false;
 
-  // Fire timer for shooter
-  private Timer mFireTimer = new Timer();
   private Timer mBarfTimer = new Timer();
 
   Logger mRobotLogger = new Logger("robot");
@@ -190,11 +180,6 @@ public class Robot extends TimedRobot {
   LatchedBoolean mShooterVelocityTrimUp = new LatchedBoolean();
   LatchedBoolean mShooterVelocityTrimDown = new LatchedBoolean();
 
-  // autonomousInit, autonomousPeriodic, disabledInit,
-  // disabledPeriodic, loopFunc, robotInit, robotPeriodic,
-  // teleopInit, teleopPeriodic, testInit, testPeriodic
-
-  private int mStartingStorageEncoderPosition;
   private int mTestPosition;
   private Timer mTestTimer = new Timer();
 
@@ -235,7 +220,7 @@ public class Robot extends TimedRobot {
     mShootingState = ShootingState.IDLE;
 
     if (Config.getInstance().getBoolean(Key.ROBOT__HAS_LEDS)) {
-      mBallIndicator = BallIndicator.getInstance();
+      BallIndicator.getInstance();
     }
 
     sGyro.calibrate();
@@ -554,12 +539,6 @@ public class Robot extends TimedRobot {
 
         // intentional fallthrough
       case STORAGE_ENCODER_BACKWARDS_TEST:
-        // mRobotLogger.log("Got initial encoder value " + mStorage.getEncoder());
-        // mStartingStorageEncoderPosition = mStorage.getEncoder();
-
-        // mTestTimer.reset();
-        // mTestTimer.start();
-
         if (mTestState == TestState.STORAGE_ENCODER_FORWARDS_TEST) {
           mTestState = TestState.STORAGE_ENCODER_FORWARDS_TEST_WAITING;
         } else {
@@ -1293,8 +1272,6 @@ public class Robot extends TimedRobot {
         /* If rollers are spun up, changes to next state */
         if (mShooter.isAtVelocity() /* TODO: && Target Acquired */) {
           mShootingState = ShootingState.SHOOT_BALL;
-          // mFireTimer.start();
-
           // reset cooldown timer
           mCurrentCooldown = ShotCooldown;
         }
