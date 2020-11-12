@@ -42,11 +42,11 @@ public class VisionPacket {
     return ID;
   }
 
-  public void setTurretOffset(double angle){
+  public void setTurretOffset(double angle) {
     Angle_Offset = angle;
   }
 
-  public double getTurretOffset(){
+  public double getTurretOffset() {
     return Math.toDegrees(Math.atan(.4 / Distance));
   }
 }
