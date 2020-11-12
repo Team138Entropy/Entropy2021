@@ -4,13 +4,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.playingwithfusion.TimeOfFlight;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Config;
 import frc.robot.Config.Key;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import com.playingwithfusion.CANVenom;
-import com.playingwithfusion.TimeOfFlight;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
