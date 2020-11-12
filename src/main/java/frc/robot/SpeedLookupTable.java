@@ -67,7 +67,7 @@ public class SpeedLookupTable {
               distance, lowerBoundDistance, lowerBoundSpeed, upperBoundDistance, upperBoundSpeed);
         }
       }
-    }else{
+    } else {
       return ourTable[ourTable.length - 1][1];
     }
 

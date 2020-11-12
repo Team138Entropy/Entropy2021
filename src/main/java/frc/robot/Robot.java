@@ -250,7 +250,11 @@ public class Robot extends TimedRobot {
 
     mClimber.updateSmartDashboard();
 
-    SmartDashboard.putBoolean("Intake Mode", mState == State.INTAKE&& mIntakeState != IntakeState.IDLE && mIntakeState != IntakeState.READY_TO_INTAKE);
+    SmartDashboard.putBoolean(
+        "Intake Mode",
+        mState == State.INTAKE
+            && mIntakeState != IntakeState.IDLE
+            && mIntakeState != IntakeState.READY_TO_INTAKE);
     SmartDashboard.putBoolean("Shooting Mode", mState == State.SHOOTING);
     SmartDashboard.putBoolean("Climbing Mode", mState == State.CLIMBING);
 
@@ -899,7 +903,6 @@ public class Robot extends TimedRobot {
     // zero turret sensor
     // this assumes the turret is aligned
 
-
     Config.getInstance().reload();
 
     mOperatorInterface.resetOverride();
@@ -928,7 +931,7 @@ public class Robot extends TimedRobot {
 
         // verify we haven't already commanded this packet!
         if (vp.ID != LastTurretVisionID) {
-          mTurret.SetAimError(vp.Error_Angle + (vp.getTurretOffset()* -1) + mTurretAdjust);
+          mTurret.SetAimError(vp.Error_Angle + (vp.getTurretOffset() * -1) + mTurretAdjust);
           LastTurretVisionID = vp.ID;
         }
 
@@ -1346,7 +1349,7 @@ public class Robot extends TimedRobot {
   }
 
   private void executeClimbingStateMachine() {
-    if(mClimbingState != ClimbingState.IDLE){
+    if (mClimbingState != ClimbingState.IDLE) {
       SmartDashboard.putNumber("Climber pos", mClimber.getEncoderPosition());
     }
 
@@ -1367,7 +1370,7 @@ public class Robot extends TimedRobot {
         /** Checks if the climb button has been hit again, signalling it to retract */
         if (mOperatorInterface.climbUp()) {
           mClimber.extend();
-        }else{
+        } else {
           mClimbingState = ClimbingState.HOLD;
         }
 
@@ -1403,7 +1406,7 @@ public class Robot extends TimedRobot {
 
         if (mOperatorInterface.climbDown()) {
           mClimber.retract();
-        }else{
+        } else {
           mClimbingState = ClimbingState.HOLD;
         }
 

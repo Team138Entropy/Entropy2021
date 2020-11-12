@@ -198,7 +198,6 @@ public class Drive extends Subsystem {
     // are we quickturning?
     boolean quickturn = mPeriodicDriveData.isQuickturning;
 
-
     // Slow down climbing if the climber is extended so we can't rip it off (as easily)
     double peakOutput = Config.getInstance().getDouble(Key.DRIVE__PEAK_OUTPUT_CLIMBING);
 
@@ -219,7 +218,6 @@ public class Drive extends Subsystem {
     // A lot of the space in this function is taken up by local copies of stuff
     double accelSpeed = Config.getInstance().getDouble(Key.DRIVE__FORWARD_ACCEL_RAMP_TIME_SECONDS);
     double brakeSpeed = Config.getInstance().getDouble(Key.DRIVE__REVERSE_BRAKE_RAMP_TIME_SECONDS);
-
 
     // Segments are started by the variables they will need
     boolean leftStationary = false;
