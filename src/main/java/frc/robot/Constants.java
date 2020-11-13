@@ -86,14 +86,14 @@ public class Constants {
     public static final double cameraFrameRate = 90.0; // fps
   }
 
-  public static class Turret{
+  public static class Turret {
     // TODO: determine why we need this
     public static final double manualAdjustFactor = .2;
 
     public static final double angleOffset = -20;
   }
 
-  public static  class Storage{
+  public static class Storage {
     // continuous & peak current limit for both storage talons
     public static final int currentLimit = 7;
   }
