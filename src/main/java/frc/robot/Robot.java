@@ -489,14 +489,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    double timePerTest = Config.getInstance().getDouble(Key.TESTMODE__TIME_PER_TEST);
-    int expectedStorageDistance =
-        Config.getInstance().getInt(Key.TESTMODE__EXPECTED_STORAGE_DISTANCE);
-    int storageAcceptableError =
-        Config.getInstance().getInt(Key.TESTMODE__STORAGE_ACCEPTABLE_ERROR);
-    int expectedShooterSpeed = Config.getInstance().getInt(Key.TESTMODE__EXPECTED_SHOOTER_SPEED);
-    int shooterAcceptableError =
-        Config.getInstance().getInt(Key.TESTMODE__SHOOTER_ACCEPTABLE_ERROR);
+    double timePerTest = Constants.TestMode.timePerTest;
+    int expectedStorageDistance = Constants.TestMode.expectedStorageDistance;
+    int storageAcceptableError = Constants.TestMode.acceptableStorageError;
+    int expectedShooterSpeed = Constants.TestMode.expectedShooterSpeed;
+    int shooterAcceptableError = Constants.TestMode.acceptableShooterError;
+
     SmartDashboard.putString("Test State", mTestState.toString());
     SmartDashboard.putBoolean("Driver Cameras", mCameraManager.getCameraStatus());
     SmartDashboard.putBoolean("Garage Door", mStorage.getIntakeSensor());

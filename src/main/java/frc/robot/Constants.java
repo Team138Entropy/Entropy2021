@@ -45,6 +45,14 @@ public class Constants {
     }
   }
 
+  public static class TestMode{
+    public static final double timePerTest = 1;
+    public static final int expectedStorageDistance = 605;
+    public static final int acceptableStorageError = 40;
+    public static final int expectedShooterSpeed = 970;
+    public static final int acceptableShooterError = 150;
+  }
+
   public static final double TURRET_MANUAL_ADJUST_FACTOR = .2;
 
   public static final int STORAGE_CURRENT_LIMIT = 7;

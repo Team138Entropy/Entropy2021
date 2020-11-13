@@ -77,12 +77,6 @@ public class Config {
     CLIMBER__KI(0d),
     CLIMBER__KD(0d),
 
-    TESTMODE__TIME_PER_TEST(1.0d),
-    TESTMODE__EXPECTED_STORAGE_DISTANCE(550),
-    TESTMODE__STORAGE_ACCEPTABLE_ERROR(50),
-    TESTMODE__EXPECTED_SHOOTER_SPEED(1110),
-    TESTMODE__SHOOTER_ACCEPTABLE_ERROR(100);
-
     private Object value;
 
     private Key(Double k) {
