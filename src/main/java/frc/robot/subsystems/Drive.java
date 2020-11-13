@@ -81,19 +81,20 @@ public class Drive extends Subsystem {
     return (int) roundedVal;
   }
 
+
   private Drive() {
     mDriveLogger = new Logger("drive");
 
-    mLeftMaster = new WPI_TalonSRX(Constants.Talon_LeftDrive1_Master);
+    mLeftMaster = new WPI_TalonSRX(Constants.Talons.Drive.leftMaster);
     // configureSpark(mLeftMaster, true, true);
 
-    mLeftSlave = new WPI_TalonSRX(Constants.Talon_LeftDrive2_Slave);
+    mLeftSlave = new WPI_TalonSRX(Constants.Talons.Drive.leftSlave);
     // configureSpark(mLeftSlave, true, false);
 
-    mRightMaster = new WPI_TalonSRX(Constants.Talon_RightDrive1_Master);
+    mRightMaster = new WPI_TalonSRX(Constants.Talons.Drive.rightMaster);
     // configureSpark(mRightMaster, false, true);
 
-    mRightSlave = new WPI_TalonSRX(Constants.Talon_RightDrive2_Slave);
+    mRightSlave = new WPI_TalonSRX(Constants.Talons.Drive.rightSlave);
     // configureSpark(mRightSlave, false, false);
 
     configTalon(mLeftMaster);

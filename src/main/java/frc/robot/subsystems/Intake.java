@@ -16,7 +16,7 @@ public class Intake extends Subsystem {
   // initial cooldown because our startup of the roller induces a countdown
   private int mOverCurrentCountdown = 30;
 
-  private final int ROLLER_PORT = Constants.Talon_IntakeRoller;
+  private final int ROLLER_PORT = Constants.Talons.intakeRoller;
 
   // TODO: Tune these values
   private final double ROLLER_SPEED = Config.getInstance().getDouble(Key.INTAKE__ROLLER_SPEED);

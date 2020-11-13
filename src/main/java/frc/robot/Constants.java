@@ -8,18 +8,28 @@ import frc.robot.util.geometry.Translation2d;
 public class Constants {
   // Talons Ports
   // ALL TALON PORTS DEFINED HERE
-  public static final int Talon_LeftDrive1_Master = 1;
-  public static final int Talon_LeftDrive2_Slave = 2;
-  public static final int Talon_RightDrive1_Master = 3;
-  public static final int Talon_RightDrive2_Slave = 4;
-  public static final int Talon_Storage_Top = 5;
-  public static final int Talon_Shooter_Master = 6;
-  public static final int Talon_Shooter_Slave = 7;
-  public static final int Talon_Storage_Bottom = 8;
-  public static final int Talon_Turret = 9;
-  public static final int Talon_IntakeRoller = 10;
-  public static final int Talon_Climber = 11;
-  // ALL TALON PORTS DEFINED HERE
+  public static class Talons{
+    public static class Drive{
+      public static final int leftMaster = 1;
+      public static final int leftSlave = 2;
+      public static final int rightMaster = 3;
+      public static final int rightSlave = 4;
+    }
+
+    public static class Storage{
+      public static final int top = 5;
+      public static final int bottom = 8;
+    }
+
+    public static class Shooter{
+      public static final int master = 6;
+      public static final int slave = 7;
+    }
+
+    public static final int turret = 9;
+    public static final int intakeRoller = 10;
+    public static final int climber = 11;
+  }
 
   public static final double TURRET_MANUAL_ADJUST_FACTOR = .2;
 
@@ -49,8 +59,8 @@ public class Constants {
   // distance in feet = 89.5/12
   // ticks per foot = ticks / feet
 
-  private static double COMP_TICKS = (19711.0 + 19582.0) / 2.0;
-  private static double COMP_DISTANCE = 89.5 / 12.0;
+  private static final double COMP_TICKS = (19711.0 + 19582.0) / 2.0;
+  private static final double COMP_DISTANCE = 89.5 / 12.0;
   public static double COMP_TICKS_PER_FOOT = COMP_TICKS / COMP_DISTANCE;
 
   public static final double TICKS_PER_FOOT = 1228.615;
@@ -103,7 +113,7 @@ public class Constants {
   public static final Rotation2d kShooterCameraHorizontalPlaneToLens =
       Rotation2d.fromDegrees(0); // Shooter should sit pretty flat
   public static final Rotation2d kBallCameraHorizontalPlaneToLens =
-      Rotation2d.fromDegrees(-5); // camera is angled downards
+      Rotation2d.fromDegrees(-5); // camera is angled downwards
   public static final double kShooterCameraHeight = 40; // shooter camera height on robot (inches)
   public static final double kBallCameraHeight = 12; // ball camera height
 

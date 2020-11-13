@@ -29,8 +29,8 @@ public class Shooter extends Subsystem {
 
   // TODO: Integrate with other subsystems for real
   // TEMPORARY STUFF BEGINS HERE
-  private final int ROLLER_PORT = Constants.Talon_Shooter_Master;
-  private final int ROLLER_SLAVE_PORT = Constants.Talon_Shooter_Slave;
+  private final int ROLLER_PORT = Constants.Talons.Shooter.master;
+  private final int ROLLER_SLAVE_PORT = Constants.Talons.Shooter.slave;
 
   // TODO: Tune these values
   private final int DEFAULT_ROLLER_SPEED = 2000; // Encoder ticks per 100ms, change this value

@@ -14,8 +14,8 @@ import frc.robot.Robot;
 /** Add your docs here. */
 public class Storage extends Subsystem {
 
-  private final int ROLLER_BOTTOM_PORT = Constants.Talon_Storage_Bottom;
-  private final int ROLLER_TOP_PORT = Constants.Talon_Storage_Top;
+  private final int ROLLER_BOTTOM_PORT = Constants.Talons.Storage.bottom;
+  private final int ROLLER_TOP_PORT = Constants.Talons.Storage.top;
 
   private final int STORAGE_CAPICTY = 5;
 

@@ -57,7 +57,7 @@ public class Turret extends Subsystem {
 
   /** Set up our talon, logger and potentiometer */
   private Turret() {
-    mTurretTalon = new WPI_TalonSRX(Constants.Talon_Turret);
+    mTurretTalon = new WPI_TalonSRX(Constants.Talons.turret);
     mTurretTalon.configFactoryDefault();
     mTurretTalon.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed, 10);
