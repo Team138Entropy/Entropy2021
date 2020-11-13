@@ -68,9 +68,9 @@ public class Drive extends Subsystem {
   public int feetToTicks(double feet) {
     double ticks;
     if (Robot.getIsPracticeBot()) {
-      ticks = Constants.TICKS_PER_FOOT;
+      ticks = Constants.Drive.Encoders.practiceTicksPerFoot;
     } else {
-      ticks = Constants.COMP_TICKS_PER_FOOT;
+      ticks = Constants.Drive.Encoders.compTicksPerFoot;
     }
     long roundedVal = Math.round(feet * ticks);
     if (roundedVal > Integer.MAX_VALUE) {

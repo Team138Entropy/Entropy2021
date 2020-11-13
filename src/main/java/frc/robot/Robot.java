@@ -916,7 +916,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Vision Turret Adjust", mTurretAdjust);
     if (mTurretState == TurretState.AUTO_AIM) {
       double turretAdjust = mOperatorInterface.getTurretAdjust();
-      mTurretAdjust += turretAdjust * Constants.TURRET_MANUAL_ADJUST_FACTOR;
+      mTurretAdjust += turretAdjust * Constants.Turret.manualAdjustFactor;
 
       // Command the Turret with vision set points
       // RobotTracker.RobotTrackerResult result =

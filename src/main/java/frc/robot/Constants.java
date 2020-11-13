@@ -32,6 +32,14 @@ public class Constants {
   }
 
   public static class Drive {
+    public static class Encoders {
+      private static final double compTicks = (19711.0 + 19582.0) / 2.0;
+      private static final double compDistance = 89.5 / 12.0;
+
+      public static double compTicksPerFoot = compTicks / compDistance;
+      public static final double practiceTicksPerFoot = 1228.615;
+    }
+
     public static class AutoPID {
       public static final double p = 4;
       public static final double i = 0.00050;
@@ -78,14 +86,17 @@ public class Constants {
     public static final double cameraFrameRate = 90.0; // fps
   }
 
-  public static final double TURRET_MANUAL_ADJUST_FACTOR = .2;
+  public static class Turret{
+    // TODO: determine why we need this
+    public static final double manualAdjustFactor = .2;
 
-  public static final int STORAGE_CURRENT_LIMIT = 7;
+    public static final double angleOffset = -20;
+  }
 
-  public static final double kTurretAngleOffset = -20;
-
-  // PWM
-  public static final int kCameraRingId = 0;
+  public static  class Storage{
+    // continuous & peak current limit for both storage talons
+    public static final int currentLimit = 7;
+  }
 
   // Talon config
   public static int CONFIG_TIMEOUT_MS = 250;
@@ -100,11 +111,6 @@ public class Constants {
   // distance in feet = 89.5/12
   // ticks per foot = ticks / feet
 
-  private static final double COMP_TICKS = (19711.0 + 19582.0) / 2.0;
-  private static final double COMP_DISTANCE = 89.5 / 12.0;
-  public static double COMP_TICKS_PER_FOOT = COMP_TICKS / COMP_DISTANCE;
-
-  public static final double TICKS_PER_FOOT = 1228.615;
   public static final double REAL_TRACK_WIDTH = 1.916;
 
   // Auto Constants
@@ -133,7 +139,7 @@ public class Constants {
   public static final double kCameraDiagonalView = Math.toRadians(75);
   public static final double kCameraHorizontalAspect = 4;
   public static final double kCameraVerticalAspect = 3;
-  public static final double kDiagonalAspect =
+  public static final double kCameraDiagonalAspect =
       Math.hypot(kCameraHorizontalAspect, kCameraVerticalAspect);
   public static final double kCameraHorizontalView =
       Math.atan(Math.tan(kCameraDiagonalView / 2) * (kCameraHorizontalAspect / kCameraDiagonalView))
@@ -170,4 +176,7 @@ public class Constants {
   public static final int kTurretTalonMotorPort = 20;
   public static final double kTurretAimAngleDeadband = .5;
   public static final double kTicksPerDegee = 140;
+
+  // PWM
+  public static final int kCameraRingId = 0;
 }

@@ -61,11 +61,11 @@ public class Storage extends Subsystem {
     mTopRoller.setNeutralMode(NeutralMode.Brake);
     mBottomRoller.setNeutralMode(NeutralMode.Brake);
 
-    mTopRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-    mTopRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
+    mTopRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
+    mTopRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
 
-    mBottomRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-    mBottomRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
+    mBottomRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
+    mBottomRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
 
     mIntakeSensor = new DigitalInput(INTAKE_SENSOR_PORT);
 
