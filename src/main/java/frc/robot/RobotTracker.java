@@ -457,12 +457,12 @@ public class RobotTracker {
     if (highgoal) {
       // High Goal
       SelectedCameraRotation = Constants.Cameras.ShooterCamera.horizontalPlaneToLens;
-      TargetHeight = Constants.kHighGoalHeight;
+      TargetHeight = Constants.Field.highGoalHeight;
       LensHeight = Constants.Cameras.ShooterCamera.cameraHeight;
     } else {
       // Ball
       SelectedCameraRotation = Constants.Cameras.BallCamera.horizontalPlaneToLens;
-      TargetHeight = Constants.kBallHeight;
+      TargetHeight = Constants.Field.ballHeight;
       LensHeight = Constants.Cameras.BallCamera.cameraHeight;
     }
 
@@ -511,12 +511,12 @@ public class RobotTracker {
     if (highgoal) {
       // High Goal
       SelectedCameraRotation = Constants.Cameras.ShooterCamera.horizontalPlaneToLens;
-      TargetHeight = Constants.kHighGoalHeight;
+      TargetHeight = Constants.Field.highGoalHeight;
       LensHeight = Constants.Cameras.ShooterCamera.cameraHeight;
     } else {
       // Ball
       SelectedCameraRotation = Constants.Cameras.BallCamera.horizontalPlaneToLens;
-      TargetHeight = Constants.kBallHeight;
+      TargetHeight = Constants.Field.ballHeight;
       LensHeight = Constants.Cameras.BallCamera.cameraHeight;
     }
 

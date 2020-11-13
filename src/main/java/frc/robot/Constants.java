@@ -126,6 +126,12 @@ public class Constants {
     }
   }
 
+  // Field Related Constants
+  public static class Field {
+    public static final double highGoalHeight = 96.25; // Center Goal Height
+    public static final double ballHeight = 5; // ball height (inches)
+  }
+
   // Path Following Constants
   public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
 
@@ -165,10 +171,6 @@ public class Constants {
       new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
   public static final Pose2d kWheelsToLens =
       new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
-
-  // Field Related Constants
-  public static final double kHighGoalHeight = 96.25; // Center Goal Height
-  public static final double kBallHeight = 5; // ball height (inches)
 
   // Looper System
   // period at which the looper runs at
