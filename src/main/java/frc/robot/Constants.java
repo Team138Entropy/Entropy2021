@@ -67,10 +67,10 @@ public class Constants {
     public static final int acceptableShooterError = 150;
   }
 
-
   public static class Controllers {
     public static final double joystickDeadband = 0.15;
     public static final double triggerDeadband = 0.15;
+
     public static class Driver {
       public static final int port = 0;
       public static final String name = "Controller (Xbox One For Windows)";

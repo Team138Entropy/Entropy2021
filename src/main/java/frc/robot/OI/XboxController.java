@@ -80,7 +80,8 @@ public class XboxController {
 
   // boolean trigger version
   boolean getTrigger(Side side) {
-    return mController.getRawAxis(side == Side.LEFT ? 2 : 3) > Constants.Controllers.triggerDeadband;
+    return mController.getRawAxis(side == Side.LEFT ? 2 : 3)
+        > Constants.Controllers.triggerDeadband;
   }
 
   boolean getButton(Button button) {
