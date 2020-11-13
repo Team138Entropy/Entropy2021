@@ -172,6 +172,8 @@ public class GoalTrack {
 
   public synchronized double getStability() {
     return Math.min(
-        1.0, mObservedPositions.size() / (Constants.Vision.cameraFrameRate * Constants.Vision.maxGoalTrackAge));
+        1.0,
+        mObservedPositions.size()
+            / (Constants.Vision.cameraFrameRate * Constants.Vision.maxGoalTrackAge));
   }
 }

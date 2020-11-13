@@ -67,7 +67,7 @@ public class Constants {
   }
 
   // Vision Tracking Constants
-  public static class Vision{
+  public static class Vision {
     public static final double maxTrackerDistance = 60.0;
     public static final double maxGoalTrackAge = 3.0;
     public static final double maxGoalTrackAgeNotTracking = 0.1;
@@ -128,7 +128,6 @@ public class Constants {
 
   // Path Following Constants
   public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
-
 
   // Camera Specific Information
   public static final double kCameraDiagonalView = Math.toRadians(75);
