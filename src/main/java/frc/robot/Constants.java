@@ -35,6 +35,9 @@ public class Constants {
     public static int talonSensorTimeoutMs = 250;
 
     public static class Encoders {
+      // ticks = (19711 + 19582) / 2
+      // distance in feet = 89.5/12
+      // ticks per foot = ticks / feet
       private static final double compTicks = (19711.0 + 19582.0) / 2.0;
       private static final double compDistance = 89.5 / 12.0;
 
@@ -64,7 +67,10 @@ public class Constants {
     public static final int acceptableShooterError = 150;
   }
 
+
   public static class Controllers {
+    public static final double joystickDeadband = 0.15;
+    public static final double triggerDeadband = 0.15;
     public static class Driver {
       public static final int port = 0;
       public static final String name = "Controller (Xbox One For Windows)";
@@ -137,13 +143,7 @@ public class Constants {
 
   public static int TURRET_AIM_MAX_VELOCITY = 80;
 
-  // Drive Constants
-  public static final double kJoystickThreshold = 0.15;
   // Oracle's official constant convention. Don't @ me.
-
-  // ticks = (19711 + 19582) / 2
-  // distance in feet = 89.5/12
-  // ticks per foot = ticks / feet
 
   public static final double REAL_TRACK_WIDTH = 1.916;
 

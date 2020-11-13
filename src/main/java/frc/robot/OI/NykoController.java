@@ -76,7 +76,7 @@ public class NykoController {
   }
 
   double getJoystick(Side side, Axis axis) {
-    double deadband = Constants.kJoystickThreshold;
+    double deadband = Constants.Controllers.joystickDeadband;
 
     boolean left = side == Side.LEFT;
     boolean y = axis == Axis.Y;
