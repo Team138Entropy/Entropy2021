@@ -104,6 +104,10 @@ public class Storage extends Subsystem {
   public synchronized boolean getIntakeSensor() {
     return mLidar.getRange() < Config.getInstance().getDouble(Key.STORAGE__LIDAR_MINDISTANCE);
   }
+  
+  public synchronized double getSensorDistance() {
+    return mLidar.getRange();
+  }
 
   public synchronized boolean isBallDetected() {
     return getIntakeSensor();
