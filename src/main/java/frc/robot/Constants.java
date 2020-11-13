@@ -110,14 +110,11 @@ public class Constants {
     public static final double diagonalView = Math.toRadians(75);
     public static final double horizontalAspect = 4;
     public static final double verticalAspect = 3;
-    public static final double diagonalAspect =
-        Math.hypot(horizontalAspect, verticalAspect);
+    public static final double diagonalAspect = Math.hypot(horizontalAspect, verticalAspect);
     public static final double horizontalView =
-        Math.atan(Math.tan(diagonalView / 2) * (horizontalAspect / diagonalView))
-            * 2;
+        Math.atan(Math.tan(diagonalView / 2) * (horizontalAspect / diagonalView)) * 2;
     public static final double verticalView =
-        Math.atan(Math.tan(diagonalView / 2) * (verticalAspect / diagonalView))
-            * 2;
+        Math.atan(Math.tan(diagonalView / 2) * (verticalAspect / diagonalView)) * 2;
 
     public static class ShooterCamera {
       public static final Rotation2d horizontalPlaneToLens =
