@@ -32,12 +32,15 @@ public class Constants {
   }
 
   public static class Drive {
+    public static int talonSensorTimeoutMs = 250;
+
     public static class Encoders {
       private static final double compTicks = (19711.0 + 19582.0) / 2.0;
       private static final double compDistance = 89.5 / 12.0;
 
       public static double compTicksPerFoot = compTicks / compDistance;
       public static final double practiceTicksPerFoot = 1228.615;
+
     }
 
     public static class AutoPID {
@@ -98,8 +101,35 @@ public class Constants {
     public static final int currentLimit = 7;
   }
 
-  // Talon config
-  public static int CONFIG_TIMEOUT_MS = 250;
+  public static class Cameras{
+    public static final double cameraDiagonalView = Math.toRadians(75);
+    public static final double cameraHorizontalAspect = 4;
+    public static final double cameraVerticalAspect = 3;
+    public static final double cameraDiagonalAspect =
+        Math.hypot(cameraHorizontalAspect, cameraVerticalAspect);
+    public static final double cameraHorizontalView =
+        Math.atan(Math.tan(cameraDiagonalView / 2) * (cameraHorizontalAspect / cameraDiagonalView))
+            * 2;
+    public static final double cameraVerticalView =
+        Math.atan(Math.tan(cameraDiagonalView / 2) * (cameraVerticalAspect / cameraDiagonalView))
+            * 2;
+
+    public static class ShooterCamera{
+      public static final Rotation2d horizontalPlaneToLens =
+          Rotation2d.fromDegrees(0); // Shooter should sit pretty flat
+      public static final double cameraHeight = 40; // shooter camera height on robot (inches)
+    }
+
+    public static class BallCamera{
+      public static final Rotation2d horizontalPlaneToLens = Rotation2d.fromDegrees(-5); // camera is angled downwards
+      public static final double cameraHeight = 12; // ball camera height
+    }
+  }
+
+
+  // Path Following Constants
+  public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
+
 
   public static int TURRET_AIM_MAX_VELOCITY = 80;
 
@@ -131,28 +161,6 @@ public class Constants {
   public static final double kDriveVoltageRampRate = 0.0;
   public static final int kDriveCurrentThrottledLimit = 30; // amps
   public static final int kDriveCurrentUnThrottledLimit = 80; // amps
-
-  // Path Following Constants
-  public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
-
-  // Camera Specific Information
-  public static final double kCameraDiagonalView = Math.toRadians(75);
-  public static final double kCameraHorizontalAspect = 4;
-  public static final double kCameraVerticalAspect = 3;
-  public static final double kCameraDiagonalAspect =
-      Math.hypot(kCameraHorizontalAspect, kCameraVerticalAspect);
-  public static final double kCameraHorizontalView =
-      Math.atan(Math.tan(kCameraDiagonalView / 2) * (kCameraHorizontalAspect / kCameraDiagonalView))
-          * 2;
-  public static final double kCameraVerticalView =
-      Math.atan(Math.tan(kCameraDiagonalView / 2) * (kCameraVerticalAspect / kCameraDiagonalView))
-          * 2;
-  public static final Rotation2d kShooterCameraHorizontalPlaneToLens =
-      Rotation2d.fromDegrees(0); // Shooter should sit pretty flat
-  public static final Rotation2d kBallCameraHorizontalPlaneToLens =
-      Rotation2d.fromDegrees(-5); // camera is angled downwards
-  public static final double kShooterCameraHeight = 40; // shooter camera height on robot (inches)
-  public static final double kBallCameraHeight = 12; // ball camera height
 
   // Offsets from our center point
   public static final Pose2d kTurrentToLens =

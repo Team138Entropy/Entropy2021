@@ -456,14 +456,14 @@ public class RobotTracker {
     // Select Rotation based on camera mount point
     if (highgoal) {
       // High Goal
-      SelectedCameraRotation = Constants.kShooterCameraHorizontalPlaneToLens;
+      SelectedCameraRotation = Constants.Cameras.ShooterCamera.horizontalPlaneToLens;
       TargetHeight = Constants.kHighGoalHeight;
-      LensHeight = Constants.kShooterCameraHeight;
+      LensHeight = Constants.Cameras.ShooterCamera.cameraHeight;
     } else {
       // Ball
-      SelectedCameraRotation = Constants.kBallCameraHorizontalPlaneToLens;
+      SelectedCameraRotation = Constants.Cameras.BallCamera.horizontalPlaneToLens;
       TargetHeight = Constants.kBallHeight;
-      LensHeight = Constants.kBallCameraHeight;
+      LensHeight = Constants.Cameras.BallCamera.cameraHeight;
     }
 
     // Compensate for camera pitch
@@ -510,14 +510,14 @@ public class RobotTracker {
     // Select Rotation based on camera mount point
     if (highgoal) {
       // High Goal
-      SelectedCameraRotation = Constants.kShooterCameraHorizontalPlaneToLens;
+      SelectedCameraRotation = Constants.Cameras.ShooterCamera.horizontalPlaneToLens;
       TargetHeight = Constants.kHighGoalHeight;
-      LensHeight = Constants.kShooterCameraHeight;
+      LensHeight = Constants.Cameras.ShooterCamera.cameraHeight;
     } else {
       // Ball
-      SelectedCameraRotation = Constants.kBallCameraHorizontalPlaneToLens;
+      SelectedCameraRotation = Constants.Cameras.BallCamera.horizontalPlaneToLens;
       TargetHeight = Constants.kBallHeight;
-      LensHeight = Constants.kBallCameraHeight;
+      LensHeight = Constants.Cameras.BallCamera.cameraHeight;
     }
 
     // Compensate for camera pitch

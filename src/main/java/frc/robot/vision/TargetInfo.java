@@ -117,15 +117,15 @@ public class TargetInfo {
 
         // nY = -((y - 320.0)/320.0);
         // nZ = -((z - 240.0)/240.0);
-        y = (Constants.kCameraHorizontalView / 2) * nY;
-        z = (Constants.kCameraVerticalView / 2) * nZ;
+        y = (Constants.Cameras.cameraHorizontalView / 2) * nY;
+        z = (Constants.Cameras.cameraVerticalView / 2) * nZ;
         break;
       case 1:
         // packets from Ball Tracking Camera
         nZ = (1.0 / 120.0) * (119.5 - z);
         nY = (1.0 / 160.0) * (y - 159.5);
-        y = (Constants.kCameraHorizontalView / 2) * nY;
-        z = (Constants.kCameraVerticalView / 2) * nZ;
+        y = (Constants.Cameras.cameraHorizontalView / 2) * nY;
+        z = (Constants.Cameras.cameraVerticalView / 2) * nZ;
         break;
     }
   }
