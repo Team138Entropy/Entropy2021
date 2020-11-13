@@ -16,16 +16,6 @@ public class Config {
     ROBOT__REAL_TRACK_WIDTH(0.58d), // Meters, 0.58 is about 23"
     DRIVE__TICKS_PER_METER(640),
 
-    // Motors,
-    DRIVE__LEFT_BACK_PORT(1),
-    DRIVE__LEFT_FRONT_PORT(2),
-    DRIVE__RIGHT_BACK_PORT(3),
-    DRIVE__RIGHT_FRONT_PORT(4),
-    INTAKE__ROLLER(10),
-    STORAGE__BOTTOM_ROLLER(8),
-    STORAGE__TOP_ROLLER(7),
-    SHOOTER__ROLLER(6),
-    SHOOTER__ROLLER_SLAVE(5),
     CLIMBER__MOTOR(11),
 
     // Sensors
@@ -48,19 +38,6 @@ public class Config {
 
     // Auto config (temporary)
     AUTO__SELECTED_PATH("test"),
-
-    // PID Stuff
-    OI__VISION__POT__MIN(0),
-    OI__VISION__POT__MAX(100d),
-    OI__VISION__PID__P(0.3d),
-    OI__VISION__PID__I(0.003d),
-    OI__VISION__PID__D(0),
-
-    AUTO__DRIVE_PID_P(1),
-    AUTO__DRIVE_PID_I(0),
-    AUTO__DRIVE_PID_D(0),
-    AUTO__DRIVE_PID_ACCEPTABLE_ERROR(0.5),
-    AUTO__DRIVE_PID_RAMP(0.2),
 
     AUTO__TURN_PID_P(0.4d),
     AUTO__TURN_PID_I(0d),

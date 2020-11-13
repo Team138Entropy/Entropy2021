@@ -38,7 +38,7 @@ public class TurnSegment extends Segment {
     I = Config.getInstance().getDouble(Config.Key.AUTO__TURN_PID_I);
     D = Config.getInstance().getDouble(Config.Key.AUTO__TURN_PID_D);
 
-    double tolerance = Config.getInstance().getDouble(Config.Key.AUTO__TURN_PID_ACCEPTABLE_ERROR);
+    double tolerance = Constants.Drive.AutoTurnPID.acceptableError;
 
     this.controller = new PIDController(P, I, D);
     this.controller.setSetpoint(degrees);

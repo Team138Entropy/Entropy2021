@@ -124,9 +124,9 @@ public class Drive extends Subsystem {
     // Configure Talon gains
     double P, I, D;
 
-    P = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_P);
-    I = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_I);
-    D = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_D);
+    P = Constants.Drive.AutoPID.p;
+    I = Constants.Drive.AutoPID.i;
+    D = Constants.Drive.AutoPID.d;
 
     mDriveLogger.info("PID values: " + P + ", " + I + ", " + D);
 
@@ -170,9 +170,9 @@ public class Drive extends Subsystem {
   public void resetPID() {
     double P, I, D;
 
-    P = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_P);
-    I = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_I);
-    D = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_D);
+    P = Constants.Drive.AutoPID.p;
+    I = Constants.Drive.AutoPID.i;
+    D = Constants.Drive.AutoPID.d;
 
     configP(P);
     configI(I);
