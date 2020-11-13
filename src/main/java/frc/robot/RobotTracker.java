@@ -723,7 +723,7 @@ public class RobotTracker {
 
   public RobotTrackerResult GetFeederStationError(double timestamp) {
     Optional<AimingParameters> mLatestAimingParameters =
-        getAimingParameters(false, -1, Constants.kMaxGoalTrackAge);
+        getAimingParameters(false, -1, Constants.Vision.maxGoalTrackAge);
 
     if (mLatestAimingParameters.isPresent()) {
       // We have Aiming Parameters!
@@ -781,7 +781,7 @@ public class RobotTracker {
   // this is the function the turret will use to correct to
   public RobotTrackerResult GetTurretError(double timestamp) {
     Optional<AimingParameters> mLatestAimingParameters =
-        getAimingParameters(true, -1, Constants.kMaxGoalTrackAge);
+        getAimingParameters(true, -1, Constants.Vision.maxGoalTrackAge);
 
     // check age here to make sure we didn't loose packets and this isn't really old
 

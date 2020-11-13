@@ -66,6 +66,18 @@ public class Constants {
     }
   }
 
+  // Vision Tracking Constants
+  public static class Vision{
+    public static final double maxTrackerDistance = 60.0;
+    public static final double maxGoalTrackAge = 3.0;
+    public static final double maxGoalTrackAgeNotTracking = 0.1;
+    public static final double maxGoalTrackSmoothingTime = 0.5;
+    public static final double trackStabilityWeight = 0.0;
+    public static final double trackAgeWeight = 10.0;
+    public static final double trackSwitchingWeight = 100.0;
+    public static final double cameraFrameRate = 90.0; // fps
+  }
+
   public static final double TURRET_MANUAL_ADJUST_FACTOR = .2;
 
   public static final int STORAGE_CURRENT_LIMIT = 7;
@@ -117,15 +129,6 @@ public class Constants {
   // Path Following Constants
   public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
 
-  // Vision Tracking Constants
-  public static final double kMaxTrackerDistance = 60.0;
-  public static final double kMaxGoalTrackAge = 3.0;
-  public static final double kMaxGoalTrackAgeNotTracking = 0.1;
-  public static final double kMaxGoalTrackSmoothingTime = 0.5;
-  public static final double kTrackStabilityWeight = 0.0;
-  public static final double kTrackAgeWeight = 10.0;
-  public static final double kTrackSwitchingWeight = 100.0;
-  public static final double kCameraFrameRate = 90.0; // fps
 
   // Camera Specific Information
   public static final double kCameraDiagonalView = Math.toRadians(75);
