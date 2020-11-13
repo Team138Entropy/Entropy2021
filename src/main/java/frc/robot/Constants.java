@@ -107,28 +107,28 @@ public class Constants {
   }
 
   public static class Cameras {
-    public static final double cameraDiagonalView = Math.toRadians(75);
-    public static final double cameraHorizontalAspect = 4;
-    public static final double cameraVerticalAspect = 3;
-    public static final double cameraDiagonalAspect =
-        Math.hypot(cameraHorizontalAspect, cameraVerticalAspect);
-    public static final double cameraHorizontalView =
-        Math.atan(Math.tan(cameraDiagonalView / 2) * (cameraHorizontalAspect / cameraDiagonalView))
+    public static final double diagonalView = Math.toRadians(75);
+    public static final double horizontalAspect = 4;
+    public static final double verticalAspect = 3;
+    public static final double diagonalAspect =
+        Math.hypot(horizontalAspect, verticalAspect);
+    public static final double horizontalView =
+        Math.atan(Math.tan(diagonalView / 2) * (horizontalAspect / diagonalView))
             * 2;
-    public static final double cameraVerticalView =
-        Math.atan(Math.tan(cameraDiagonalView / 2) * (cameraVerticalAspect / cameraDiagonalView))
+    public static final double verticalView =
+        Math.atan(Math.tan(diagonalView / 2) * (verticalAspect / diagonalView))
             * 2;
 
     public static class ShooterCamera {
       public static final Rotation2d horizontalPlaneToLens =
           Rotation2d.fromDegrees(0); // Shooter should sit pretty flat
-      public static final double cameraHeight = 40; // shooter camera height on robot (inches)
+      public static final double height = 40; // shooter camera height on robot (inches)
     }
 
     public static class BallCamera {
       public static final Rotation2d horizontalPlaneToLens =
           Rotation2d.fromDegrees(-5); // camera is angled downwards
-      public static final double cameraHeight = 12; // ball camera height
+      public static final double height = 12; // ball camera height
     }
   }
 
