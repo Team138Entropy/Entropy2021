@@ -31,13 +31,14 @@ public class Constants {
     public static final int climber = 11;
   }
 
-  public static class Drive{
-    public static class AutoPID{
+  public static class Drive {
+    public static class AutoPID {
       public static final double p = 4;
       public static final double i = 0.00050;
       public static final double d = 0;
     }
-    public static class AutoTurnPID{
+
+    public static class AutoTurnPID {
       public static final double p = 0.2;
       public static final double i = 0;
       public static final double d = 0.015;
@@ -45,7 +46,7 @@ public class Constants {
     }
   }
 
-  public static class TestMode{
+  public static class TestMode {
     public static final double timePerTest = 1;
     public static final int expectedStorageDistance = 605;
     public static final int acceptableStorageError = 40;

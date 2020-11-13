@@ -75,7 +75,7 @@ public class Config {
     CLIMBER__KF(0),
     CLIMBER__KP(.3d),
     CLIMBER__KI(0d),
-    CLIMBER__KD(0d),
+    CLIMBER__KD(0d);
 
     private Object value;
 
