@@ -471,8 +471,12 @@ public class Drive extends Subsystem {
   }
 
   public void zeroEncoders() {
-    mLeftMaster.getSensorCollection().setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
-    mRightMaster.getSensorCollection().setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+    mLeftMaster
+        .getSensorCollection()
+        .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+    mRightMaster
+        .getSensorCollection()
+        .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
   }
 
   // Used only in TEST mode

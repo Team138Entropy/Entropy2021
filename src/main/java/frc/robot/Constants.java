@@ -40,7 +40,6 @@ public class Constants {
 
       public static double compTicksPerFoot = compTicks / compDistance;
       public static final double practiceTicksPerFoot = 1228.615;
-
     }
 
     public static class AutoPID {
@@ -101,7 +100,7 @@ public class Constants {
     public static final int currentLimit = 7;
   }
 
-  public static class Cameras{
+  public static class Cameras {
     public static final double cameraDiagonalView = Math.toRadians(75);
     public static final double cameraHorizontalAspect = 4;
     public static final double cameraVerticalAspect = 3;
@@ -114,22 +113,21 @@ public class Constants {
         Math.atan(Math.tan(cameraDiagonalView / 2) * (cameraVerticalAspect / cameraDiagonalView))
             * 2;
 
-    public static class ShooterCamera{
+    public static class ShooterCamera {
       public static final Rotation2d horizontalPlaneToLens =
           Rotation2d.fromDegrees(0); // Shooter should sit pretty flat
       public static final double cameraHeight = 40; // shooter camera height on robot (inches)
     }
 
-    public static class BallCamera{
-      public static final Rotation2d horizontalPlaneToLens = Rotation2d.fromDegrees(-5); // camera is angled downwards
+    public static class BallCamera {
+      public static final Rotation2d horizontalPlaneToLens =
+          Rotation2d.fromDegrees(-5); // camera is angled downwards
       public static final double cameraHeight = 12; // ball camera height
     }
   }
 
-
   // Path Following Constants
   public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
-
 
   public static int TURRET_AIM_MAX_VELOCITY = 80;
 
