@@ -70,7 +70,7 @@ public class TurnSegment extends Segment {
 
       logger.info("Angle: " + angle);
 
-      if (debounceCount >= Constants.AUTO_DEBOUNCE_TICKS) {
+      if (debounceCount >= Constants.Auto.debounceTicks) {
         done = true;
         drive.setOpenLoop(DriveSignal.BRAKE);
       }

@@ -95,6 +95,9 @@ public class Constants {
   }
 
   public static class Turret {
+    public static int maxAimVelocity = 80;
+    public static final double ticksPerDegree = 140;
+
     // TODO: determine why we need this
     public static final double manualAdjustFactor = .2;
 
@@ -135,27 +138,30 @@ public class Constants {
     public static final double ballHeight = 5; // ball height (inches)
   }
 
+  public static class RobotDimensions{
+    // tested via trial & error, not measured
+    // 22 is too low, 100 is too high
+    public static final double driveWheelTrackWidthInches = 50;
+
+    public static final double driveWheelDiameterInches = 3.938;
+    public static final double driveWheelRadiusInches = driveWheelDiameterInches / 2.0;
+    public static final double driveWheelTrackRadiusWidthMeters =
+        driveWheelTrackWidthInches / 2.0 * 0.0254;
+  }
+
+  public static class Auto{
+    public static final int debounceTicks = 10; // ~0.2 seconds
+    public static final int defaultAccel = 750;
+    public static final int defaultCruiseVelocity = 900;
+  }
+
   // Path Following Constants
   public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
-
-  public static int TURRET_AIM_MAX_VELOCITY = 80;
 
   // Oracle's official constant convention. Don't @ me.
 
   public static final double REAL_TRACK_WIDTH = 1.916;
 
-  // Auto Constants
-  public static final int AUTO_DEBOUNCE_TICKS = 10; // ~0.2 seconds
-  public static final int DEFAULT_ACCEL = 750;
-  public static final int DEFAULT_CRUISE_VELOCITY = 900;
-
-  // 22 is too low, 100 is too high
-  public static final double kDriveWheelTrackWidthInches = 50;
-
-  public static final double kDriveWheelDiameterInches = 3.938;
-  public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
-  public static final double kDriveWheelTrackRadiusWidthMeters =
-      kDriveWheelTrackWidthInches / 2.0 * 0.0254;
 
   // Based on how this is used, I'm pretty sure this is a corrective factor
   public static final double kTrackScrubFactor = 1.0469745223;
@@ -169,19 +175,20 @@ public class Constants {
   public static final Pose2d kWheelsToLens =
       new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
 
-  // Looper System
+
   // period at which the looper runs at
-  public static final double kLooperDt = 0.01;
+  public static final double robotLoopPeriod = 0.01;
+
+
+  /// unused/old
+  // Turret
+  public static final int kTurretTalonMotorPort = 20;
+  public static final double kTurretAimAngleDeadband = .5;
+
+  // PWM
+  public static final int kCameraRingId = 0;
 
   // Constants for Server Motor System
   public static final int kCANTimeoutMs = 10; // use for important on the fly updates
   public static final int kLongCANTimeoutMs = 100; // use for constructor
-
-  // Turret
-  public static final int kTurretTalonMotorPort = 20;
-  public static final double kTurretAimAngleDeadband = .5;
-  public static final double kTicksPerDegee = 140;
-
-  // PWM
-  public static final int kCameraRingId = 0;
 }

@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
   private static boolean isPracticeBot = false;
 
   // Looper - Running on a set period
-  private final Looper mEnabledLooper = new Looper(Constants.kLooperDt);
+  private final Looper mEnabledLooper = new Looper(Constants.robotLoopPeriod);
 
   private boolean startedHoming = false;
   private BallIndicator mBallIndicator;

@@ -141,7 +141,7 @@ public class Drive extends Subsystem {
   }
 
   public void resetCruiseAndAccel() {
-    setCruiseAndAcceleration(Constants.DEFAULT_CRUISE_VELOCITY, Constants.DEFAULT_ACCEL);
+    setCruiseAndAcceleration(Constants.Auto.defaultCruiseVelocity, Constants.Auto.defaultAccel);
   }
 
   public void setCruiseAndAcceleration(int cruise, int accel) {
