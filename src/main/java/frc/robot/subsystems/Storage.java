@@ -124,11 +124,7 @@ public class Storage extends Subsystem {
     SmartDashboard.putNumber("Encoder Distance Raw", getEncoder());
 
     // if we've hit our encoder distance target
-    if (encoderDistance >= BALL_DISTANCE_IN_ENCODER_TICKS) {
-      return true;
-    } else {
-      return false;
-    }
+    return encoderDistance >= BALL_DISTANCE_IN_ENCODER_TICKS;
   }
 
   public synchronized void barf() {
