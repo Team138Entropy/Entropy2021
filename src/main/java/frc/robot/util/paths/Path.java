@@ -177,8 +177,7 @@ public class Path {
       PathSegment segment = segments.get(i);
       maxStartSpeed +=
           Math.sqrt(
-              maxStartSpeed * maxStartSpeed
-                  + 2 * Constants.kPathFollowingMaxAccel * segment.getLength());
+              maxStartSpeed * maxStartSpeed + 2 * Constants.pathMaxAccel * segment.getLength());
       startSpeeds[i] = segment.getStartState().vel();
       if (startSpeeds[i] > maxStartSpeed) {
         startSpeeds[i] = maxStartSpeed;

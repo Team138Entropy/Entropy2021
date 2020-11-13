@@ -574,12 +574,12 @@ public class RobotTracker {
       // High Goal
       SelectedTracker = mVisionTarget_Goal;
       SelectedLock = mVisionTarget_Goal_Lock;
-      LensOffset = Constants.kTurrentToLens;
+      LensOffset = Constants.RobotDimensions.turretToLens;
     } else {
       // Ball
       SelectedTracker = mVisionTarget_Ball;
       SelectedLock = mVisionTarget_Ball_Lock;
-      LensOffset = Constants.kWheelsToLens;
+      LensOffset = Constants.RobotDimensions.wheelsToLens;
     }
 
     // Select Pose2d

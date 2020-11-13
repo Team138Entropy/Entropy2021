@@ -142,11 +142,19 @@ public class Constants {
     // tested via trial & error, not measured
     // 22 is too low, 100 is too high
     public static final double driveWheelTrackWidthInches = 50;
+    // Based on how this is used, I'm pretty sure this is a corrective factor
+    public static final double trackScrubFactor = 1.0469745223;
 
     public static final double driveWheelDiameterInches = 3.938;
     public static final double driveWheelRadiusInches = driveWheelDiameterInches / 2.0;
     public static final double driveWheelTrackRadiusWidthMeters =
         driveWheelTrackWidthInches / 2.0 * 0.0254;
+
+    // Offsets from our center point
+    public static final Pose2d turretToLens =
+        new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
+    public static final Pose2d wheelsToLens =
+        new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
   }
 
   public static class Auto {
@@ -155,29 +163,12 @@ public class Constants {
     public static final int defaultCruiseVelocity = 900;
   }
 
-  // Path Following Constants
-  public static final double kPathFollowingMaxAccel = 80.0; // inches per second ^ 2
-
-  // Oracle's official constant convention. Don't @ me.
-
-  public static final double REAL_TRACK_WIDTH = 1.916;
-
-  // Based on how this is used, I'm pretty sure this is a corrective factor
-  public static final double kTrackScrubFactor = 1.0469745223;
-  public static final double kDriveVoltageRampRate = 0.0;
-  public static final int kDriveCurrentThrottledLimit = 30; // amps
-  public static final int kDriveCurrentUnThrottledLimit = 80; // amps
-
-  // Offsets from our center point
-  public static final Pose2d kTurrentToLens =
-      new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
-  public static final Pose2d kWheelsToLens =
-      new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
+  public static final double pathMaxAccel = 80.0; // inches per second ^ 2
 
   // period at which the looper runs at
   public static final double robotLoopPeriod = 0.01;
 
-  /// unused/old
+  /// unused/old stuff
   // Turret
   public static final int kTurretTalonMotorPort = 20;
   public static final double kTurretAimAngleDeadband = .5;
@@ -188,4 +179,10 @@ public class Constants {
   // Constants for Server Motor System
   public static final int kCANTimeoutMs = 10; // use for important on the fly updates
   public static final int kLongCANTimeoutMs = 100; // use for constructor
+
+  public static final double REAL_TRACK_WIDTH = 1.916;
+
+  public static final double kDriveVoltageRampRate = 0.0;
+  public static final int kDriveCurrentThrottledLimit = 30; // amps
+  public static final int kDriveCurrentUnThrottledLimit = 80; // amps
 }
