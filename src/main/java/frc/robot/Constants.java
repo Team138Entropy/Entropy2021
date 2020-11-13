@@ -138,7 +138,7 @@ public class Constants {
     public static final double ballHeight = 5; // ball height (inches)
   }
 
-  public static class RobotDimensions{
+  public static class RobotDimensions {
     // tested via trial & error, not measured
     // 22 is too low, 100 is too high
     public static final double driveWheelTrackWidthInches = 50;
@@ -149,7 +149,7 @@ public class Constants {
         driveWheelTrackWidthInches / 2.0 * 0.0254;
   }
 
-  public static class Auto{
+  public static class Auto {
     public static final int debounceTicks = 10; // ~0.2 seconds
     public static final int defaultAccel = 750;
     public static final int defaultCruiseVelocity = 900;
@@ -161,7 +161,6 @@ public class Constants {
   // Oracle's official constant convention. Don't @ me.
 
   public static final double REAL_TRACK_WIDTH = 1.916;
-
 
   // Based on how this is used, I'm pretty sure this is a corrective factor
   public static final double kTrackScrubFactor = 1.0469745223;
@@ -175,10 +174,8 @@ public class Constants {
   public static final Pose2d kWheelsToLens =
       new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
 
-
   // period at which the looper runs at
   public static final double robotLoopPeriod = 0.01;
-
 
   /// unused/old
   // Turret
