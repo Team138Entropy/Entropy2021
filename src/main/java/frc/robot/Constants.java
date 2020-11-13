@@ -59,6 +59,7 @@ public class Constants {
       public static final int port = 0;
       public static final String name = "Controller (Xbox One For Windows)";
     }
+
     public static class Operator {
       public static final int port = 1;
       public static final String name = "AIRFLO";
@@ -70,7 +71,6 @@ public class Constants {
   public static final int STORAGE_CURRENT_LIMIT = 7;
 
   public static final double kTurretAngleOffset = -20;
-
 
   // PWM
   public static final int kCameraRingId = 0;
