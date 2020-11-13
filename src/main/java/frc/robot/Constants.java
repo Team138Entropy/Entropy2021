@@ -54,17 +54,23 @@ public class Constants {
     public static final int acceptableShooterError = 150;
   }
 
+  public static class Controllers {
+    public static class Driver {
+      public static final int port = 0;
+      public static final String name = "Controller (Xbox One For Windows)";
+    }
+    public static class Operator {
+      public static final int port = 1;
+      public static final String name = "AIRFLO";
+    }
+  }
+
   public static final double TURRET_MANUAL_ADJUST_FACTOR = .2;
 
   public static final int STORAGE_CURRENT_LIMIT = 7;
 
   public static final double kTurretAngleOffset = -20;
 
-  // Controller Ports
-  public static final int DriverControllerPort = 0;
-  public static final String DriverControllerName = "Controller (Xbox One For Windows)";
-  public static final int OperatorControllerPort = 1;
-  public static final String OperatorControllerName = "AIRFLO";
 
   // PWM
   public static final int kCameraRingId = 0;
