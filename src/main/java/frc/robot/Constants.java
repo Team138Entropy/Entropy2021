@@ -8,20 +8,20 @@ import frc.robot.util.geometry.Translation2d;
 public class Constants {
   // Talons Ports
   // ALL TALON PORTS DEFINED HERE
-  public static class Talons{
-    public static class Drive{
+  public static class Talons {
+    public static class Drive {
       public static final int leftMaster = 1;
       public static final int leftSlave = 2;
       public static final int rightMaster = 3;
       public static final int rightSlave = 4;
     }
 
-    public static class Storage{
+    public static class Storage {
       public static final int top = 5;
       public static final int bottom = 8;
     }
 
-    public static class Shooter{
+    public static class Shooter {
       public static final int master = 6;
       public static final int slave = 7;
     }

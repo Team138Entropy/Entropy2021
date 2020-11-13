@@ -81,7 +81,6 @@ public class Drive extends Subsystem {
     return (int) roundedVal;
   }
 
-
   private Drive() {
     mDriveLogger = new Logger("drive");
 
