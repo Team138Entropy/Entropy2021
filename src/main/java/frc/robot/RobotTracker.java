@@ -456,14 +456,14 @@ public class RobotTracker {
     // Select Rotation based on camera mount point
     if (highgoal) {
       // High Goal
-      SelectedCameraRotation = Constants.kShooterCameraHorizontalPlaneToLens;
-      TargetHeight = Constants.kHighGoalHeight;
-      LensHeight = Constants.kShooterCameraHeight;
+      SelectedCameraRotation = Constants.Cameras.ShooterCamera.horizontalPlaneToLens;
+      TargetHeight = Constants.Field.highGoalHeight;
+      LensHeight = Constants.Cameras.ShooterCamera.height;
     } else {
       // Ball
-      SelectedCameraRotation = Constants.kBallCameraHorizontalPlaneToLens;
-      TargetHeight = Constants.kBallHeight;
-      LensHeight = Constants.kBallCameraHeight;
+      SelectedCameraRotation = Constants.Cameras.BallCamera.horizontalPlaneToLens;
+      TargetHeight = Constants.Field.ballHeight;
+      LensHeight = Constants.Cameras.BallCamera.height;
     }
 
     // Compensate for camera pitch
@@ -510,14 +510,14 @@ public class RobotTracker {
     // Select Rotation based on camera mount point
     if (highgoal) {
       // High Goal
-      SelectedCameraRotation = Constants.kShooterCameraHorizontalPlaneToLens;
-      TargetHeight = Constants.kHighGoalHeight;
-      LensHeight = Constants.kShooterCameraHeight;
+      SelectedCameraRotation = Constants.Cameras.ShooterCamera.horizontalPlaneToLens;
+      TargetHeight = Constants.Field.highGoalHeight;
+      LensHeight = Constants.Cameras.ShooterCamera.height;
     } else {
       // Ball
-      SelectedCameraRotation = Constants.kBallCameraHorizontalPlaneToLens;
-      TargetHeight = Constants.kBallHeight;
-      LensHeight = Constants.kBallCameraHeight;
+      SelectedCameraRotation = Constants.Cameras.BallCamera.horizontalPlaneToLens;
+      TargetHeight = Constants.Field.ballHeight;
+      LensHeight = Constants.Cameras.BallCamera.height;
     }
 
     // Compensate for camera pitch
@@ -570,16 +570,16 @@ public class RobotTracker {
     Object SelectedLock;
     GoalTracker SelectedTracker;
     Pose2d LensOffset; // Where from our center point this is mounted
-    if (HighGoal == true) {
+    if (HighGoal) {
       // High Goal
       SelectedTracker = mVisionTarget_Goal;
       SelectedLock = mVisionTarget_Goal_Lock;
-      LensOffset = Constants.kTurrentToLens;
+      LensOffset = Constants.RobotDimensions.turretToLens;
     } else {
       // Ball
       SelectedTracker = mVisionTarget_Ball;
       SelectedLock = mVisionTarget_Ball_Lock;
-      LensOffset = Constants.kWheelsToLens;
+      LensOffset = Constants.RobotDimensions.wheelsToLens;
     }
 
     // Select Pose2d
@@ -723,7 +723,7 @@ public class RobotTracker {
 
   public RobotTrackerResult GetFeederStationError(double timestamp) {
     Optional<AimingParameters> mLatestAimingParameters =
-        getAimingParameters(false, -1, Constants.kMaxGoalTrackAge);
+        getAimingParameters(false, -1, Constants.Vision.maxGoalTrackAge);
 
     if (mLatestAimingParameters.isPresent()) {
       // We have Aiming Parameters!
@@ -781,7 +781,7 @@ public class RobotTracker {
   // this is the function the turret will use to correct to
   public RobotTrackerResult GetTurretError(double timestamp) {
     Optional<AimingParameters> mLatestAimingParameters =
-        getAimingParameters(true, -1, Constants.kMaxGoalTrackAge);
+        getAimingParameters(true, -1, Constants.Vision.maxGoalTrackAge);
 
     // check age here to make sure we didn't loose packets and this isn't really old
 

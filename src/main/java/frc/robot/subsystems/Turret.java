@@ -12,7 +12,7 @@ public class Turret extends Subsystem {
   private static Turret sInstance;
 
   private final WPI_TalonSRX mTurretTalon;
-  private final double TicksPerDegree = Constants.kTicksPerDegee;
+  private final double TicksPerDegree = Constants.Turret.ticksPerDegree;
 
   // Home Position of Turret
   //  as vision is disabled, goes to homing to get back home
@@ -57,7 +57,7 @@ public class Turret extends Subsystem {
 
   /** Set up our talon, logger and potentiometer */
   private Turret() {
-    mTurretTalon = new WPI_TalonSRX(Constants.Talon_Turret);
+    mTurretTalon = new WPI_TalonSRX(Constants.Talons.turret);
     mTurretTalon.configFactoryDefault();
     mTurretTalon.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed, 10);
@@ -146,7 +146,7 @@ public class Turret extends Subsystem {
     velocity = Math.abs(velocity);
 
     // Shooter is offset
-    if (velocity <= Constants.TURRET_AIM_MAX_VELOCITY) {
+    if (velocity <= Constants.Turret.maxAimVelocity) {
       mPeriodicIO.angle = angle;
       double setpoint = mPeriodicIO.CurrentPosition - (angle * TicksPerDegree);
       mPeriodicIO.demand = setpoint;

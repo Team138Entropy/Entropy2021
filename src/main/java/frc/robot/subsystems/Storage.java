@@ -6,27 +6,21 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Config;
-import frc.robot.Config.Key;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
 
-  private final int ROLLER_BOTTOM_PORT = Constants.Talon_Storage_Bottom;
-  private final int ROLLER_TOP_PORT = Constants.Talon_Storage_Top;
+  private final int ROLLER_BOTTOM_PORT = Constants.Talons.Storage.bottom;
+  private final int ROLLER_TOP_PORT = Constants.Talons.Storage.top;
 
   private final int STORAGE_CAPICTY = 5;
 
-  private final double STORE_SPEED =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_STORE_SPEED);
-  private final double BOTTOM_SPEED_FACTOR =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_BOTTOM_SPEED_FACTOR);
-  private final double TEST_SPEED_FACTOR =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_SPEED_FACTOR);
-  private final double EJECT_SPEED =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_EJECT_SPEED);
+  private final double STORE_SPEED = Constants.Storage.rollerStoreSpeed;
+  private final double TEST_SPEED_FACTOR = Constants.Storage.testRollerSpeedFactor;
+  private final double BOTTOM_SPEED_FACTOR = Constants.Storage.bottomRollerSpeedFactor;
+  private final double EJECT_SPEED = Constants.Storage.rollerEjectSpeed;
   private final double BALL_DISTANCE_IN_ENCODER_TICKS;
 
   private final int INTAKE_SENSOR_PORT = 0;
@@ -61,22 +55,20 @@ public class Storage extends Subsystem {
     mTopRoller.setNeutralMode(NeutralMode.Brake);
     mBottomRoller.setNeutralMode(NeutralMode.Brake);
 
-    mTopRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-    mTopRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
+    mTopRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
+    mTopRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
 
-    mBottomRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-    mBottomRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
+    mBottomRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
+    mBottomRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
 
     mIntakeSensor = new DigitalInput(INTAKE_SENSOR_PORT);
 
     if (Robot.getIsPracticeBot()) {
-      BALL_DISTANCE_IN_ENCODER_TICKS =
-          Config.getInstance().getDouble(Key.STORAGE__BALL_DISTANCE_IN_ENCODER_TICKS_PRACTICE);
+      BALL_DISTANCE_IN_ENCODER_TICKS = Constants.Storage.BallDistances.practice;
       mBottomRoller.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
       mBottomRoller.setSensorPhase(false);
     } else {
-      BALL_DISTANCE_IN_ENCODER_TICKS =
-          Config.getInstance().getDouble(Key.STORAGE__BALL_DISTANCE_IN_ENCODER_TICKS_PRODUCTION);
+      BALL_DISTANCE_IN_ENCODER_TICKS = Constants.Storage.BallDistances.competition;
       mTopRoller.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
       mTopRoller.setSensorPhase(false);
       mTopRoller.setInverted(true);

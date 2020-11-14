@@ -77,7 +77,7 @@ public class DriveSegment extends Segment {
     if (acceptable(left) && acceptable(right)) {
       logger.verbose("Positions in acceptable range for " + ++debounceCount + " tick(s)");
 
-      if (debounceCount >= Constants.AUTO_DEBOUNCE_TICKS) {
+      if (debounceCount >= Constants.Auto.debounceTicks) {
         done = true;
         drive.setOpenLoop(DriveSignal.BRAKE);
       }

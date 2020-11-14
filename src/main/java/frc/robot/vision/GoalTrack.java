@@ -48,7 +48,7 @@ public class GoalTrack {
    */
   public synchronized boolean tryUpdate(double timestamp, Pose2d observation) {
     boolean TargetAlive = IsGoalTrackAlive();
-    if (TargetAlive == false) {
+    if (!TargetAlive) {
       return false;
     }
 
@@ -56,7 +56,7 @@ public class GoalTrack {
     double distance = mSmoothedPosition.inverse().transformBy(observation).getTranslation().norm();
 
     // if target is within our max tracking distance
-    if (distance < Constants.kMaxTrackerDistance) {
+    if (distance < Constants.Vision.maxTrackerDistance) {
 
       mObservedPositions.put(timestamp, observation);
       PruneTracksByTime();
@@ -88,7 +88,7 @@ public class GoalTrack {
   /** Removes the track if it is older than the set age this value is defined in constants file */
   private synchronized void PruneTracksByTime() {
     // Calculate deletion point..delete all before this time
-    double delete_point = Timer.getFPGATimestamp() - Constants.kMaxGoalTrackAge;
+    double delete_point = Timer.getFPGATimestamp() - Constants.Vision.maxGoalTrackAge;
 
     // Iterate through observed positions... removing if old
     mObservedPositions.entrySet().removeIf(entry -> entry.getKey() < delete_point);
@@ -118,7 +118,7 @@ public class GoalTrack {
 
       for (Map.Entry<Double, Pose2d> entry : mObservedPositions.entrySet()) {
         TimeDelta = CurrentTime - entry.getKey();
-        if (TimeDelta > Constants.kMaxGoalTrackSmoothingTime) {
+        if (TimeDelta > Constants.Vision.maxGoalTrackSmoothingTime) {
           continue;
         }
 
@@ -172,6 +172,8 @@ public class GoalTrack {
 
   public synchronized double getStability() {
     return Math.min(
-        1.0, mObservedPositions.size() / (Constants.kCameraFrameRate * Constants.kMaxGoalTrackAge));
+        1.0,
+        mObservedPositions.size()
+            / (Constants.Vision.cameraFrameRate * Constants.Vision.maxGoalTrackAge));
   }
 }
