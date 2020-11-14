@@ -2,7 +2,6 @@ package frc.robot.auto;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import frc.robot.Config;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drive;
@@ -34,9 +33,9 @@ public class TurnSegment extends Segment {
     degrees = degrees % 360;
     this.degrees = degrees;
 
-    P = Config.getInstance().getDouble(Config.Key.AUTO__TURN_PID_P);
-    I = Config.getInstance().getDouble(Config.Key.AUTO__TURN_PID_I);
-    D = Config.getInstance().getDouble(Config.Key.AUTO__TURN_PID_D);
+    P = Constants.Auto.TurnPID.P;
+    I = Constants.Auto.TurnPID.I;
+    D = Constants.Auto.TurnPID.D;
 
     double tolerance = Constants.Drive.AutoTurnPID.acceptableError;
 

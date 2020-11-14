@@ -48,7 +48,7 @@ public class PathSegment {
     isLine = true;
     createMotionProfiler(startState, endSpeed);
 
-    mLogger = new Logger("pathsegment");
+    mLogger = new Logger(Constants.Loggers.PATH);
   }
 
   public PathSegment(
@@ -230,7 +230,7 @@ public class PathSegment {
   /**
    * Gets the remaining distance left on the segment from point <code>point</code>
    *
-   * @param point result of <code>getClosestPoint()</code>
+   * @param position result of <code>getClosestPoint()</code>
    * @return distance remaining
    */
   public double getRemainingDistance(Translation2d position) {

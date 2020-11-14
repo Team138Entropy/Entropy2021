@@ -1,13 +1,42 @@
 package frc.robot;
 
+import frc.robot.Logger.SupportedLevels;
 import frc.robot.util.geometry.Pose2d;
 import frc.robot.util.geometry.Rotation2d;
 import frc.robot.util.geometry.Translation2d;
 
 // Any Sort of Constant or 'Magic Number' should be defined here
 public class Constants {
-  // Talons Ports
-  // ALL TALON PORTS DEFINED HERE
+  public enum Loggers {
+    VISION(SupportedLevels.VERBOSE),
+    POT(SupportedLevels.DEBUG),
+    PID(SupportedLevels.INFO),
+    ROBOT(SupportedLevels.WARN),
+    TURRET(SupportedLevels.VERBOSE),
+    DRIVE(SupportedLevels.INFO),
+    SUBSYSTEM(SupportedLevels.INFO),
+    BALL_STORED(SupportedLevels.INFO),
+    EVENT_WATCHER_THREAD(SupportedLevels.INFO),
+    VISION_MANAGER(SupportedLevels.INFO),
+    PATH(SupportedLevels.DEBUG),
+    OI(SupportedLevels.VERBOSE),
+    ROBOT_STATE(SupportedLevels.INFO),
+    BALL_DETECTED(SupportedLevels.INFO),
+    CAMERA_MANAGER(SupportedLevels.INFO),
+    CONFIG(SupportedLevels.INFO),
+    STORAGE(SupportedLevels.INFO),
+    INTAKE(SupportedLevels.VERBOSE),
+    SHOOTER(SupportedLevels.INFO),
+    CLIMBER(SupportedLevels.WARN);
+
+    public SupportedLevels minLevel;
+
+    Loggers(SupportedLevels minLevel) {
+      this.minLevel = minLevel;
+    }
+  }
+
+  /// Talons
   public static class Talons {
     public static class Drive {
       public static final int leftMaster = 1;
@@ -31,8 +60,18 @@ public class Constants {
     public static final int climber = 11;
   }
 
+  /// Subsystems
   public static class Drive {
+    public static boolean enabled = true;
+
     public static int talonSensorTimeoutMs = 250;
+
+    public static double maxSpeedWhenClimbing = .3;
+
+    // TODO: determine if this is actually "DRIVE__FORWARD_ACCEL_RAMP_TIME_SECONDS", as it was
+    // previously named
+    public static double accelSpeed = 1;
+    public static double brakeSpeed = 1;
 
     public static class Encoders {
       // ticks = (19711 + 19582) / 2
@@ -59,6 +98,91 @@ public class Constants {
     }
   }
 
+  public static class Intake {
+    public static final double intakeRollerSpeed = 1;
+  }
+
+  public static class Turret {
+    public static int maxAimVelocity = 80;
+    public static final double ticksPerDegree = 140;
+
+    // TODO: determine why we need this
+    public static final double manualAdjustFactor = .2;
+
+    public static final double angleOffset = -20;
+  }
+
+  public static class Storage {
+    // continuous & peak current limit for both storage talons
+    public static final int currentLimit = 7;
+
+    public static final double rollerStoreSpeed = .5;
+    public static final double rollerEjectSpeed = .5;
+
+    // the storage roller goes x times faster in test mode
+    public static final double testRollerSpeedFactor = .5;
+
+    // the bottom roller goes x times faster than the top one
+    public static final double bottomRollerSpeedFactor = 1.15;
+
+    // in encoder ticks
+    public static class BallDistances {
+      public static final double practice = 250;
+      public static final double competition = 300;
+    }
+  }
+
+  public static class Climber {
+    public static final boolean enabled = true;
+
+    // if it's within n in either direction of the target position, it's good
+    public static final int detectionRange = 100;
+
+    // in encoder ticks
+    public static class Positions {
+      public static final int extended = 65000;
+      public static final int retracted = 3000;
+    }
+
+    public static final double extendSpeed = 1;
+    public static final double retractSpeed = -1;
+    public static final double homeSpeed = .5;
+    public static final double jogSpeedFactor = 1; // a factor of the operator controller
+
+    // Talon SRX/ Victor SPX will support multiple (cascaded) PID loops. For now we just want the
+    // primary one.
+    public static final int pidLoopIndex = 0;
+
+    // TODO: remove or make global
+    public static final int talonCommandTimeout = 10;
+
+    public static class PID {
+      public static final double F = 0;
+      public static final double P = 1;
+      public static final double I = 0;
+      public static final double D = 0;
+    }
+  }
+
+  public static class Auto {
+    public static final int debounceTicks = 10; // ~0.2 seconds
+    public static final int defaultAccel = 750;
+    public static final int defaultCruiseVelocity = 900;
+
+    public static class TurnPID {
+      public static final double P = .4;
+      public static final double I = 0;
+      public static final double D = 0;
+      public static final double acceptableError = 5;
+      public static final double max = .5;
+    }
+  }
+
+  public static class BallIndicator {
+    public static final boolean enabled = false;
+  }
+
+  /// Other things
   public static class TestMode {
     public static final double timePerTest = 1;
     public static final int expectedStorageDistance = 605;
@@ -92,21 +216,6 @@ public class Constants {
     public static final double trackAgeWeight = 10.0;
     public static final double trackSwitchingWeight = 100.0;
     public static final double cameraFrameRate = 90.0; // fps
-  }
-
-  public static class Turret {
-    public static int maxAimVelocity = 80;
-    public static final double ticksPerDegree = 140;
-
-    // TODO: determine why we need this
-    public static final double manualAdjustFactor = .2;
-
-    public static final double angleOffset = -20;
-  }
-
-  public static class Storage {
-    // continuous & peak current limit for both storage talons
-    public static final int currentLimit = 7;
   }
 
   public static class Cameras {
@@ -157,32 +266,42 @@ public class Constants {
         new Pose2d(new Translation2d(0, 0.0), Rotation2d.fromDegrees(0.0));
   }
 
-  public static class Auto {
-    public static final int debounceTicks = 10; // ~0.2 seconds
-    public static final int defaultAccel = 750;
-    public static final int defaultCruiseVelocity = 900;
-  }
+  // where on the robot the practice jumper pin is located
+  public static final int practiceJumperPin = 1;
 
   public static final double pathMaxAccel = 80.0; // inches per second ^ 2
 
   // period at which the looper runs at
   public static final double robotLoopPeriod = 0.01;
 
-  /// unused/old stuff
-  // Turret
-  public static final int kTurretTalonMotorPort = 20;
-  public static final double kTurretAimAngleDeadband = .5;
+  /// unused/old configuration
 
-  // PWM
-  public static final int kCameraRingId = 0;
+  //  // PWM
+  //  public static final int kCameraRingId = 0;
+  //
+  //  // Constants for Server Motor System
+  //  public static final int kCANTimeoutMs = 10; // use for important on the fly updates
+  //  public static final int kLongCANTimeoutMs = 100; // use for constructor
+  //
+  //  public static final double REAL_TRACK_WIDTH = 1.916;
+  //
+  //  public static final double kDriveVoltageRampRate = 0.0;
+  //  public static final int kDriveCurrentThrottledLimit = 30; // amps
+  //  public static final int kDriveCurrentUnThrottledLimit = 80; // amps
 
-  // Constants for Server Motor System
-  public static final int kCANTimeoutMs = 10; // use for important on the fly updates
-  public static final int kLongCANTimeoutMs = 100; // use for constructor
+  //  CLIMBER__OVERCURRENT_THRESHOLD(12d),
+  //  CLIMBER__OVERCURRENT_MIN_OCCURENCES(25),
+  //  CLIMBER__OVERCURRENT_COUNTDOWN_LENGTH(30d),
 
-  public static final double REAL_TRACK_WIDTH = 1.916;
+  //  Turret
+  //  public static final int kTurretTalonMotorPort = 20;
+  //  public static final double kTurretAimAngleDeadband = .5;
+  //  // which analog position the 10-turn pot is plugged in to
+  //  ROBOT__POT__LOCATION(0),
+  //  // the range of the pot, which maps it on a scale of 0-100 (this was tested)
+  //  ROBOT__POT__RANGE(321.8d),
+  //  // the starting offset of the pot
+  //  ROBOT__POT__OFFSET(6),
 
-  public static final double kDriveVoltageRampRate = 0.0;
-  public static final int kDriveCurrentThrottledLimit = 30; // amps
-  public static final int kDriveCurrentUnThrottledLimit = 80; // amps
+  // OI__VISION__PID__MAX_SPEED(0.25d),
 }

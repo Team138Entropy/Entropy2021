@@ -14,6 +14,7 @@ package frc.robot.subsystems;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.Constants;
 import frc.robot.Logger;
 
 // camera subsystem
@@ -22,7 +23,7 @@ public class CameraManager extends Subsystem {
   private static UsbCamera backCamera;
   private static CameraManager sInstance;
 
-  Logger mLogger = new Logger("cameraManager");
+  Logger mLogger = new Logger(Constants.Loggers.CAMERA_MANAGER);
 
   // this is a singleton
   public static synchronized CameraManager getInstance() {
