@@ -570,7 +570,7 @@ public class RobotTracker {
     Object SelectedLock;
     GoalTracker SelectedTracker;
     Pose2d LensOffset; // Where from our center point this is mounted
-    if (HighGoal == true) {
+    if (HighGoal) {
       // High Goal
       SelectedTracker = mVisionTarget_Goal;
       SelectedLock = mVisionTarget_Goal_Lock;
