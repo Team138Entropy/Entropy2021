@@ -77,8 +77,8 @@ public class GoalTracker {
           mAgeWeight
               * Math.max(
                   0,
-                  (Constants.kMaxGoalTrackAge - (mCurrentTimestamp - report.latest_timestamp))
-                      / Constants.kMaxGoalTrackAge);
+                  (Constants.Vision.maxGoalTrackAge - (mCurrentTimestamp - report.latest_timestamp))
+                      / Constants.Vision.maxGoalTrackAge);
       double switching_score = (report.id == mLastTrackID ? mSwitchingWeight : 0);
 
       // Compile all of these fields together! this is our score!

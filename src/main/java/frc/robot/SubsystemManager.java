@@ -56,7 +56,7 @@ public class SubsystemManager implements ILooper {
   }
 
   private SubsystemManager() {
-    mSubsystemLogger = new Logger("subsystem");
+    mSubsystemLogger = new Logger(Constants.Loggers.SUBSYSTEM);
     mSubsystems = new ArrayList<>();
   }
 

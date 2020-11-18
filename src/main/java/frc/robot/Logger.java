@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants.*;
 import java.util.Arrays;
 
 /**
@@ -25,41 +26,32 @@ public class Logger {
     INFO,
     VERBOSE,
     DEBUG,
-    SILLY
+    SILLY,
+    OFF
   };
 
-  String mLogPath;
+  Loggers mThisLogger;
   String mDefaultLevel;
   /**
    * Initiates the logger with the path of logPath.
    *
-   * @param logPath
+   * @param thisLogger
    */
-  public Logger(String logPath) {
-    this.mLogPath = logPath;
-  }
-  /**
-   * Initiates the logger with the path of logPath and a default level
-   *
-   * @param logPath
-   * @param defaultLevel
-   */
-  public Logger(String logPath, String defaultLevel) {
-    this.mLogPath = logPath;
-    this.mDefaultLevel = defaultLevel;
+  public Logger(Loggers thisLogger) {
+    this.mThisLogger = thisLogger;
   }
 
   /**
    * This is an internal method that determines how log file entries are formatted. You
    * can @Override this method to change the output.
    *
-   * @param logPath
+   * @param thisLogger
    * @param thisLogLevel
    * @param message
    * @return
    */
-  public static String getLogMsg(String logPath, SupportedLevels thisLogLevel, String message) {
-    return "[" + logPath + ":" + thisLogLevel.name() + "] " + message;
+  public static String getLogMsg(Loggers thisLogger, SupportedLevels thisLogLevel, String message) {
+    return "[" + thisLogger.name() + ":" + thisLogLevel.name() + "] " + message;
   }
 
   /**
@@ -80,40 +72,33 @@ public class Logger {
    * @param stackTrace True if stack trace is desired
    */
   public void logLevel(SupportedLevels level, String message, Boolean stackTrace) {
-    String minLevel;
-    try {
-      minLevel = Config.getInstance().cfg.getString("LOG__" + mLogPath.toUpperCase());
-    } catch (Exception exception) {
-      minLevel = mDefaultLevel;
-    }
+    SupportedLevels minLevel = mThisLogger.minLevel;
 
     // if logging is enabled at all for this logger,
     // and the level is recognized,
     // and our level is higher-up or equal to the minimum specified,
     // then log it
-    if (minLevel == null
-        || (!minLevel.toString().equals("OFF")
-            && Arrays.asList(SupportedLevels.values()).indexOf(level)
-                <= Arrays.asList(SupportedLevels.values())
-                    .indexOf(SupportedLevels.valueOf(minLevel)))) {
+    if ((!(minLevel == SupportedLevels.OFF)
+        && Arrays.asList(SupportedLevels.values()).indexOf(level)
+            <= Arrays.asList(SupportedLevels.values()).indexOf(minLevel))) {
       // if the level we're logging at is WARN or ERR, then log to STDERR, otherwise log to
       // STDOUT
       if (level == SupportedLevels.ERROR) {
         if (stackTrace) {
           DriverStation.reportError(
-              getLogMsg(mLogPath, level, message), Thread.currentThread().getStackTrace());
+              getLogMsg(mThisLogger, level, message), Thread.currentThread().getStackTrace());
         } else {
-          DriverStation.reportError(getLogMsg(mLogPath, level, message), false);
+          DriverStation.reportError(getLogMsg(mThisLogger, level, message), false);
         }
       } else if (level == SupportedLevels.WARN) {
         if (stackTrace) {
           DriverStation.reportWarning(
-              getLogMsg(mLogPath, level, message), Thread.currentThread().getStackTrace());
+              getLogMsg(mThisLogger, level, message), Thread.currentThread().getStackTrace());
         } else {
-          DriverStation.reportWarning(getLogMsg(mLogPath, level, message), false);
+          DriverStation.reportWarning(getLogMsg(mThisLogger, level, message), false);
         }
       } else {
-        System.out.println(getLogMsg(mLogPath, level, message));
+        System.out.println(getLogMsg(mThisLogger, level, message));
       }
     }
   }
@@ -164,21 +149,21 @@ public class Logger {
   }
 
   /**
-   * Logs at the level DEBUG
-   *
-   * @param message The message to log
-   */
-  public void debug(String message) {
-    logLevel(SupportedLevels.DEBUG, message);
-  }
-
-  /**
    * Logs at the level VERBOSE
    *
    * @param message The message to log
    */
   public void verbose(String message) {
     logLevel(SupportedLevels.VERBOSE, message);
+  }
+
+  /**
+   * Logs at the level DEBUG
+   *
+   * @param message The message to log
+   */
+  public void debug(String message) {
+    logLevel(SupportedLevels.DEBUG, message);
   }
 
   /**

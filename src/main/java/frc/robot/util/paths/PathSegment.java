@@ -48,7 +48,7 @@ public class PathSegment {
     isLine = true;
     createMotionProfiler(startState, endSpeed);
 
-    mLogger = new Logger("pathsegment");
+    mLogger = new Logger(Constants.Loggers.PATH);
   }
 
   public PathSegment(
@@ -138,7 +138,7 @@ public class PathSegment {
 
   public void createMotionProfiler(MotionState start_state, double end_speed) {
     MotionProfileConstraints motionConstraints =
-        new MotionProfileConstraints(maxSpeed, Constants.kPathFollowingMaxAccel);
+        new MotionProfileConstraints(maxSpeed, Constants.pathMaxAccel);
     MotionProfileGoal goal_state = new MotionProfileGoal(getLength(), end_speed);
     speedController =
         MotionProfileGenerator.generateProfile(motionConstraints, goal_state, start_state);
@@ -230,7 +230,7 @@ public class PathSegment {
   /**
    * Gets the remaining distance left on the segment from point <code>point</code>
    *
-   * @param point result of <code>getClosestPoint()</code>
+   * @param position result of <code>getClosestPoint()</code>
    * @return distance remaining
    */
   public double getRemainingDistance(Translation2d position) {

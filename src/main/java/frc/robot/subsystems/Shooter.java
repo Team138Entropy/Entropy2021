@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Config;
-import frc.robot.Config.Key;
 import frc.robot.Constants;
 import frc.robot.SpeedLookupTable;
 
@@ -23,20 +21,18 @@ public class Shooter extends Subsystem {
   private final double I = 0;
   private final double D = 0;
 
-  // a minimum acountdown
+  // a minimum countdown
   private static final int MIN_SHOT_COUNTDOWN = 100;
   private int mShotCountdown = MIN_SHOT_COUNTDOWN;
 
   // TODO: Integrate with other subsystems for real
   // TEMPORARY STUFF BEGINS HERE
-  private final int ROLLER_PORT = Constants.Talon_Shooter_Master;
-  private final int ROLLER_SLAVE_PORT = Constants.Talon_Shooter_Slave;
+  private final int ROLLER_PORT = Constants.Talons.Shooter.master;
+  private final int ROLLER_SLAVE_PORT = Constants.Talons.Shooter.slave;
 
   // TODO: Tune these values
   private final int DEFAULT_ROLLER_SPEED = 2000; // Encoder ticks per 100ms, change this value
   private int mVelocityAdjustment = 0;
-  private final int VELOCITY_ADJUSTMENT_BUMP =
-      Config.getInstance().getInt(Key.SHOOTER__VELOCITY_ADJUSTMENT);
 
   private boolean mHasHadCurrentDrop = false;
 
@@ -80,14 +76,6 @@ public class Shooter extends Subsystem {
     int speed = (int) Math.round(SpeedLookupTable.getInstance().getSpeedFromDistance(distance));
 
     return speed + mVelocityAdjustment;
-  }
-
-  public void increaseVelocity() {
-    mVelocityAdjustment += VELOCITY_ADJUSTMENT_BUMP;
-  }
-
-  public void decreaseVelocity() {
-    mVelocityAdjustment -= VELOCITY_ADJUSTMENT_BUMP;
   }
 
   public void resetVelocity() {

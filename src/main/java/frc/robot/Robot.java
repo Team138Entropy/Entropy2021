@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Config.Key;
 import frc.robot.OI.OperatorInterface;
 import frc.robot.auto.IntakeSegment;
 import frc.robot.auto.Path;
@@ -146,13 +145,12 @@ public class Robot extends TimedRobot {
   private final Turret mTurret = Turret.getInstance();
   private final Drive mDrive = Drive.getInstance();
 
-  private static final DigitalInput practiceInput =
-      new DigitalInput(Config.getInstance().getInt(Key.ROBOT__PRACTICE_JUMPER_PIN));
+  private static final DigitalInput practiceInput = new DigitalInput(Constants.practiceJumperPin);
 
   private static boolean isPracticeBot = false;
 
   // Looper - Running on a set period
-  private final Looper mEnabledLooper = new Looper(Constants.kLooperDt);
+  private final Looper mEnabledLooper = new Looper(Constants.robotLoopPeriod);
 
   private CameraManager mCameraManager;
 
@@ -174,7 +172,7 @@ public class Robot extends TimedRobot {
 
   private Timer mBarfTimer = new Timer();
 
-  Logger mRobotLogger = new Logger("robot");
+  Logger mRobotLogger = new Logger(Constants.Loggers.ROBOT);
 
   // Shooter velocity trim state
   LatchedBoolean mShooterVelocityTrimUp = new LatchedBoolean();
@@ -186,9 +184,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     SmartDashboard.putNumber("Auto Layout", 0);
-
-    // Zero all nesscary sensors on Robot
-    Config.getInstance().reload();
     SmartDashboard.putBoolean("Correct Controllers", mOperatorInterface.checkControllers());
 
     // Read the jumper pin for practice bot
@@ -199,7 +194,7 @@ public class Robot extends TimedRobot {
     // Constantly collects information
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 
-    // Zero all nesscary sensors on Robot
+    // Zero all necessary sensors on Robot
     mSubsystemManager.zeroSensors();
 
     // Reset Robot Tracker - Note starting position of the Robot
@@ -219,7 +214,7 @@ public class Robot extends TimedRobot {
     mClimbingState = ClimbingState.IDLE;
     mShootingState = ShootingState.IDLE;
 
-    if (Config.getInstance().getBoolean(Key.ROBOT__HAS_LEDS)) {
+    if (Constants.BallIndicator.enabled) {
       BallIndicator.getInstance();
     }
 
@@ -288,8 +283,6 @@ public class Robot extends TimedRobot {
     // collections information periodically
     mEnabledLooper.start();
 
-    Config.getInstance().reload();
-
     mState = State.SHOOTING;
     mShootingState = ShootingState.IDLE;
     mIntakeState = IntakeState.IDLE;
@@ -353,8 +346,6 @@ public class Robot extends TimedRobot {
     // collections information periodically
     mEnabledLooper.start();
 
-    Config.getInstance().reload();
-
     mOperatorInterface.checkControllers();
 
     // Set the initial Robot State
@@ -397,8 +388,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     mAuto = false;
     mTestState = TestState.MANUAL;
-
-    Config.getInstance().reload();
     mSubsystemManager.checkSubsystems();
 
     SmartDashboard.putBoolean("Raspberry PI Passed", false);
@@ -474,14 +463,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    double timePerTest = Config.getInstance().getDouble(Key.TESTMODE__TIME_PER_TEST);
-    int expectedStorageDistance =
-        Config.getInstance().getInt(Key.TESTMODE__EXPECTED_STORAGE_DISTANCE);
-    int storageAcceptableError =
-        Config.getInstance().getInt(Key.TESTMODE__STORAGE_ACCEPTABLE_ERROR);
-    int expectedShooterSpeed = Config.getInstance().getInt(Key.TESTMODE__EXPECTED_SHOOTER_SPEED);
-    int shooterAcceptableError =
-        Config.getInstance().getInt(Key.TESTMODE__SHOOTER_ACCEPTABLE_ERROR);
+    double timePerTest = Constants.TestMode.timePerTest;
+    int expectedStorageDistance = Constants.TestMode.expectedStorageDistance;
+    int storageAcceptableError = Constants.TestMode.acceptableStorageError;
+    int expectedShooterSpeed = Constants.TestMode.expectedShooterSpeed;
+    int shooterAcceptableError = Constants.TestMode.acceptableShooterError;
+
     SmartDashboard.putString("Test State", mTestState.toString());
     SmartDashboard.putBoolean("Driver Cameras", mCameraManager.getCameraStatus());
     SmartDashboard.putBoolean("Garage Door", mStorage.getIntakeSensor());
@@ -784,7 +771,7 @@ public class Robot extends TimedRobot {
 
               @Override
               public int getEncoder() {
-                return (int) mDrive.getRightEncoderDistance();
+                return mDrive.getRightEncoderDistance();
               }
             },
             "Drive Right Back",
@@ -797,9 +784,7 @@ public class Robot extends TimedRobot {
         break;
       case MANUAL:
         if (mOperatorInterface.isClimberTest()) {
-          mClimber.jog(
-              mOperatorInterface.getClimberJogSpeed()
-                  * Config.getInstance().getDouble(Key.CLIMBER__JOG_SPEED_FACTOR));
+          mClimber.jog(mOperatorInterface.getClimberJogSpeed() * Constants.Climber.jogSpeedFactor);
         } else {
           mClimber.stop();
         }
@@ -882,8 +867,6 @@ public class Robot extends TimedRobot {
     // zero turret sensor
     // this assumes the turret is aligned
 
-    Config.getInstance().reload();
-
     mOperatorInterface.resetOverride();
     mClimber.resetEncoder();
   }
@@ -897,7 +880,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Vision Turret Adjust", mTurretAdjust);
     if (mTurretState == TurretState.AUTO_AIM) {
       double turretAdjust = mOperatorInterface.getTurretAdjust();
-      mTurretAdjust += turretAdjust * Constants.TURRET_MANUAL_ADJUST_FACTOR;
+      mTurretAdjust += turretAdjust * Constants.Turret.manualAdjustFactor;
 
       // Command the Turret with vision set points
       // RobotTracker.RobotTrackerResult result =
@@ -933,7 +916,7 @@ public class Robot extends TimedRobot {
   public void driveTrainLoop() {
     // TODO: Cache whether or not the robot has a drivetrain. We shouldn't be calling the config
     // system every tick.
-    if (Config.getInstance().getBoolean(Key.ROBOT__HAS_DRIVETRAIN)) {
+    if (Constants.Drive.enabled) {
       // Check User Inputs
       double driveThrottle = mOperatorInterface.getDriveThrottle();
       double driveTurn = mOperatorInterface.getDriveTurn();
@@ -941,7 +924,7 @@ public class Robot extends TimedRobot {
       boolean WantsAutoAim = mOperatorInterface.getFeederSteer();
 
       // Continue Driving
-      if (WantsAutoAim == true) {
+      if (WantsAutoAim) {
         // Harvest Mode - AutoSteer Functionality
         // Used for tracking a ball
         // we may want to limit the speed?
@@ -1207,7 +1190,7 @@ public class Robot extends TimedRobot {
 
   private boolean checkTransitionToClimbing() {
     // TODO: Remove the check that climber is enabled
-    if (mOperatorInterface.climbStart() && Config.getInstance().getBoolean(Key.CLIMBER__ENABLED)) {
+    if (mOperatorInterface.climbStart() && Constants.Climber.enabled) {
       mRobotLogger.log("Changing to climbing");
 
       /** Disables intake if transitioning from intake */
