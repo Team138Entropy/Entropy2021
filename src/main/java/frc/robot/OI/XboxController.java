@@ -3,6 +3,7 @@ package frc.robot.OI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants;
 
 /*
@@ -52,12 +53,22 @@ public class XboxController {
   public boolean checkNameAndPort() {
     if (!mController.getName().equals(Constants.Controllers.Driver.name)
         || mController.getPort() != 0) {
-      DriverStation.reportError(
-          "Xbox Controller not found in port 0! Got name "
-              + mController.getName()
-              + " in port "
-              + mController.getPort(),
-          new Error().getStackTrace());
+      if (RobotBase.isReal()) {
+        DriverStation.reportError(
+            "Xbox Controller not found in port 0! Got name "
+                + mController.getName()
+                + " in port "
+                + mController.getPort(),
+            new Error().getStackTrace());
+      } else {
+        DriverStation.reportWarning(
+            "Xbox Controller not found in port 0! Got name "
+                + mController.getName()
+                + " in port "
+                + mController.getPort()
+                + " (not reporting error due to simulated environment)",
+            new Error().getStackTrace());
+      }
       return false;
     }
     return true;

@@ -2,6 +2,7 @@ package frc.robot.OI;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants;
 
 /*
@@ -64,12 +65,22 @@ public class NykoController {
     // space? ten? a tab? something else stupid? we trim the string anyway
     String name = mController.getName().trim();
     if (!name.equals(Constants.Controllers.Operator.name) || mController.getPort() != 1) {
-      DriverStation.reportError(
-          "Airflo Controller not found in port 1! Got name "
-              + mController.getName()
-              + " in port "
-              + mController.getPort(),
-          new Error().getStackTrace());
+      if (RobotBase.isReal()) {
+        DriverStation.reportError(
+            "Airflo Controller not found in port 1! Got name "
+                + name
+                + " in port "
+                + mController.getPort(),
+            new Error().getStackTrace());
+      } else {
+        DriverStation.reportWarning(
+            "Airflo Controller not found in port 1! Got name "
+                + name
+                + " in port "
+                + mController.getPort()
+                + " (not reporting error due to simulated environment)",
+            new Error().getStackTrace());
+      }
       return false;
     }
     return true;
