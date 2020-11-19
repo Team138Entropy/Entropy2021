@@ -96,6 +96,7 @@ public class Drive extends Subsystem {
 
     configTalon(mLeftMaster);
     mLeftSlave.setNeutralMode(NeutralMode.Brake);
+    if(!Robot.getIsPracticeBot()) mLeftSlave.setSensorPhase(false);
 
     configTalon(mRightMaster);
     mRightSlave.setNeutralMode(NeutralMode.Brake);
