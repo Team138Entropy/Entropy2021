@@ -13,7 +13,7 @@ import frc.robot.Robot;
 public class Storage extends Subsystem {
 
   private final int ROLLER_BOTTOM_PORT = Constants.Talons.Storage.bottom;
-  private final int ROLLER_TOP_PORT = Constants.Talons.Storage.top;
+  private final int ROLLER_TOP_PORT;
 
   private final int STORAGE_CAPICTY = 5;
 
@@ -46,6 +46,11 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
+    ROLLER_TOP_PORT =
+        Robot.getIsPracticeBot()
+            ? Constants.Talons.Storage.practiceTop
+            : Constants.Talons.Storage.compTop;
+
     mBottomRoller = new WPI_TalonSRX(ROLLER_BOTTOM_PORT);
     mTopRoller = new WPI_TalonSRX(ROLLER_TOP_PORT);
 
