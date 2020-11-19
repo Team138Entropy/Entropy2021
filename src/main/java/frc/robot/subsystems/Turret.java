@@ -55,7 +55,7 @@ public class Turret extends Subsystem {
     return sInstance;
   }
 
-  /** Set up our talon, logger and potentiometer */
+  /** Set up our talon, logger and encoder */
   private Turret() {
     mTurretTalon = new WPI_TalonSRX(Constants.Talons.turret);
     mTurretTalon.configFactoryDefault();
