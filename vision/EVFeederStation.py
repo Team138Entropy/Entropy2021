@@ -34,20 +34,19 @@ Camera_Image_Width = 640
 Camera_Image_Height = 480
 
 centerX = (Camera_Image_Width / 2) - .5
-centerY = (Camera_Image_Height/2) - .5
+centerY = (Camera_Image_Height / 2) - .5
 
 # Aspect Ratio
 HorizontalAspect = 4
 VerticalAspect = 3
 DiagonalAspect = math.hypot(HorizontalAspect, VerticalAspect)
 
-
 # Ball HSV Values
 Ball_HSV_Lower = np.array([13, 67, 188])
 Ball_HSV_Upper = np.array([62, 255, 255])
 
-#Non changing distance variables
-#PSEYE WIDE ANGLE FOV = 75, CLOSE ANGLE = 56
+# Non changing distance variables
+# PSEYE WIDE ANGLE FOV = 75, CLOSE ANGLE = 56
 FOV = 75
 
 # High goal height = 8 feet, 2.25 inches, actual height of center goal is 96.25,
@@ -61,17 +60,17 @@ Tft = .583
 # theta = 1/2 FOV,
 tanFOV = math.tan(FOV / 2)
 
-#Constraint values
+# Constraint values
 # ratio values - detects feeder station. Doing and not when doing ratio checks will ignore them
 rat_low = 0
 rat_high = 1
 
-#Solitity compares the hull vs contour, and looks at the difference in filled area
-#Works on a system of %
+# Solitity compares the hull vs contour, and looks at the difference in filled area
+# Works on a system of %
 solidity_low = .5
 solidity_high = .95
 
-#Vertices is acts as "length"
+# Vertices is acts as "length"
 minArea = 40
 minWidth = 10
 maxWidth = 1000
@@ -83,8 +82,6 @@ minVertices = 5
 hsv_threshold_hue = [15, 166]
 hsv_threshold_saturation = [71, 255]
 hsv_threshold_value = [39, 255]
-
-
 
 # List will go in order [x of target position, y of target position, yaw, distance, ]
 sendValues = np.array([None] * 4)
@@ -176,6 +173,7 @@ upper_orange = np.array([23, 255, 255])
 def flipImage(frame):
     return cv2.flip(frame, -1)
 
+
 # Masks the video based on a range of hsv colors
 # Takes in a frame, range of color, and a blurred frame, returns a masked frame
 def threshold_video(lower_color, upper_color, blur):
@@ -205,10 +203,9 @@ def findTargets(frame, mask, value_array, centerX, centerY):
     image = frame.copy()
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
-        #Blocking out parts of the robot
-        rect1 = cv2.rectangle(img, (0, 300), (640, 480), (0,0,0), -1)
-        
-        
+        # Blocking out parts of the robot
+        rect1 = cv2.rectangle(img, (0, 300), (640, 480), (0, 0, 0), -1)
+
         value_array = findTape(contours, rect1, centerX, centerY)
     else:
         # No Contours!
@@ -335,21 +332,23 @@ def findTape(contours, image, centerX, centerY):
             hullArea = cv2.contourArea(hull)
 
             if cntArea != 0 and hullArea != 0:
-                mySolidity = float (cntArea)/hullArea
+                mySolidity = float(cntArea) / hullArea
             else:
                 mySolidity = 1000
 
             x, y, w, h = cv2.boundingRect(cnt)
             ratio = float(w) / h
             # Filters contours based off of size
-            if (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (x > minWidth) and (x < maxWidth) and (y > minHeight) and (checkContours(cntArea, hullArea, ratio, cnt)):
+            if (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (
+                    x > minWidth) and (x < maxWidth) and (y > minHeight) and (
+            checkContours(cntArea, hullArea, ratio, cnt)):
                 # Next three lines are for debugging the contouring
                 contimage = cv2.drawContours(image, cnt, -1, (0, 255, 0), 3)
-                
-                #cv2.imwrite("1drawncontours.jpg", contimage)
-                #time.sleep(1)
-                #print("writing image")
-                
+
+                # cv2.imwrite("1drawncontours.jpg", contimage)
+                # time.sleep(1)
+                # print("writing image")
+
                 ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
                 # Gets the centeroids of contour
                 if M["m00"] != 0:
@@ -360,13 +359,13 @@ def findTape(contours, image, centerX, centerY):
 
                     ###### New code that has an averaged shooting distance to avoid outliers
 
-                    #global run_count
+                    # global run_count
                     global distanceHoldValues
                     global shootingDistance
                     global outlierCount
                     global run_count
 
-                    #fills list to avoid errors
+                    # fills list to avoid errors
                     '''
                     if outlierCount >= 5:
                         distanceHoldValues = []
@@ -391,13 +390,13 @@ def findTape(contours, image, centerX, centerY):
                         starttime = time.time()
                         print(starttime)
                     '''
-                    #print(myDistFeet)
+                    # print(myDistFeet)
 
                     sendValues[0] = cx
                     sendValues[1] = cy
                     sendValues[3] = myDistFeet
                     print(sendValues[3])
-                    
+
                 else:
                     cx, cy = 0, 0
                 if (len(biggestCnts) < 13):
@@ -463,13 +462,15 @@ def findTape(contours, image, centerX, centerY):
     cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), (255, 255, 255), 2)
 
     # cv2.imwrite("latest.jpg", image);
-    
+
     return sendValues
 
 
 # Checks if tape contours are worthy based off of contour area and (not currently) hull area
 def checkContours(cntSize, hullSize, aspRatio, contour):
-    return cntSize > (image_width / 6) and (len(contour) > minVertices) and (len(contour) < maxVertices) and not (aspRatio < rat_low or aspRatio > rat_high)
+    return cntSize > (image_width / 6) and (len(contour) > minVertices) and (len(contour) < maxVertices) and not (
+                aspRatio < rat_low or aspRatio > rat_high)
+
 
 # Checks if ball contours are worthy based off of contour area and (not currently) hull area
 def checkBall(cntSize, cntAspectRatio):
@@ -488,12 +489,12 @@ def translateRotation(rotation, width, height):
 
 def calculateDistanceFeet(targetPixelWidth):
     # d = Tft*FOVpixel/(2*Tpixel*tanΘ)
-    #Target width in feet * 
+    # Target width in feet *
     distEst = Tft * camPixelWidth / (2 * targetPixelWidth * tanFOV)
-    
+
     # Unsure as to what measurement distEst is producing in the above line, but multiplying it by .32 will return your distance in feet
     distEstFeet = distEst * .32
-    #distEstInches = distEstFeet *.32*12
+    # distEstInches = distEstFeet *.32*12
     return (distEstFeet)
 
 
@@ -621,7 +622,6 @@ def ProcessFrame(frame, tape):
         if processedValues[3] != None:
             print(processedValues[3])
 
-
         highGoal = {}
         highGoal['x'] = processedValues[0]
         highGoal['y'] = processedValues[1]
@@ -713,7 +713,7 @@ def getEllipseRotation(image, cnt):
 configFile = "/boot/frc.json"
 
 
-class CameraConfig: 
+class CameraConfig:
     pass
 
 

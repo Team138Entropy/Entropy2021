@@ -35,13 +35,12 @@ Camera_Image_Width = 320
 Camera_Image_Height = 240
 
 centerX = (Camera_Image_Width / 2) - .5
-centerY = (Camera_Image_Height/2) - .5
+centerY = (Camera_Image_Height / 2) - .5
 
 # Aspect Ratio
 HorizontalAspect = 4
 VerticalAspect = 3
 DiagonalAspect = math.hypot(HorizontalAspect, VerticalAspect)
-
 
 # Ball HSV Values
 Ball_HSV_Lower = np.array([13, 67, 188])
@@ -66,6 +65,7 @@ starttime = 0
 # Queue of Packets
 # Thread Safe.. Packets being sent to robot are placed here!
 PacketQueue = queue.Queue()
+
 
 # Creates a socket
 class SocketWorker(threading.Thread):
@@ -264,6 +264,7 @@ upper_orange = np.array([23, 255, 255])
 def flipImage(frame):
     return cv2.flip(frame, -1)
 
+
 # Masks the video based on a range of hsv colors
 # Takes in a frame, range of color, and a blurred frame, returns a masked frame
 def threshold_video(lower_color, upper_color, blur):
@@ -436,23 +437,23 @@ def findTape(contours, image, centerX, centerY):
 
                     ###### New code that has an averaged shooting distance to avoid outliers
 
-                    #global run_count
+                    # global run_count
                     global distanceHoldValues
                     global shootingDistance
                     global outlierCount
                     global run_count
 
-                    #fills list to avoid errors
+                    # fills list to avoid errors
                     if outlierCount >= 5:
                         distanceHoldValues = []
 
                     if len(distanceHoldValues) < 5:
                         distanceHoldValues = [myDistFeet] * 5
 
-                    if abs(myDistFeet-mean(distanceHoldValues)) > 1.5:
+                    if abs(myDistFeet - mean(distanceHoldValues)) > 1.5:
                         outlierCount = outlierCount + 1
                         myDistFeet = None
-                        
+
                     else:
                         outlierCount = 0
                         distanceHoldValues.pop()
@@ -681,9 +682,9 @@ def findBalls(frame):
 
                 finalTarget = calculateYaw(cx, centerX, H_FOCAL_LENGTH)
                 ball['yaw'] = finalTarget
-                #print("good ball!")
+                # print("good ball!")
                 PacketQueue.put_nowait(ball)
-               # ball['Size'] = CntArea
+                # ball['Size'] = CntArea
 
                 # Set our Found Ball
                 '''
@@ -691,9 +692,9 @@ def findBalls(frame):
                     FoundBall = ball
                 elif FoundBall['Size'] < ball['Size']:
                     FoundBall = ball
-                ''' 
+                '''
 
-        # Check if we have a found ball for this frame
+                # Check if we have a found ball for this frame
         '''
         if not FoundBall == None:
             # print("Found Ball!")
@@ -729,7 +730,6 @@ def ProcessFrame(frame, tape):
         # Ball Tracker!
         frame = MaskBall(frame)  # Filter and Mask by HSV Values
         Targets = findBalls(frame)
-
 
         return []
 
@@ -921,11 +921,11 @@ if __name__ == "__main__":
         # in the source image.  If there is an error notify the output.
         timestamp, img = cap.read()
 
-        n1=dt.datetime.now()
+        n1 = dt.datetime.now()
         Tape = False
         frame = ProcessFrame(img, Tape)
-        n2=dt.datetime.now()
-        #print("Milliseconds: " + str(((n2-n1).microseconds)/1000))
+        n2 = dt.datetime.now()
+        # print("Milliseconds: " + str(((n2-n1).microseconds)/1000))
 
     # Doesn't do anything at the moment. You can easily get this working by indenting these three lines
     # and setting while loop to: while fps._numFrames < TOTAL_FRAMES
