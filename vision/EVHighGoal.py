@@ -36,27 +36,26 @@ Camera_Image_Width = 640
 Camera_Image_Height = 480
 
 centerX = (Camera_Image_Width / 2) - .5
-centerY = (Camera_Image_Height/2) - .5
+centerY = (Camera_Image_Height / 2) - .5
 
 # Aspect Ratio
 HorizontalAspect = 4
 VerticalAspect = 3
 DiagonalAspect = math.hypot(HorizontalAspect, VerticalAspect)
 
-
 # Ball HSV Values
 Ball_HSV_Lower = np.array([13, 67, 188])
 Ball_HSV_Upper = np.array([62, 255, 255])
 
-#Non changing distance variables
-#PSEYE WIDE ANGLE FOV = 75, CLOSE ANGLE = 56
+# Non changing distance variables
+# PSEYE WIDE ANGLE FOV = 75, CLOSE ANGLE = 56
 FOV = 75
 
 # High goal height = 8 feet, 2.25 inches, actual height of center goal is 96.25,
 # Centroid of the tape is ~87.75 inches (center of height of tape)
 # tape is 1 ft 5inches, 17 inches/2 = 8.5 inches. 96.25-8.5 gives 87.75
 
-#Camera height is 37.5 inches
+# Camera height is 37.5 inches
 targetHeightInches = 50.25
 
 camPixelWidth = 640
@@ -66,19 +65,17 @@ Tft = 3.27
 # theta = 1/2 FOV,
 tanFOV = math.tan(FOV / 2)
 
-
-
-#Constraint values
+# Constraint values
 # ratio values - detects feeder station. Doing and not when doing ratio checks will ignore them
 rat_low = 1.5
 rat_high = 5
 
-#Solitity compares the hull vs contour, and looks at the difference in filled area
-#Works on a system of %
+# Solitity compares the hull vs contour, and looks at the difference in filled area
+# Works on a system of %
 solidity_low = .1
 solidity_high = .3
 
-#Vertices is acts as "length"
+# Vertices is acts as "length"
 minArea = 10
 minWidth = 20
 maxWidth = 1000
@@ -90,8 +87,6 @@ minVertices = 30
 hsv_threshold_hue = [15, 166]
 hsv_threshold_saturation = [71, 255]
 hsv_threshold_value = [39, 255]
-
-
 
 # List will go in order [x of target position, y of target position, yaw, distance, ]
 sendValues = np.array([None] * 4)
@@ -197,6 +192,7 @@ class WebcamVideoStream:
     def getError(self):
         return self.stream.getError()
 
+
 #########################################################################
 ###################### PROCESSING OPENCV ################################
 #########################################################################
@@ -241,11 +237,12 @@ upper_green = np.array([98, 255, 195])
 lower_orange = np.array([0, 193, 92])
 upper_orange = np.array([23, 255, 255])
 
+
 #################################DA CLASS###############################################
 
 class OpenCvProcessing():
-    
-    def __init__(self,image_width,H_FOCAL_LENGTH,V_FOCAL_LENGTH,green_blur,orange_blur):
+
+    def __init__(self, image_width, H_FOCAL_LENGTH, V_FOCAL_LENGTH, green_blur, orange_blur):
         self.image_width = image_width
         self.H_FOCAL_LENGTH = H_FOCAL_LENGTH
         self.V_FOCAL_LENGTH = V_FOCAL_LENGTH
@@ -253,7 +250,7 @@ class OpenCvProcessing():
         self.orange_blur = orange_blur
 
     # Flip image if camera mounted upside down
-    def flip_image(self,frame):
+    def flip_image(self, frame):
         return cv2.flip(frame, -1)
 
     # Masks the video based on a range of hsv colors
@@ -264,7 +261,7 @@ class OpenCvProcessing():
         global hsv_threshold_value
         out = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(out, (hsv_threshold_hue[0], hsv_threshold_saturation[0], hsv_threshold_value[0]),
-                        (hsv_threshold_hue[1], hsv_threshold_saturation[1], hsv_threshold_value[1]))
+                           (hsv_threshold_hue[1], hsv_threshold_saturation[1], hsv_threshold_value[1]))
 
         # Returns the masked imageBlurs video to smooth out image
 
@@ -280,7 +277,7 @@ class OpenCvProcessing():
         # Gets the shape of video
         # Gets center of height and width
         # Copies frame and stores it in image
-        
+
         # Processes the contours, takes in (contours, output_image, (centerOfImage)
         if len(contours) != 0:
             value_array = find_tape(contours, frame, centerX, centerY)
@@ -404,27 +401,28 @@ class OpenCvProcessing():
                 cntArea = cv2.contourArea(cnt)
                 # calculate area of convex hull
                 hullArea = cv2.contourArea(hull)
-                
+
                 perimeter = cv2.arcLength(cnt, True)
                 approxCurve = cv2.approxPolyDP(cnt, perimeter * .01, True)
-                
 
                 if cntArea != 0 and hullArea != 0:
-                    mySolidity = float (cntArea)/hullArea
+                    mySolidity = float(cntArea) / hullArea
                 else:
                     mySolidity = 1000
 
                 x, y, w, h = cv2.boundingRect(cnt)
                 ratio = float(w) / h
                 # Filters contours based off of size
-                if len(approxCurve) >= 8 and (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (x > minWidth) and (x < maxWidth) and (y > minHeight) and (check_contours(cntArea, hullArea, ratio, cnt)):
+                if len(approxCurve) >= 8 and (cntArea > minArea) and (mySolidity > solidity_low) and (
+                        mySolidity < solidity_high) and (x > minWidth) and (x < maxWidth) and (y > minHeight) and (
+                check_contours(cntArea, hullArea, ratio, cnt)):
                     # Next three lines are for debugging the contouring
                     contimage = cv2.drawContours(image, cnt, -1, (0, 255, 0), 3)
-                    
-                    #cv2.imwrite("1drawncontours.jpg", contimage)
-                    #time.sleep(1)
-                    #print("writing image")
-                    
+
+                    # cv2.imwrite("1drawncontours.jpg", contimage)
+                    # time.sleep(1)
+                    # print("writing image")
+
                     ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
                     # Gets the centeroids of contour
                     if M["m00"] != 0:
@@ -435,13 +433,13 @@ class OpenCvProcessing():
 
                         ###### New code that has an averaged shooting distance to avoid outliers
 
-                        #global run_count
+                        # global run_count
                         global distanceHoldValues
                         global shootingDistance
                         global outlierCount
                         global run_count
 
-                        #fills list to avoid errors
+                        # fills list to avoid errors
                         '''
                         if outlierCount >= 5:
                             distanceHoldValues = []
@@ -466,13 +464,13 @@ class OpenCvProcessing():
                             starttime = time.time()
                             print(starttime)
                         '''
-                        #print(myDistFeet)
+                        # print(myDistFeet)
 
                         sendValues[0] = cx
                         sendValues[1] = cy
                         sendValues[3] = myDistFeet
                         print(sendValues[3])
-                        
+
                     else:
                         cx, cy = 0, 0
                     if (len(biggestCnts) < 13):
@@ -538,12 +536,13 @@ class OpenCvProcessing():
         cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), (255, 255, 255), 2)
 
         # cv2.imwrite("latest.jpg", image);
-        
+
         return sendValues
 
     # Checks if tape contours are worthy based off of contour area and (not currently) hull area
     def check_contours(self, cntSize, hullSize, aspRatio, contour):
-        return cntSize > (self.image_width / 6) and (len(contour) > minVertices) and (len(contour) < maxVertices) and not (aspRatio < rat_low or aspRatio > rat_high)
+        return cntSize > (self.image_width / 6) and (len(contour) > minVertices) and (
+                    len(contour) < maxVertices) and not (aspRatio < rat_low or aspRatio > rat_high)
 
     # Checks if ball contours are worthy based off of contour area and (not currently) hull area
     def check_ball(self, cntSize, cntAspectRatio):
@@ -558,14 +557,14 @@ class OpenCvProcessing():
         rotation *= -1
         return round(rotation)
 
-    def calculate_dist_feet(self, targetPixelWidth): # this name could be better, lmk if you have any ideas -avery
+    def calculate_dist_feet(self, targetPixelWidth):  # this name could be better, lmk if you have any ideas -avery
         # d = Tft*FOVpixel/(2*Tpixel*tanΘ)
-        #Target width in feet * 
+        # Target width in feet *
         distEst = Tft * camPixelWidth / (2 * targetPixelWidth * tanFOV)
-        
+
         # Unsure as to what measurement distEst is producing in the above line, but multiplying it by .32 will return your distance in feet
         distEstFeet = distEst * .32
-        #distEstInches = distEstFeet *.32*12
+        # distEstInches = distEstFeet *.32*12
         return (distEstFeet)
 
     # Uses trig and focal length of camera to find yaw.
@@ -591,9 +590,9 @@ class OpenCvProcessing():
         # signature yet again and I have no idea WTH is going on
         else:
             raise Exception(("Contours tuple must have length 2 or 3, "
-                            "otherwise OpenCV changed their cv2.findContours return "
-                            "signature yet again. Refer to OpenCV's documentation "
-                            "in that case"))
+                             "otherwise OpenCV changed their cv2.findContours return "
+                             "signature yet again. Refer to OpenCV's documentation "
+                             "in that case"))
 
         # return the actual contours array
         return cnts
@@ -677,16 +676,16 @@ class OpenCvProcessing():
 
     # Proccesses each frame of the image
     # boolean to whether we want ball tracking or tape tracking
-    def process_frame(self, frame, tape): # BROKEN BECAUSE RETURN VALUE IS NOT DEFINED
+    def process_frame(self, frame, tape):  # BROKEN BECAUSE RETURN VALUE IS NOT DEFINED
         if (tape == True):
-            threshold = threshold_video(self.lower_green, self.upper_green, frame) # calling functions inside functions :mmLul:
-            
-            rect1 = cv2.rectangle(frame, (0, 300), (640, 480), (0,0,0), -1)
+            threshold = threshold_video(self.lower_green, self.upper_green,
+                                        frame)  # calling functions inside functions :mmLul:
+
+            rect1 = cv2.rectangle(frame, (0, 300), (640, 480), (0, 0, 0), -1)
             processedValues = find_targets(rect1, threshold, vals_to_send, centerX, centerY)
-            
+
             if processedValues[3] != None:
                 print(processedValues[3])
-
 
             highGoal = {}
             highGoal['x'] = processedValues[0]
@@ -770,25 +769,30 @@ class OpenCvProcessing():
             rotation = translate_rotation(rotation, width, height)
             return rotation
 
+
 ocv = OpenCvProcessing(image_width, H_FOCAL_LENGTH, V_FOCAL_LENGTH, green_blur, orange_blur)
 #################### FRC VISION PI Image Specific #############
 configFile = "/boot/frc.json"
 
-class CameraConfig: #why
+
+class CameraConfig:  # why
     pass
+
 
 team = None
 server = False
 cameraConfigs = []
 
+
 def parse_error(str):
     """Report parse error."""
-    
+
     print("config error in '" + configFile + "': " + str, file=sys.stderr)
+
 
 def read_camera_config(config):
     """Read single camera configuration."""
-    
+
     cam = CameraConfig()
 
     # name
@@ -810,15 +814,16 @@ def read_camera_config(config):
     cameraConfigs.append(cam)
     return True
 
+
 def read_config():
     """Read configuration file."""
-    
+
     global team
     global server
 
     # parse file
     try:
-        with open(configFile, "rt") as f: #json sucks lets use postgres :mmLul:
+        with open(configFile, "rt") as f:  # json sucks lets use postgres :mmLul:
             j = json.load(f)
     except OSError as err:
         print("could not open '{}': {}".format(configFile, err), file=sys.stderr)
@@ -858,9 +863,10 @@ def read_config():
 
     return True
 
+
 def start_camera(config):
     """Start running the camera."""
-    
+
     print("Starting camera '{}' on {}".format(config.name, config.path))
     cs = CameraServer.getInstance()
     camera = cs.startAutomaticCapture(name=config.name, path=config.path)
@@ -869,6 +875,7 @@ def start_camera(config):
     camera.setConfigJson(json.dumps(config.config))
 
     return cs, camera
+
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
@@ -908,7 +915,7 @@ if __name__ == "__main__":
         timestamp, img = cap.read()
 
         Tape = True
-        frame = ocv.process_frame(img, Tape) #ocv is the class name
+        frame = ocv.process_frame(img, Tape)  # ocv is the class name
 
     # Doesn't do anything at the moment. You can easily get this working by indenting these three lines
     # and setting while loop to: while fps._numFrames < TOTAL_FRAMES
