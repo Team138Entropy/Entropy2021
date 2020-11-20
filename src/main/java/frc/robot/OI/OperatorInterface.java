@@ -37,8 +37,8 @@ public class OperatorInterface {
   }
 
   private OperatorInterface() {
-    DriverController = new XboxController(Constants.DriverControllerPort);
-    OperatorController = new NykoController(Constants.OperatorControllerPort);
+    DriverController = new XboxController(Constants.Controllers.Driver.port);
+    OperatorController = new NykoController(Constants.Controllers.Operator.port);
     mClimbUpWasPressed = new LatchedBoolean();
     mClimbDownWasPressed = new LatchedBoolean();
     mClimbStartWasPressed = new LatchedBoolean();

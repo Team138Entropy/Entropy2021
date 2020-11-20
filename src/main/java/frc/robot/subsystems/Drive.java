@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpiutil.math.MathUtil;
-import frc.robot.Config;
-import frc.robot.Config.Key;
 import frc.robot.Constants;
 import frc.robot.Kinematics;
 import frc.robot.Logger;
@@ -68,9 +66,9 @@ public class Drive extends Subsystem {
   public int feetToTicks(double feet) {
     double ticks;
     if (Robot.getIsPracticeBot()) {
-      ticks = Constants.TICKS_PER_FOOT;
+      ticks = Constants.Drive.Encoders.practiceTicksPerFoot;
     } else {
-      ticks = Constants.COMP_TICKS_PER_FOOT;
+      ticks = Constants.Drive.Encoders.compTicksPerFoot;
     }
     long roundedVal = Math.round(feet * ticks);
     if (roundedVal > Integer.MAX_VALUE) {
@@ -82,18 +80,18 @@ public class Drive extends Subsystem {
   }
 
   private Drive() {
-    mDriveLogger = new Logger("drive");
+    mDriveLogger = new Logger(Constants.Loggers.DRIVE);
 
-    mLeftMaster = new WPI_TalonSRX(Constants.Talon_LeftDrive1_Master);
+    mLeftMaster = new WPI_TalonSRX(Constants.Talons.Drive.leftMaster);
     // configureSpark(mLeftMaster, true, true);
 
-    mLeftSlave = new WPI_TalonSRX(Constants.Talon_LeftDrive2_Slave);
+    mLeftSlave = new WPI_TalonSRX(Constants.Talons.Drive.leftSlave);
     // configureSpark(mLeftSlave, true, false);
 
-    mRightMaster = new WPI_TalonSRX(Constants.Talon_RightDrive1_Master);
+    mRightMaster = new WPI_TalonSRX(Constants.Talons.Drive.rightMaster);
     // configureSpark(mRightMaster, false, true);
 
-    mRightSlave = new WPI_TalonSRX(Constants.Talon_RightDrive2_Slave);
+    mRightSlave = new WPI_TalonSRX(Constants.Talons.Drive.rightSlave);
     // configureSpark(mRightSlave, false, false);
 
     configTalon(mLeftMaster);
@@ -124,9 +122,9 @@ public class Drive extends Subsystem {
     // Configure Talon gains
     double P, I, D;
 
-    P = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_P);
-    I = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_I);
-    D = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_D);
+    P = Constants.Drive.AutoPID.p;
+    I = Constants.Drive.AutoPID.i;
+    D = Constants.Drive.AutoPID.d;
 
     mDriveLogger.info("PID values: " + P + ", " + I + ", " + D);
 
@@ -141,7 +139,7 @@ public class Drive extends Subsystem {
   }
 
   public void resetCruiseAndAccel() {
-    setCruiseAndAcceleration(Constants.DEFAULT_CRUISE_VELOCITY, Constants.DEFAULT_ACCEL);
+    setCruiseAndAcceleration(Constants.Auto.defaultCruiseVelocity, Constants.Auto.defaultAccel);
   }
 
   public void setCruiseAndAcceleration(int cruise, int accel) {
@@ -170,9 +168,9 @@ public class Drive extends Subsystem {
   public void resetPID() {
     double P, I, D;
 
-    P = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_P);
-    I = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_I);
-    D = Config.getInstance().getDouble(Config.Key.AUTO__DRIVE_PID_D);
+    P = Constants.Drive.AutoPID.p;
+    I = Constants.Drive.AutoPID.i;
+    D = Constants.Drive.AutoPID.d;
 
     configP(P);
     configI(I);
@@ -199,7 +197,7 @@ public class Drive extends Subsystem {
     boolean quickturn = mPeriodicDriveData.isQuickturning;
 
     // Slow down climbing if the climber is extended so we can't rip it off (as easily)
-    double peakOutput = Config.getInstance().getDouble(Key.DRIVE__PEAK_OUTPUT_CLIMBING);
+    double peakOutput = Constants.Drive.maxSpeedWhenClimbing;
 
     if (mPeriodicDriveData.climbingSpeed && !quickturn) {
       mLeftMaster.configPeakOutputForward(peakOutput, 0);
@@ -216,8 +214,8 @@ public class Drive extends Subsystem {
     }
 
     // A lot of the space in this function is taken up by local copies of stuff
-    double accelSpeed = Config.getInstance().getDouble(Key.DRIVE__FORWARD_ACCEL_RAMP_TIME_SECONDS);
-    double brakeSpeed = Config.getInstance().getDouble(Key.DRIVE__REVERSE_BRAKE_RAMP_TIME_SECONDS);
+    double accelSpeed = Constants.Drive.accelSpeed;
+    double brakeSpeed = Constants.Drive.brakeSpeed;
 
     // Segments are started by the variables they will need
     boolean leftStationary = false;
@@ -471,8 +469,12 @@ public class Drive extends Subsystem {
   }
 
   public void zeroEncoders() {
-    mLeftMaster.getSensorCollection().setQuadraturePosition(0, Constants.CONFIG_TIMEOUT_MS);
-    mRightMaster.getSensorCollection().setQuadraturePosition(0, Constants.CONFIG_TIMEOUT_MS);
+    mLeftMaster
+        .getSensorCollection()
+        .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+    mRightMaster
+        .getSensorCollection()
+        .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
   }
 
   // Used only in TEST mode

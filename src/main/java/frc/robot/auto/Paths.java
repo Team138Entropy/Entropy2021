@@ -15,7 +15,7 @@ public class Paths {
             .append(new VisionToggleSegment())
             .append(
                 new DriveSegment(
-                    40.0 / 12.0, Constants.DEFAULT_CRUISE_VELOCITY, Constants.DEFAULT_ACCEL))
+                    40.0 / 12.0, Constants.Auto.defaultCruiseVelocity, Constants.Auto.defaultAccel))
             .append(new VisionToggleSegment()));
 
     paths.put(
@@ -25,7 +25,7 @@ public class Paths {
             .append(new SpinUpSegment())
             .append(
                 new DriveSegment(
-                    40.0 / 12.0, Constants.DEFAULT_CRUISE_VELOCITY, Constants.DEFAULT_ACCEL))
+                    40.0 / 12.0, Constants.Auto.defaultCruiseVelocity, Constants.Auto.defaultAccel))
             .append(new ShootSegment()));
 
     // paths.put(
@@ -61,12 +61,12 @@ public class Paths {
             .append(new SpinUpSegment())
             .append(
                 new DriveSegment(
-                    47.0 / 12.0, Constants.DEFAULT_CRUISE_VELOCITY, Constants.DEFAULT_ACCEL))
+                    47.0 / 12.0, Constants.Auto.defaultCruiseVelocity, Constants.Auto.defaultAccel))
             .append(new VisionToggleSegment())
             .append(new ShootSegment())
             .append(new VisionToggleSegment())
             .append(new IntakeSegment(3))
-            .append(new DriveSegment(86.0 / 12.0, 300, Constants.DEFAULT_ACCEL))
+            .append(new DriveSegment(86.0 / 12.0, 300, Constants.Auto.defaultAccel))
             .append(new SyncIntakeSegment())
             .append(new VisionToggleSegment())
             .append(new ShootSegment())
