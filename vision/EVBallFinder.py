@@ -23,18 +23,18 @@ from numpy import mean
 import math
 import datetime
 
-PictureNumber = 1 #Used for file naming. Everytime it loops it +='s one.
+PictureNumber = 1  # Used for file naming. Everytime it loops it +='s one.
 
 # datetime object containing current date and time
 now = datetime.now()
-#set path
+# set path
 path = "/year"
 
 # dd/mm/YY H:M:S
 drTitle = now.strftime("%d-%m-%Y_%H-%M-%S")
 path = drTitle
 isFile = os.path.isfile(drTitle)
-if isFile is False: # This will never be true as the PI cannot restart in <1 second
+if isFile is False:  # This will never be true as the PI cannot restart in <1 second
     os.mkdir(drTitle)
 
 # Image Camera Size (Pixels)
@@ -53,6 +53,7 @@ DiagonalAspect = math.hypot(HorizontalAspect, VerticalAspect)
 hsv_threshold_hue = [55, 75]
 hsv_threshold_saturation = [89, 231]
 hsv_threshold_value = [102, 255]
+
 
 class WebcamVideoStream:
     def __init__(self, camera, cameraServer, frameWidth, frameHeight, name="WebcamVideoStream"):
@@ -117,6 +118,7 @@ class WebcamVideoStream:
     def getError(self):
         return self.stream.getError()
 
+
 configFile = "/boot/frc.json"
 
 
@@ -128,11 +130,12 @@ team = None
 server = False
 cameraConfigs = []
 
+
 def parseError(str):
     print("config error in '" + configFile + "': " + str, file=sys.stderr)
 
 
-def readCameraConfig(config): 
+def readCameraConfig(config):
     cam = CameraConfig()
 
     # name
@@ -154,7 +157,6 @@ def readCameraConfig(config):
 
     cameraConfigs.append(cam)
     return True
-
 
 
 def readConfig():
@@ -214,12 +216,12 @@ def startCamera(config):
 
     return cs, camera
 
+
 if len(sys.argv) >= 2:
     configFile = sys.argv[1]
 # read configuration
 if not readConfig():
     sys.exit(1)
-
 
 # start cameras
 cameras = []
@@ -234,9 +236,11 @@ cameraServer = streams[0]
 cap = WebcamVideoStream(webcam, cameraServer, image_width, image_height).start()
 
 while True:
-    fileTitle = (drTitle + "/samplePicture" + str(PictureNumber) + ".jpg") # This makes the files not override each other, by having it named with numbers increasing.
+    fileTitle = (drTitle + "/samplePicture" + str(
+        PictureNumber) + ".jpg")  # This makes the files not override each other, by having it named with numbers increasing.
     PictureNumber += 1
     timestamp, img = cap.read()
-    cv2.imwrite(fileTitle, img) #Makes the picture. Includes directory name as most unix systems will create a directory if it doesnt exist.
-    #print("THE IMAGE WAS SAVED KEK")
-    time.sleep(1.5) # This can be changed
+    cv2.imwrite(fileTitle,
+                img)  # Makes the picture. Includes directory name as most unix systems will create a directory if it doesnt exist.
+    # print("THE IMAGE WAS SAVED KEK")
+    time.sleep(1.5)  # This can be changed
