@@ -6,8 +6,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.OurWPITalonSRX;
+import frc.robot.Robot;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
