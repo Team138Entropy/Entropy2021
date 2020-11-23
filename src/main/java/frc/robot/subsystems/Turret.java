@@ -5,13 +5,13 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import frc.robot.Constants;
+import frc.robot.OurWPITalonSRX;
 
 public class Turret extends Subsystem {
   private static Turret sInstance;
 
-  private final WPI_TalonSRX mTurretTalon;
+  private final OurWPITalonSRX mTurretTalon;
   private final double TicksPerDegree = Constants.Turret.ticksPerDegree;
 
   // Home Position of Turret
@@ -57,7 +57,7 @@ public class Turret extends Subsystem {
 
   /** Set up our talon, logger and potentiometer */
   private Turret() {
-    mTurretTalon = new WPI_TalonSRX(Constants.Talons.turret);
+    mTurretTalon = new OurWPITalonSRX(Constants.Talons.turret);
     mTurretTalon.configFactoryDefault();
     mTurretTalon.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed, 10);

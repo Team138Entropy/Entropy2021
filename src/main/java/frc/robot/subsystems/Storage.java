@@ -3,11 +3,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.OurWPITalonSRX;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
@@ -27,8 +27,8 @@ public class Storage extends Subsystem {
 
   private DigitalInput mIntakeSensor;
 
-  private final WPI_TalonSRX mBottomRoller;
-  private final WPI_TalonSRX mTopRoller;
+  private final OurWPITalonSRX mBottomRoller;
+  private final OurWPITalonSRX mTopRoller;
 
   private int mBallCount = 0;
 
@@ -46,8 +46,8 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
-    mBottomRoller = new WPI_TalonSRX(ROLLER_BOTTOM_PORT);
-    mTopRoller = new WPI_TalonSRX(ROLLER_TOP_PORT);
+    mBottomRoller = new OurWPITalonSRX(ROLLER_BOTTOM_PORT);
+    mTopRoller = new OurWPITalonSRX(ROLLER_TOP_PORT);
 
     mBottomRoller.configFactoryDefault();
     mTopRoller.configFactoryDefault();

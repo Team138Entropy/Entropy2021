@@ -3,10 +3,10 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Logger;
+import frc.robot.OurWPITalonSRX;
 
 public class Climber extends Subsystem {
   private final int PORT_NUMBER = Constants.Talons.climber;
@@ -36,12 +36,12 @@ public class Climber extends Subsystem {
   /** Aggregation */
   private static Climber sInstance;
 
-  private WPI_TalonSRX mMotor;
+  private OurWPITalonSRX mMotor;
   private Logger mLogger;
   private boolean mIsHoming;
 
   private Climber() {
-    mMotor = new WPI_TalonSRX(PORT_NUMBER);
+    mMotor = new OurWPITalonSRX(PORT_NUMBER);
     mLogger = new Logger(Constants.Loggers.CLIMBER);
     mIsHoming = false;
     init();
