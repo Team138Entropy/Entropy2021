@@ -11,7 +11,7 @@
  * 
  * anyways this file generates most of LazyWPITalonSRX.java
  * to use, go to https://www.ctr-electronics.com/downloads/api/java/html/classcom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1can_1_1_w_p_i___talon_s_r_x.html
- * and paste this entire file into devtools and press enter
+ * and paste this entire file into devtools (Chrome/Chromium only i think) and press enter
  * methods are copied to your clipboard
  */
 
@@ -72,10 +72,10 @@ public ${row[0]} ${row[1]} {
   if(Robot.isReal()){
     ${type === "void" ? "" : "return"} thisTalon.${methodName}${args};
   }else{
-    mLogger.verbose("${methodName}(${args.length > 2 ? '" + ' + args.slice(1, -1).split(", ").map(arg => "String.valueOf(" + arg + ")").join(' + ", " + ') + ' + "' : ""})");${type === "void" ? "" : `\n    return ${getReturnStrFromType(type)};`}
+    mLogger.verbose(deviceNumber + ": ${methodName}(${args.length > 2 ? '" + ' + args.slice(1, -1).split(", ").map(arg => "String.valueOf(" + arg + ")").join(' + ", " + ') + ' + "' : ""})");${type === "void" ? "" : `\n    return ${getReturnStrFromType(type)};`}
   }
 }
-`.trim());
+`.trim() + "\n");
 }
 
 copy(methods.join("\n"))
