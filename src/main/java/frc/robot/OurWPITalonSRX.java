@@ -1005,15 +1005,6 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public boolean isVoltageCompensationEnabled() {
-    if (Robot.isReal()) {
-      return thisTalon.isVoltageCompensationEnabled();
-    } else {
-      mLogger.verbose("isVoltageCompensationEnabled()");
-      return false;
-    }
-  }
-
   public double getBusVoltage() {
     if (Robot.isReal()) {
       return thisTalon.getBusVoltage();
