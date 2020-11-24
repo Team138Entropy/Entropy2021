@@ -3,7 +3,7 @@ package frc.robot.OI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.*;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants;
 
 /*
@@ -50,22 +50,36 @@ public class XboxController {
     checkNameAndPort();
   }
 
+  private boolean alreadyWarnedInSimulator = false;
+
   public boolean checkNameAndPort() {
-    if (!mController.getName().equals(Constants.DriverControllerName)
+    if (!mController.getName().equals(Constants.Controllers.Driver.name)
         || mController.getPort() != 0) {
-      DriverStation.reportError(
-          "Xbox Controller not found in port 0! Got name "
-              + mController.getName()
-              + " in port "
-              + mController.getPort(),
-          new Error().getStackTrace());
+      if (RobotBase.isReal()) {
+        DriverStation.reportError(
+            "Xbox Controller not found in port 0! Got name "
+                + mController.getName()
+                + " in port "
+                + mController.getPort(),
+            new Error().getStackTrace());
+      } else {
+        if (!alreadyWarnedInSimulator)
+          DriverStation.reportWarning(
+              "Xbox Controller not found in port 0! Got name "
+                  + mController.getName()
+                  + " in port "
+                  + mController.getPort()
+                  + " (not reporting error due to simulated environment)",
+              new Error().getStackTrace());
+        alreadyWarnedInSimulator = true;
+      }
       return false;
     }
     return true;
   }
 
   double getJoystick(Side side, Axis axis) {
-    double deadband = Constants.kJoystickThreshold;
+    double deadband = Constants.Controllers.joystickDeadband;
 
     boolean left = side == Side.LEFT;
     boolean y = axis == Axis.Y;
@@ -81,7 +95,8 @@ public class XboxController {
 
   // boolean trigger version
   boolean getTrigger(Side side) {
-    return mController.getRawAxis(side == Side.LEFT ? 2 : 3) > Constants.kJoystickThreshold;
+    return mController.getRawAxis(side == Side.LEFT ? 2 : 3)
+        > Constants.Controllers.triggerDeadband;
   }
 
   boolean getButton(Button button) {

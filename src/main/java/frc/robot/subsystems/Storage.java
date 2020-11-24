@@ -5,33 +5,32 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.playingwithfusion.TimeOfFlight;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Config;
-import frc.robot.Config.Key;
 import frc.robot.Constants;
+import frc.robot.OurWPITalonSRX;
 import frc.robot.Robot;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
 
-  private final int ROLLER_BOTTOM_PORT = Constants.Talon_Storage_Bottom;
-  private final int ROLLER_TOP_PORT = Constants.Talon_Storage_Top;
+  private final int ROLLER_BOTTOM_PORT = Constants.Talons.Storage.bottom;
+  private final int ROLLER_TOP_PORT = Constants.Talons.Storage.top;
 
   private final int STORAGE_CAPICTY = 5;
 
-  private final double STORE_SPEED =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_STORE_SPEED);
-  private final double BOTTOM_SPEED_FACTOR =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_BOTTOM_SPEED_FACTOR);
-  private final double TEST_SPEED_FACTOR =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_SPEED_FACTOR);
-  private final double EJECT_SPEED =
-      Config.getInstance().getDouble(Key.STORAGE__ROLLER_EJECT_SPEED);
+  private final double STORE_SPEED = Constants.Storage.rollerStoreSpeed;
+  private final double TEST_SPEED_FACTOR = Constants.Storage.testRollerSpeedFactor;
+  private final double BOTTOM_SPEED_FACTOR = Constants.Storage.bottomRollerSpeedFactor;
+  private final double EJECT_SPEED = Constants.Storage.rollerEjectSpeed;
   private final double BALL_DISTANCE_IN_ENCODER_TICKS;
-
-  private final WPI_TalonSRX mBottomRoller;
-  private final WPI_TalonSRX mTopRoller;
   private final TimeOfFlight mLidar;
+  private final int INTAKE_SENSOR_PORT = 0;
+
+  private DigitalInput mIntakeSensor;
+
+  private final OurWPITalonSRX mBottomRoller;
+  private final OurWPITalonSRX mTopRoller;
 
   private int mBallCount = 0;
 
@@ -50,9 +49,8 @@ public class Storage extends Subsystem {
 
   private Storage() {
     mLidar = new TimeOfFlight(0);
-
-    mBottomRoller = new WPI_TalonSRX(ROLLER_BOTTOM_PORT);
-    mTopRoller = new WPI_TalonSRX(ROLLER_TOP_PORT);
+    mBottomRoller = new OurWPITalonSRX(ROLLER_BOTTOM_PORT);
+    mTopRoller = new OurWPITalonSRX(ROLLER_TOP_PORT);
 
     mBottomRoller.configFactoryDefault();
     mTopRoller.configFactoryDefault();
@@ -60,20 +58,18 @@ public class Storage extends Subsystem {
     mTopRoller.setNeutralMode(NeutralMode.Brake);
     mBottomRoller.setNeutralMode(NeutralMode.Brake);
 
-    mTopRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-    mTopRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
+    mTopRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
+    mTopRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
 
-    mBottomRoller.configContinuousCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
-    mBottomRoller.configPeakCurrentLimit(Constants.STORAGE_CURRENT_LIMIT);
+    mBottomRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
+    mBottomRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
 
     if (Robot.getIsPracticeBot()) {
-      BALL_DISTANCE_IN_ENCODER_TICKS =
-          Config.getInstance().getDouble(Key.STORAGE__BALL_DISTANCE_IN_ENCODER_TICKS_PRACTICE);
+      BALL_DISTANCE_IN_ENCODER_TICKS = Constants.Storage.BallDistances.practice;
       mBottomRoller.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
       mBottomRoller.setSensorPhase(false);
     } else {
-      BALL_DISTANCE_IN_ENCODER_TICKS =
-          Config.getInstance().getDouble(Key.STORAGE__BALL_DISTANCE_IN_ENCODER_TICKS_PRODUCTION);
+      BALL_DISTANCE_IN_ENCODER_TICKS = Constants.Storage.BallDistances.competition;
       mTopRoller.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
       mTopRoller.setSensorPhase(false);
       mTopRoller.setInverted(true);
@@ -102,7 +98,7 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean getIntakeSensor() {
-    return mLidar.getRange() < Config.getInstance().getDouble(Key.STORAGE__LIDAR_MINDISTANCE);
+    return mLidar.getRange() < Constants.Storage.lidarMinDistance;
   }
 
   public synchronized boolean isBallDetected() {

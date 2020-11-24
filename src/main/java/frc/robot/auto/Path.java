@@ -1,5 +1,6 @@
 package frc.robot.auto;
 
+import frc.robot.Constants;
 import frc.robot.Logger;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,7 +17,7 @@ public class Path {
   private ArrayList<Segment> uninitializedSegments;
   private boolean finished = false;
 
-  private static Logger logger = new Logger("path");
+  private static Logger logger = new Logger(Constants.Loggers.PATH);
 
   protected static Logger getLogger() {
     return logger;
