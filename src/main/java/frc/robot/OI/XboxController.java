@@ -50,6 +50,7 @@ public class XboxController {
     checkNameAndPort();
   }
 
+  private boolean alreadyWarnedInSimulator = false;
   public boolean checkNameAndPort() {
     if (!mController.getName().equals(Constants.Controllers.Driver.name)
         || mController.getPort() != 0) {
@@ -61,13 +62,14 @@ public class XboxController {
                 + mController.getPort(),
             new Error().getStackTrace());
       } else {
-        DriverStation.reportWarning(
+        if(!alreadyWarnedInSimulator) DriverStation.reportWarning(
             "Xbox Controller not found in port 0! Got name "
                 + mController.getName()
                 + " in port "
                 + mController.getPort()
                 + " (not reporting error due to simulated environment)",
             new Error().getStackTrace());
+        alreadyWarnedInSimulator = true;
       }
       return false;
     }
