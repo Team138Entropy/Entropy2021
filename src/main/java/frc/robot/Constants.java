@@ -27,6 +27,7 @@ public class Constants {
     STORAGE(SupportedLevels.INFO),
     INTAKE(SupportedLevels.VERBOSE),
     SHOOTER(SupportedLevels.INFO),
+    SIMULATEDTALON(SupportedLevels.WARN),
     CLIMBER(SupportedLevels.WARN);
 
     public SupportedLevels minLevel;
@@ -124,6 +125,9 @@ public class Constants {
 
     // the bottom roller goes x times faster than the top one
     public static final double bottomRollerSpeedFactor = 1.15;
+
+    // minimum distance for the lidar sensor for to count something as a ball
+    public static final int lidarMinDistance = 20;
 
     // in encoder ticks
     public static class BallDistances {

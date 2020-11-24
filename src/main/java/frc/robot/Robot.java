@@ -265,7 +265,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Vision Distance", LastDistance);
     SmartDashboard.putBoolean("Has Vision", LastDistance != -1);
 
-    SmartDashboard.putNumber("Garage As Number", mStorage.getIntakeSensor() ? 1 : 0);
+    SmartDashboard.putNumber("Has Intake Sensor", mStorage.getIntakeSensor() ? 1 : 0);
+    SmartDashboard.putNumber("Raw Intake Sensor", mStorage.getSensorDistance());
   }
 
   @Override
