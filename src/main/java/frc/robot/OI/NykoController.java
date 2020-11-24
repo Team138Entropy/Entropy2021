@@ -59,6 +59,7 @@ public class NykoController {
   }
 
   private boolean alreadyWarnedInSimulator = false;
+
   public boolean checkNameAndPort() {
     // for some stupid reason, the 300iq people at nyko thought it would be cool and epic to put a
     // tab character after the name of the controller that is reported. the driver station then
@@ -74,13 +75,14 @@ public class NykoController {
                 + mController.getPort(),
             new Error().getStackTrace());
       } else {
-        if(!alreadyWarnedInSimulator) DriverStation.reportWarning(
-            "Airflo Controller not found in port 1! Got name "
-                + name
-                + " in port "
-                + mController.getPort()
-                + " (not reporting error due to simulated environment)",
-            new Error().getStackTrace());
+        if (!alreadyWarnedInSimulator)
+          DriverStation.reportWarning(
+              "Airflo Controller not found in port 1! Got name "
+                  + name
+                  + " in port "
+                  + mController.getPort()
+                  + " (not reporting error due to simulated environment)",
+              new Error().getStackTrace());
         alreadyWarnedInSimulator = true;
       }
       return false;
