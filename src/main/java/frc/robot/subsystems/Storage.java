@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.annotation.Nullable;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -23,7 +25,8 @@ public class Storage extends Subsystem {
   private final double BOTTOM_SPEED_FACTOR = Constants.Storage.bottomRollerSpeedFactor;
   private final double EJECT_SPEED = Constants.Storage.rollerEjectSpeed;
   private final double BALL_DISTANCE_IN_ENCODER_TICKS;
-  private final TimeOfFlight mLidar;
+  @Nullable
+  private TimeOfFlight mLidar;
   private final int INTAKE_SENSOR_PORT = 0;
 
   private DigitalInput mIntakeSensor;
@@ -47,7 +50,9 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
-    mLidar = new TimeOfFlight(0);
+    if (Robot.isReal()){
+      mLidar = new TimeOfFlight(0);
+    }
     mBottomRoller = new OurWPITalonSRX(ROLLER_BOTTOM_PORT);
     mTopRoller = new OurWPITalonSRX(ROLLER_TOP_PORT);
 
@@ -97,11 +102,17 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean getIntakeSensor() {
-    return mLidar.getRange() < Constants.Storage.lidarMinDistance;
+    if (Robot.isReal()){
+      return mLidar.getRange() < Constants.Storage.lidarMinDistance;
+    }
+    return false;
   }
 
   public synchronized double getSensorDistance() {
-    return mLidar.getRange();
+    if (Robot.isReal()){
+      return mLidar.getRange();
+    }
+    return 0;
   }
 
   public synchronized boolean isBallDetected() {
