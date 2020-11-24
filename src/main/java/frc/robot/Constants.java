@@ -27,7 +27,7 @@ public class Constants {
     STORAGE(SupportedLevels.INFO),
     INTAKE(SupportedLevels.VERBOSE),
     SHOOTER(SupportedLevels.INFO),
-    SIMULATEDTALON(SupportedLevels.VERBOSE),
+    SIMULATEDTALON(SupportedLevels.WARN),
     CLIMBER(SupportedLevels.WARN);
 
     public SupportedLevels minLevel;
