@@ -18,6 +18,7 @@
 
 '''
 
+# import the necessary packages
 import json
 import time
 import sys
@@ -31,6 +32,7 @@ import cv2
 import numpy as np
 from networktables import NetworkTables
 import math
+import datetime
 ########### SET RESOLUTION TO 256x144 !!!! ############
 
 
@@ -62,13 +64,9 @@ hsv_threshold_hue = [13, 62]
 hsv_threshold_saturation = [55, 255]
 hsv_threshold_value = [87, 255]
 
-# import the necessary packages
-import datetime
-
 #Queue of Packets
 #Thread Safe.. Packets being sent to robot are placed here!
 PacketQueue = queue.Queue()
-
 
 #Creates a socket
 class SocketWorker(threading.Thread):
@@ -81,9 +79,7 @@ class SocketWorker(threading.Thread):
 		SocketPort = 5800
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.sock.connect((SocketHost, SocketPort))
-
-
-
+  
 	def run(self):
 		while True:
 			try:
@@ -94,7 +90,7 @@ class SocketWorker(threading.Thread):
 					data_string = json.dumps(packet)
 					self.sock.sendall(data_string.encode())
 				except Exception as e:
-					print("Socket Exception " + str(e))
+					print(f"Socket Exception: {e}")
 			except Exception as e1:
 				pass
 
@@ -293,7 +289,6 @@ def threshold_video(lower_color, upper_color, blur):
 	mask = cv2.inRange(out, (hsv_threshold_hue[0], hsv_threshold_saturation[0], hsv_threshold_value[0]),  (hsv_threshold_hue[1], hsv_threshold_saturation[1], hsv_threshold_value[1]))
 
 	# Returns the masked imageBlurs video to smooth out image
-
 	return mask
 
 
@@ -320,7 +315,6 @@ def findTargets(frame, mask):
 	else:
 		# pushes that it deosn't see vision target to network tables
 		networkTable.putBoolean("tapeDetected", False)
-
 
 	# Shows the contours overlayed on the original video
 	return image
@@ -351,7 +345,7 @@ def findCargo(frame, mask):
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 def findBall(contours, image, centerX, centerY):
-	screenHeight, screenWidth, channels = image.shape;
+	screenHeight, screenWidth, channels = image.shape
 	#Seen vision targets (correct angle, adjacent to each other)
 	cargo = []
 
@@ -379,8 +373,6 @@ def findBall(contours, image, centerX, centerY):
 				else:
 					cx, cy = 0, 0
 				if(len(biggestCargo) < 3):
-
-
 					##### DRAWS CONTOUR######
 					# Gets rotated bounding rectangle of contour
 					rect = cv2.minAreaRect(cnt)
@@ -419,9 +411,6 @@ def findBall(contours, image, centerX, centerY):
 					elif [cx, cy, cnt] not in biggestCargo:
 						biggestCargo.append([cx, cy])
 
-
-
-
 		# Check if there are cargo seen
 		if (len(biggestCargo) > 0):
 			#pushes that it sees cargo to network tables
@@ -448,14 +437,13 @@ def findBall(contours, image, centerX, centerY):
 			networkTable.putBoolean("cargoDetected", False)
 
 		cv2.line(image, (int(centerX), screenHeight), (int(centerX), 0), (255, 255, 255), 2)
-
 		return image
 
 # Draws Contours and finds center and yaw of vision targets
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 def findTape(contours, image, centerX, centerY):
-	screenHeight, screenWidth, channels = image.shape;
+	screenHeight, screenWidth, channels = image.shape
 	#Seen vision targets (correct angle, adjacent to each other)
 	targets = []
 	if len(contours) >= 2:
@@ -509,12 +497,10 @@ def findTape(contours, image, centerX, centerY):
 					# Draws rotated rectangle
 					cv2.drawContours(image, [box], 0, (23, 184, 80), 3)
 
-
 					# Calculates yaw of contour (horizontal position in degrees)
 					yaw = calculateYaw(cx, centerX, H_FOCAL_LENGTH)
 					# Calculates yaw of contour (horizontal position in degrees)
 					pitch = calculatePitch(cy, centerY, V_FOCAL_LENGTH)
-
 
 					# Draws a vertical white line passing through center of contour
 					cv2.line(image, (cx, screenHeight), (cx, 0), (255, 255, 255))
@@ -543,7 +529,6 @@ def findTape(contours, image, centerX, centerY):
 						 biggestCnts.append([cx, cy, rotation])
 					elif [cx, cy, rotation] not in biggestCnts:
 						 biggestCnts.append([cx, cy, rotation])
-
 
 		# Sorts array based on coordinates (leftmost to rightmost) to make sure contours are adjacent
 		biggestCnts = sorted(biggestCnts, key=lambda x: x[0])
@@ -607,8 +592,6 @@ def findTape(contours, image, centerX, centerY):
 	#cv2.imwrite("latest.jpg", image);
 	return image
 
-
-
 # Checks if tape contours are worthy based off of contour area and (not currently) hull area
 def checkContours(cntSize, hullSize, aspRatio):
 	return cntSize > (image_width / 6) and not (aspRatio < rat_low or aspRatio > rat_high)
@@ -639,7 +622,6 @@ def calculateDistance138(targetHeightPixels):
 
 def calculateDistanceMethod2(targPixelWidth):
 	#d = Tft*FOVpixel/(2*Tpixel*tanΘ)
-
 	FOV = 75
 	#8 feet, 2.25 inches, actual height of center goal is 96.25, I think the centroid of the tape is ~87.75 inches
 	#tape is 1 ft 5inches, 17 inches/2 = 8.5 inches. 96.25-8.5 gives 87.75
@@ -652,7 +634,6 @@ def calculateDistanceMethod2(targPixelWidth):
  
 	distEst = Tft*camPixelWidth/(2*targPixelWidth*tanFOV)
 	return(distEst) 
-
 
 def calculateDistance(heightOfCamera, heightOfTarget, pitch):
 	heightOfTargetFromCamera = heightOfTarget - heightOfCamera
@@ -673,17 +654,13 @@ def calculateDistance(heightOfCamera, heightOfTarget, pitch):
 					   d
 	'''
 	distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
-
 	return distance
-
 
 # Uses trig and focal length of camera to find yaw.
 # Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
 def calculateYaw(pixelX, centerX, hFocalLength):
 	yaw = math.degrees(math.atan((pixelX - centerX) / hFocalLength))
 	return round(yaw)
-
-
 
 #Grabs Countours Based on Version
 def grab_contours(cnts):
@@ -708,7 +685,6 @@ def grab_contours(cnts):
 
     # return the actual contours array
     return cnts
-
 
 #Filter out the Tape HSV
 def FilterHSVTape(frame):
@@ -747,10 +723,8 @@ def findTapeTargets(frame):
             # calculate area of convex hull
             hullArea = cv2.contourArea(hull)
 
-
 def CheckBall(CntSize, CntAspectRatio):
     return (CntSize > (Camera_Image_Width / 2)) and (round(CntAspectRatio) == 1)
-
 
 #For Finding Power Cells
 def findBalls(frame):
@@ -790,11 +764,8 @@ def findBalls(frame):
 			if CntArea < 150:
 				continue
 
-
 			cnt_aspect_ratio = float(w_br) / h_br
 			AspectRatioCheck = (round(cnt_aspect_ratio) == 1)
-
-
 
 			OkayBall = AspectRatioCheck
 			if OkayBall == True:
@@ -821,7 +792,6 @@ def findBalls(frame):
 			#print("Found Ball!")
 			#print(FoundBall)(
 			PacketQueue.put_nowait(FoundBall)
-
 	return FoundBalls
 
 
@@ -840,7 +810,6 @@ def ProcessFrame(frame, tape):
 		original_frame = frame.copy()
 		frame = MaskBall(frame) #Filter and Mask by HSV Values
 		Targets = findBalls(frame)
-
 
 		'''
 		#Debug Drawing Code
@@ -862,10 +831,6 @@ def ProcessFrame(frame, tape):
 
 		cv2.imwrite("of1" + str(val) +  ".jpg", original_frame)
 		'''
-
-
-
-
 		return original_frame
 
 # Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
@@ -911,7 +876,8 @@ def getEllipseRotation(image, cnt):
 #################### FRC VISION PI Image Specific #############
 configFile = "/boot/frc.json"
 
-class CameraConfig: pass
+class CameraConfig: 
+    pass
 
 team = None
 server = False
@@ -924,7 +890,6 @@ def parseError(str):
 """Read single camera configuration."""
 def readCameraConfig(config):
 	cam = CameraConfig()
-
 	# name
 	try:
 		cam.name = config["name"]
@@ -936,7 +901,7 @@ def readCameraConfig(config):
 	try:
 		cam.path = config["path"]
 	except KeyError:
-		parseError("camera '{}': could not read path".format(cam.name))
+		parseError(f"camera '{cam.name}': could not read path")
 		return False
 
 	cam.config = config
@@ -1056,7 +1021,6 @@ if __name__ == "__main__":
 
 		Tape = False
 		frame = ProcessFrame(img, Tape)
-
 
 	#Doesn't do anything at the moment. You can easily get this working by indenting these three lines
 	# and setting while loop to: while fps._numFrames < TOTAL_FRAMES

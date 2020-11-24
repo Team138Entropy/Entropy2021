@@ -30,7 +30,6 @@ from numpy import mean
 import math
 import datetime as dt
 
-
 # Image Camera Size (Pixels)
 Camera_Image_Width = 320
 Camera_Image_Height = 240
@@ -64,13 +63,9 @@ outlierCount = 0
 run_count = 0
 starttime = 0
 
-# import the necessary packages
-import datetime
-
 # Queue of Packets
 # Thread Safe.. Packets being sent to robot are placed here!
 PacketQueue = queue.Queue()
-
 
 # Creates a socket
 class SocketWorker(threading.Thread):
@@ -311,7 +306,7 @@ def findTargets(frame, mask, value_array, centerX, centerY):
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 def findBall(contours, image, centerX, centerY):
-    screenHeight, screenWidth, channels = image.shape;
+    screenHeight, screenWidth, channels = image.shape
     # Seen vision targets (correct angle, adjacent to each other)
     cargo = []
 
@@ -406,7 +401,7 @@ def findBall(contours, image, centerX, centerY):
 
 def findTape(contours, image, centerX, centerY):
     sendValues = [None] * 4
-    screenHeight, screenWidth, channels = image.shape;
+    screenHeight, screenWidth, channels = image.shape
     # Seen vision targets (correct angle, adjacent to each other)
     targets = []
     if len(contours) >= 2:
