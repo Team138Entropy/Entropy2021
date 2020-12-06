@@ -108,7 +108,7 @@ public class Drive extends Subsystem {
     // TODO: figure out what this does and make it work
     setOpenLoop(DriveSignal.NEUTRAL);
 
-    if(Constants.Drive.driveMode == Constants.Drive.DriveMode.WPILIB_DRIVE){
+    if (Constants.Drive.driveMode == Constants.Drive.DriveMode.WPILIB_DRIVE) {
       mDifferentialDrive = new DifferentialDrive(mLeftMaster, mRightMaster);
     }
   }
@@ -196,10 +196,10 @@ public class Drive extends Subsystem {
     mRightMaster.set(ControlMode.Position, -right);
   }
 
-  double closestToZero(double num1, double num2){
-    if(Math.abs(num1) < Math.abs(num2)){
+  double closestToZero(double num1, double num2) {
+    if (Math.abs(num1) < Math.abs(num2)) {
       return num1;
-    }else{
+    } else {
       return num2;
     }
   }
@@ -295,12 +295,13 @@ public class Drive extends Subsystem {
     // increase or decrease between frames (calls to teleopPeriodic())
     // because speed is a factor of motor percent output, this limits the slope of speed
     // and the derivitave (slope) of speed is acceleration
-    
-    // speeding up when going forwards is the same acceleration direction as slowing down when reversing
+
+    // speeding up when going forwards is the same acceleration direction as slowing down when
+    // reversing
     // and thus has the same constants
     double accelerationLeft = leftOutput - mPeriodicDriveData.left_old;
     double accelerationRight = rightOutput - mPeriodicDriveData.right_old;
-    
+
     SmartDashboard.putNumber("left accel", accelerationLeft);
     SmartDashboard.putNumber("right accel", accelerationRight);
 
@@ -311,32 +312,38 @@ public class Drive extends Subsystem {
     SmartDashboard.putNumber("left limited accel", 0);
     SmartDashboard.putNumber("right limited accel", 0);
 
-    if(leftAcceleratingForward && rightAcceleratingForward){
-      double leftIncrease = closestToZero(accelerationLeft, Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
-      double rightIncrease = closestToZero(accelerationRight, Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationRight));
+    if (leftAcceleratingForward && rightAcceleratingForward) {
+      double leftIncrease =
+          closestToZero(
+              accelerationLeft,
+              Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
+      double rightIncrease =
+          closestToZero(
+              accelerationRight,
+              Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationRight));
 
       leftOutput = mPeriodicDriveData.left_old + leftIncrease;
       rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
       SmartDashboard.putNumber("left limited accel", leftIncrease);
       SmartDashboard.putNumber("right limited accel", rightIncrease);
-
-      SmartDashboard.putBoolean("is left accel limited", accelerationLeft > Constants.Drive.AccelerationLimiting.acceleration);
-      SmartDashboard.putBoolean("is right accel limited", accelerationRight > Constants.Drive.AccelerationLimiting.acceleration);
-    }else if(leftAcceleratingBackwards && rightAcceleratingBackwards){
-      double leftIncrease = closestToZero(accelerationLeft, Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
-      double rightIncrease =  closestToZero(accelerationRight, Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationRight));
+    } else if (leftAcceleratingBackwards && rightAcceleratingBackwards) {
+      double leftIncrease =
+          closestToZero(
+              accelerationLeft,
+              Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
+      double rightIncrease =
+          closestToZero(
+              accelerationRight,
+              Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationRight));
 
       leftOutput = mPeriodicDriveData.left_old + leftIncrease;
       rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
       SmartDashboard.putNumber("left limited accel", leftIncrease);
       SmartDashboard.putNumber("right limited accel", rightIncrease);
-      
-      SmartDashboard.putBoolean("is left decel limited", accelerationLeft > Constants.Drive.AccelerationLimiting.decceleration);
-      SmartDashboard.putBoolean("is right decel limited", accelerationLeft > Constants.Drive.AccelerationLimiting.decceleration);
     }
-    
+
     SmartDashboard.putNumber("left limited percent output", leftOutput);
     SmartDashboard.putNumber("right limited percent output", rightOutput);
 

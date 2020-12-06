@@ -68,10 +68,11 @@ public class Constants {
       MAX_DRIVE
     }
 
-    public class AccelerationLimiting{
-      // divide desired seconds until full throttle (forwards or backwards) by 50 to find max accel per tick
-      public static final double acceleration = (1 / 2) / 50;
-      public static final double decceleration = (1 / 2) / 50;
+    public class AccelerationLimiting {
+      // divide the reciprocal of desired seconds until full throttle (forwards or backwards) by 50 to find max accel
+      // per tick
+      public static final double acceleration = (1f / 2f) / 50f;
+      public static final double decceleration = (1f / 2f) / 50f;
     }
 
     public static double quickTurnDeadband = 0.1;
