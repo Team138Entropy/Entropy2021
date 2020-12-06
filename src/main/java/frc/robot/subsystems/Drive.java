@@ -313,35 +313,44 @@ public class Drive extends Subsystem {
     SmartDashboard.putNumber("left limited accel", 0);
     SmartDashboard.putNumber("right limited accel", 0);
 
-    if (leftAcceleratingForward && rightAcceleratingForward) {
+    if(leftAcceleratingForward){
       double leftIncrease =
           closestToZero(
               accelerationLeft,
               Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
+              
+      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+
+      SmartDashboard.putNumber("left limited accel", leftIncrease);
+    }else if(leftAcceleratingBackwards){
+
+      double leftIncrease =
+          closestToZero(
+              accelerationLeft,
+              Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
+      
+      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+      
+      SmartDashboard.putNumber("left limited accel", leftIncrease);
+    }
+
+    if(rightAcceleratingForward){
       double rightIncrease =
           closestToZero(
               accelerationRight,
               Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationRight));
 
-      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
       rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
-      SmartDashboard.putNumber("left limited accel", leftIncrease);
       SmartDashboard.putNumber("right limited accel", rightIncrease);
-    } else if (leftAcceleratingBackwards && rightAcceleratingBackwards) {
-      double leftIncrease =
-          closestToZero(
-              accelerationLeft,
-              Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
+    }else if(rightAcceleratingBackwards){
       double rightIncrease =
           closestToZero(
               accelerationRight,
               Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationRight));
 
-      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
       rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
-      SmartDashboard.putNumber("left limited accel", leftIncrease);
       SmartDashboard.putNumber("right limited accel", rightIncrease);
     }
 
