@@ -13,7 +13,7 @@ public class Constants {
     PID(SupportedLevels.INFO),
     ROBOT(SupportedLevels.WARN),
     TURRET(SupportedLevels.VERBOSE),
-    DRIVE(SupportedLevels.INFO),
+    DRIVE(SupportedLevels.DEBUG),
     SUBSYSTEM(SupportedLevels.INFO),
     BALL_STORED(SupportedLevels.INFO),
     EVENT_WATCHER_THREAD(SupportedLevels.INFO),
@@ -65,8 +65,13 @@ public class Constants {
     public enum DriveMode {
       OLD_DRIVE,
       WPILIB_DRIVE,
-      WPILIB_DRIVE_2,
       MAX_DRIVE
+    }
+
+    public class AccelerationLimiting{
+      // divide desired seconds until full throttle (forwards or backwards) by 50 to find max accel per tick
+      public static final double acceleration = (1 / 2) / 50;
+      public static final double decceleration = (1 / 2) / 50;
     }
 
     public static double quickTurnDeadband = 0.1;

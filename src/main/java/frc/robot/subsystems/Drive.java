@@ -20,9 +20,6 @@ public class Drive extends Subsystem {
   // Drive Talons
   private WPI_TalonSRX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
 
-  // Drive is plummed to default to high gear
-  private boolean mHighGear = true;
-
   public enum DriveControlState {
     OPEN_LOOP, // open loop voltage control
     PATH_FOLLOWING, // velocity PID control
@@ -99,10 +96,10 @@ public class Drive extends Subsystem {
     // configureSpark(mRightSlave, false, false);
 
     configTalon(mLeftMaster);
-    mLeftSlave.setNeutralMode(NeutralMode.Coast);
+    mLeftSlave.setNeutralMode(NeutralMode.Brake);
 
     configTalon(mRightMaster);
-    mRightSlave.setNeutralMode(NeutralMode.Coast);
+    mRightSlave.setNeutralMode(NeutralMode.Brake);
 
     // Configure slave Talons to follow masters
     mLeftSlave.follow(mLeftMaster);
@@ -111,7 +108,9 @@ public class Drive extends Subsystem {
     // TODO: figure out what this does and make it work
     setOpenLoop(DriveSignal.NEUTRAL);
 
-    mDifferentialDrive = new DifferentialDrive(mLeftMaster, mRightMaster);
+    if(Constants.Drive.driveMode == Constants.Drive.DriveMode.WPILIB_DRIVE){
+      mDifferentialDrive = new DifferentialDrive(mLeftMaster, mRightMaster);
+    }
   }
 
   private void configTalon(WPI_TalonSRX talon) {
@@ -123,7 +122,7 @@ public class Drive extends Subsystem {
     talon.configOpenloopRamp(0);
     talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
     talon.setSensorPhase(true);
-    talon.setNeutralMode(NeutralMode.Coast);
+    talon.setNeutralMode(NeutralMode.Brake);
 
     // Configure Talon gains
     double P, I, D;
@@ -197,6 +196,14 @@ public class Drive extends Subsystem {
     mRightMaster.set(ControlMode.Position, -right);
   }
 
+  double closestToZero(double num1, double num2){
+    if(Math.abs(num1) < Math.abs(num2)){
+      return num1;
+    }else{
+      return num2;
+    }
+  }
+
   /** Configure talons for open loop control */
   public synchronized void setOpenLoop(DriveSignal signal) {
     // are we quickturning?
@@ -250,9 +257,6 @@ public class Drive extends Subsystem {
     double leftOutput = signal.getLeft();
     double rightOutput = signal.getRight();
 
-    // Ramping is calculated through a series of "abstractions", calculating the acceleration
-    // directions
-    // of hierarchical components in the drivetrain.
     boolean leftAcceleratingForward = false;
     boolean leftAcceleratingBackwards = false;
 
@@ -271,51 +275,77 @@ public class Drive extends Subsystem {
       rightAcceleratingBackwards = true;
     }
 
-    // Whether our velocity is increasing or decreasing
-    boolean acceleratingForward = false;
-    boolean acceleratingBackwards = false;
-
-    if (leftAcceleratingForward && rightAcceleratingForward) {
-      acceleratingForward = true;
-    } else if (leftAcceleratingBackwards && rightAcceleratingBackwards) {
-      acceleratingBackwards = true;
-    }
-
-    // Whether we are going forwards or in reverse
-    boolean velocityForwards = false;
-    boolean velocityReverse = false;
-
-    if (leftOutput > 0) {
-      velocityForwards = true;
-    } else if (leftOutput < 0) {
-      velocityReverse = true;
-    }
-
-    // this is [0, 1)
-    double differenceBetweenSides =
-        Math.abs(Math.abs(signal.getLeft()) - Math.abs(signal.getRight()));
-
-    double accelSpeedWhenTurningFactor = 1 - differenceBetweenSides;
-
     SmartDashboard.putBoolean("quckturn", quickturn);
     SmartDashboard.putBoolean("leftAcceleratingForward", leftAcceleratingForward);
     SmartDashboard.putBoolean("leftAcceleratingBackwards", leftAcceleratingBackwards);
     SmartDashboard.putBoolean("rightAcceleratingForward", rightAcceleratingForward);
     SmartDashboard.putBoolean("rightAcceleratingBackwards", rightAcceleratingBackwards);
+    SmartDashboard.putNumber("left percent output", leftOutput);
+    SmartDashboard.putNumber("right percent output", rightOutput);
 
-    boolean noSignal = signal.getLeft() == 0 && signal.getRight() == 0;
-    if (quickturn || (noSignal && stationary)) {
-      setOpenloopRamp(0);
-    } else {
-      setOpenloopRamp(Constants.Drive.accelLimit);
+    // boolean noSignal = signal.getLeft() == 0 && signal.getRight() == 0;
+    // if (quickturn || (noSignal && stationary)) {
+    //   setOpenloopRamp(0);
+    // } else {
+    //   setOpenloopRamp(Constants.Drive.accelLimit);
+    // }
+
+    // acceleration limiting begins here
+    // acceleration limiting works because we limit the amount that the motor percents can
+    // increase or decrease between frames (calls to teleopPeriodic())
+    // because speed is a factor of motor percent output, this limits the slope of speed
+    // and the derivitave (slope) of speed is acceleration
+    
+    // speeding up when going forwards is the same acceleration direction as slowing down when reversing
+    // and thus has the same constants
+    double accelerationLeft = leftOutput - mPeriodicDriveData.left_old;
+    double accelerationRight = rightOutput - mPeriodicDriveData.right_old;
+    
+    SmartDashboard.putNumber("left accel", accelerationLeft);
+    SmartDashboard.putNumber("right accel", accelerationRight);
+
+    SmartDashboard.putBoolean("is left accel limited", false);
+    SmartDashboard.putBoolean("is right accel limited", false);
+    SmartDashboard.putBoolean("is left decel limited", false);
+    SmartDashboard.putBoolean("is right decel limited", false);
+    SmartDashboard.putNumber("left limited accel", 0);
+    SmartDashboard.putNumber("right limited accel", 0);
+
+    if(leftAcceleratingForward && rightAcceleratingForward){
+      double leftIncrease = closestToZero(accelerationLeft, Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
+      double rightIncrease = closestToZero(accelerationRight, Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationRight));
+
+      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+      rightOutput = mPeriodicDriveData.right_old + rightIncrease;
+
+      SmartDashboard.putNumber("left limited accel", leftIncrease);
+      SmartDashboard.putNumber("right limited accel", rightIncrease);
+
+      SmartDashboard.putBoolean("is left accel limited", accelerationLeft > Constants.Drive.AccelerationLimiting.acceleration);
+      SmartDashboard.putBoolean("is right accel limited", accelerationRight > Constants.Drive.AccelerationLimiting.acceleration);
+    }else if(leftAcceleratingBackwards && rightAcceleratingBackwards){
+      double leftIncrease = closestToZero(accelerationLeft, Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
+      double rightIncrease =  closestToZero(accelerationRight, Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationRight));
+
+      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+      rightOutput = mPeriodicDriveData.right_old + rightIncrease;
+
+      SmartDashboard.putNumber("left limited accel", leftIncrease);
+      SmartDashboard.putNumber("right limited accel", rightIncrease);
+      
+      SmartDashboard.putBoolean("is left decel limited", accelerationLeft > Constants.Drive.AccelerationLimiting.decceleration);
+      SmartDashboard.putBoolean("is right decel limited", accelerationLeft > Constants.Drive.AccelerationLimiting.decceleration);
     }
+    
+    SmartDashboard.putNumber("left limited percent output", leftOutput);
+    SmartDashboard.putNumber("right limited percent output", rightOutput);
 
     // cache our olds after we've used them to make them actually "olds"
     mPeriodicDriveData.left_old = leftOutput;
     mPeriodicDriveData.right_old = rightOutput;
 
     // then we set our master talons, remembering that the physical right of the drivetrain is
-    // backwards
+    // backwards, for some reason :)
     mLeftMaster.set(ControlMode.PercentOutput, leftOutput);
     mRightMaster.set(ControlMode.PercentOutput, rightOutput * -1);
   }
@@ -377,10 +407,6 @@ public class Drive extends Subsystem {
                     Math.abs(signal.getLeft()),
                     Math.abs(signal.getRight()))); // / (1 + (differenceBetweenSides * 6));
 
-        SmartDashboard.putNumber("scaling factor", scaling_factor);
-        SmartDashboard.putNumber("left signal", (signal.getLeft() / scaling_factor) / 1.5);
-        SmartDashboard.putNumber("right signal", (signal.getRight() / scaling_factor) / 1.5);
-
         if (quickTurn) {
           setOpenLoop(
               new DriveSignal(
@@ -391,14 +417,10 @@ public class Drive extends Subsystem {
               new DriveSignal(
                   signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
         }
-
         break;
       case WPILIB_DRIVE:
-        mDifferentialDrive.arcadeDrive(throttle, wheel);
-        break;
-      case WPILIB_DRIVE_2:
-        mPeriodicDriveData.isQuickturning = Math.abs(throttle) > Constants.Drive.quickTurnDeadband;
-        mDifferentialDrive.curvatureDrive(throttle, wheel, mPeriodicDriveData.isQuickturning);
+        mDifferentialDrive.arcadeDrive(throttle / 1.5, wheel / 1.5);
+        mDriveLogger.log(throttle / 5 + " " + wheel / 5);
         break;
       case MAX_DRIVE:
         // todo
