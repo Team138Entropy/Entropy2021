@@ -46,7 +46,6 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
-RealTests
     ROLLER_TOP_PORT =
         Robot.getIsPracticeBot()
             ? Constants.Talons.Storage.practiceTop
@@ -54,9 +53,6 @@ RealTests
 
     mBottomRoller = new OurWPITalonSRX(ROLLER_BOTTOM_PORT);
     mTopRoller = new OurWPITalonSRX(ROLLER_TOP_PORT);
-
-
-main
 
     mBottomRoller.configFactoryDefault();
     mTopRoller.configFactoryDefault();
