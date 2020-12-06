@@ -75,7 +75,11 @@ public class Constants {
       // divide the reciprocal of desired seconds until full throttle (forwards or backwards) by 50
       // to find max accel
       // per tick
-      public static final double acceleration = (1f / 1.25f) / 50f;
+
+      // make this one higher if this falls forwards (rotates around the axis of the intake roller)
+      public static final double acceleration = (1f / 1f) / 50f;
+
+      // make this one higher if this falls backwards
       public static final double decceleration = (1f / 1.25f) / 50f;
     }
 
