@@ -936,7 +936,7 @@ public class Robot extends TimedRobot {
         // mDrive.autoSteerFeederStation(driveThrottle, vp.Error_Angle);
       } else {
         // Standard Manual Drive
-        mDrive.setDrive(driveThrottle, driveTurn, false);
+        mDrive.setDrive(driveThrottle, driveTurn);
 
         // if we were previously in auto drive.. turn it off
         if (mDriveState == DriveState.AUTO_DRIVE) {

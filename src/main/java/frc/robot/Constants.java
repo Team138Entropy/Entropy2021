@@ -68,10 +68,8 @@ public class Constants {
 
     public static double maxSpeedWhenClimbing = .3;
 
-    // TODO: determine if this is actually "DRIVE__FORWARD_ACCEL_RAMP_TIME_SECONDS", as it was
-    // previously named
-    public static double accelSpeed = 1;
-    public static double brakeSpeed = 1;
+    // acceleration speed (in ms)
+    public static double accelLimit = 3;
 
     public static class Encoders {
       // ticks = (19711 + 19582) / 2

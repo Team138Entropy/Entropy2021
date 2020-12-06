@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.Kinematics;
@@ -95,10 +97,10 @@ public class Drive extends Subsystem {
     // configureSpark(mRightSlave, false, false);
 
     configTalon(mLeftMaster);
-    mLeftSlave.setNeutralMode(NeutralMode.Brake);
+    mLeftSlave.setNeutralMode(NeutralMode.Coast);
 
     configTalon(mRightMaster);
-    mRightSlave.setNeutralMode(NeutralMode.Brake);
+    mRightSlave.setNeutralMode(NeutralMode.Coast);
 
     // Configure slave Talons to follow masters
     mLeftSlave.follow(mLeftMaster);
@@ -117,7 +119,7 @@ public class Drive extends Subsystem {
     talon.configOpenloopRamp(0);
     talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
     talon.setSensorPhase(true);
-    talon.setNeutralMode(NeutralMode.Brake);
+    talon.setNeutralMode(NeutralMode.Coast);
 
     // Configure Talon gains
     double P, I, D;
@@ -213,10 +215,6 @@ public class Drive extends Subsystem {
       mRightMaster.configPeakOutputReverse(-1, 0);
     }
 
-    // A lot of the space in this function is taken up by local copies of stuff
-    double accelSpeed = Constants.Drive.accelSpeed;
-    double brakeSpeed = Constants.Drive.brakeSpeed;
-
     // Segments are started by the variables they will need
     boolean leftStationary = false;
     boolean rightStationary = false;
@@ -295,22 +293,17 @@ public class Drive extends Subsystem {
 
     double accelSpeedWhenTurningFactor = 1 - differenceBetweenSides;
 
-    // This is where the actual accel limiting logic begins
-    if (velocityForwards) {
-      if (acceleratingForward) {
-        setOpenloopRamp(accelSpeed * accelSpeedWhenTurningFactor);
-      }
-    } else if (velocityReverse) {
-      // if (acceleratingForward) {
-      //   setOpenloopRamp(brakeSpeed * accelSpeedWhenTurningFactor);
-      // }
+    SmartDashboard.putBoolean("quckturn", quickturn);
+    SmartDashboard.putBoolean("leftAcceleratingForward", leftAcceleratingForward);
+    SmartDashboard.putBoolean("leftAcceleratingBackwards", leftAcceleratingBackwards);
+    SmartDashboard.putBoolean("rightAcceleratingForward", rightAcceleratingForward);
+    SmartDashboard.putBoolean("rightAcceleratingBackwards", rightAcceleratingBackwards);
 
-      // PittDrive mode - symmetry between forward and reverse accel
-      setOpenloopRamp(brakeSpeed * accelSpeedWhenTurningFactor);
-    } else if (stationary) {
+    boolean noSignal = signal.getLeft() == 0 && signal.getRight() == 0;
+    if(quickturn || (noSignal && stationary)){
       setOpenloopRamp(0);
-    } else if (quickturn) {
-      setOpenloopRamp(0);
+    }else{
+      setOpenloopRamp(Constants.Drive.accelLimit);
     }
 
     // cache our olds after we've used them to make them actually "olds"
@@ -330,7 +323,8 @@ public class Drive extends Subsystem {
     mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
   }
 
-  public synchronized void setDrive(double throttle, double wheel, boolean quickTurn) {
+  public synchronized void setDrive(double throttle, double wheel) {
+    boolean quickTurn = false;
     wheel = wheel * -1; // invert wheel
 
     // TODO: Extract this "epsilonEquals" pattern into a "handleDeadband" method
@@ -349,6 +343,8 @@ public class Drive extends Subsystem {
 
     if (wheel != 0 && quickTurn) {
       mPeriodicDriveData.isQuickturning = true;
+    }else{
+      mPeriodicDriveData.isQuickturning = false;
     }
 
     final double kWheelGain = 0.05;
@@ -374,11 +370,16 @@ public class Drive extends Subsystem {
             Math.max(
                 Math.abs(signal.getLeft()),
                 Math.abs(signal.getRight()))); // / (1 + (differenceBetweenSides * 6));
+
+    SmartDashboard.putNumber("scaling factor", scaling_factor);
+    SmartDashboard.putNumber("left signal",  (signal.getLeft() / scaling_factor) / 1.5);
+    SmartDashboard.putNumber("right signal",  (signal.getRight() / scaling_factor) / 1.5);
+
     if (quickTurn) {
       setOpenLoop(
           new DriveSignal(
-              (signal.getLeft() / scaling_factor) / 1.5,
-              (signal.getRight() / scaling_factor) / 1.5));
+              (signal.getLeft() / scaling_factor) / 5,
+              (signal.getRight() / scaling_factor) / 5));
     } else {
       setOpenLoop(
           new DriveSignal(signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
