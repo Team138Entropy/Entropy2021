@@ -10,6 +10,7 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.Kinematics;
 import frc.robot.Logger;
+import frc.robot.OurWPITalonSRX;
 import frc.robot.Robot;
 import frc.robot.util.*;
 import frc.robot.util.geometry.*;
@@ -18,7 +19,7 @@ public class Drive extends Subsystem {
   private static Drive mInstance;
 
   // Drive Talons
-  private WPI_TalonSRX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
+  private OurWPITalonSRX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
 
   public enum DriveControlState {
     OPEN_LOOP, // open loop voltage control
@@ -83,20 +84,21 @@ public class Drive extends Subsystem {
   private Drive() {
     mDriveLogger = new Logger(Constants.Loggers.DRIVE);
 
-    mLeftMaster = new WPI_TalonSRX(Constants.Talons.Drive.leftMaster);
+    mLeftMaster = new OurWPITalonSRX(Constants.Talons.Drive.leftMaster);
     // configureSpark(mLeftMaster, true, true);
 
-    mLeftSlave = new WPI_TalonSRX(Constants.Talons.Drive.leftSlave);
+    mLeftSlave = new OurWPITalonSRX(Constants.Talons.Drive.leftSlave);
     // configureSpark(mLeftSlave, true, false);
 
-    mRightMaster = new WPI_TalonSRX(Constants.Talons.Drive.rightMaster);
+    mRightMaster = new OurWPITalonSRX(Constants.Talons.Drive.rightMaster);
     // configureSpark(mRightMaster, false, true);
 
-    mRightSlave = new WPI_TalonSRX(Constants.Talons.Drive.rightSlave);
+    mRightSlave = new OurWPITalonSRX(Constants.Talons.Drive.rightSlave);
     // configureSpark(mRightSlave, false, false);
 
     configTalon(mLeftMaster);
     mLeftSlave.setNeutralMode(NeutralMode.Brake);
+    if (!Robot.getIsPracticeBot()) mLeftSlave.setSensorPhase(false);
 
     configTalon(mRightMaster);
     mRightSlave.setNeutralMode(NeutralMode.Brake);
@@ -113,7 +115,7 @@ public class Drive extends Subsystem {
     }
   }
 
-  private void configTalon(WPI_TalonSRX talon) {
+  private void configTalon(OurWPITalonSRX talon) {
     talon.configFactoryDefault();
     talon.configNominalOutputForward(0., 0);
     talon.configNominalOutputReverse(0., 0);
@@ -519,12 +521,14 @@ public class Drive extends Subsystem {
   }
 
   public void zeroEncoders() {
-    mLeftMaster
-        .getSensorCollection()
-        .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
-    mRightMaster
-        .getSensorCollection()
-        .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+    if (Robot.isReal()) {
+      mLeftMaster
+          .getSensorCollection()
+          .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+      mRightMaster
+          .getSensorCollection()
+          .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+    }
   }
 
   // Used only in TEST mode

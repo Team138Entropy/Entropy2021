@@ -2,6 +2,7 @@ package frc.robot.OI;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants;
 
 /*
@@ -57,19 +58,33 @@ public class NykoController {
     checkNameAndPort();
   }
 
+  private boolean alreadyWarnedInSimulator = false;
+
   public boolean checkNameAndPort() {
     // for some stupid reason, the 300iq people at nyko thought it would be cool and epic to put a
     // tab character after the name of the controller that is reported. the driver station then
     // passes this on to us, so we get something that makes no sense and is bad to debug. is it one
-    // space? ten? a tab? something else stupid? we trim the string anyway
+    // space? ten? a tab? something else stupid? we trim the string away
     String name = mController.getName().trim();
     if (!name.equals(Constants.Controllers.Operator.name) || mController.getPort() != 1) {
-      DriverStation.reportError(
-          "Airflo Controller not found in port 1! Got name "
-              + mController.getName()
-              + " in port "
-              + mController.getPort(),
-          new Error().getStackTrace());
+      if (RobotBase.isReal()) {
+        DriverStation.reportError(
+            "Airflo Controller not found in port 1! Got name "
+                + name
+                + " in port "
+                + mController.getPort(),
+            new Error().getStackTrace());
+      } else {
+        if (!alreadyWarnedInSimulator)
+          DriverStation.reportWarning(
+              "Airflo Controller not found in port 1! Got name "
+                  + name
+                  + " in port "
+                  + mController.getPort()
+                  + " (not reporting error due to simulated environment)",
+              new Error().getStackTrace());
+        alreadyWarnedInSimulator = true;
+      }
       return false;
     }
     return true;

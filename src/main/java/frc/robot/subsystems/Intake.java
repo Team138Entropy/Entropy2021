@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Logger;
+import frc.robot.OurWPITalonSRX;
 
 /** Add your docs here. */
 public class Intake extends Subsystem {
@@ -19,7 +19,7 @@ public class Intake extends Subsystem {
   // TODO: Tune these values
   private final double ROLLER_SPEED = Constants.Intake.intakeRollerSpeed;
 
-  private final WPI_TalonSRX mRoller;
+  private final OurWPITalonSRX mRoller;
 
   private static Intake sInstance;
 
@@ -31,7 +31,7 @@ public class Intake extends Subsystem {
   }
 
   private Intake() {
-    mRoller = new WPI_TalonSRX(ROLLER_PORT);
+    mRoller = new OurWPITalonSRX(ROLLER_PORT);
     mRoller.configFactoryDefault();
   }
 

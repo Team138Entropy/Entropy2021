@@ -27,6 +27,7 @@ public class Constants {
     STORAGE(SupportedLevels.INFO),
     INTAKE(SupportedLevels.VERBOSE),
     SHOOTER(SupportedLevels.INFO),
+    SIMULATEDTALON(SupportedLevels.WARN),
     CLIMBER(SupportedLevels.WARN);
 
     public SupportedLevels minLevel;
@@ -46,7 +47,9 @@ public class Constants {
     }
 
     public static class Storage {
-      public static final int top = 5;
+      // 2 different tops depending on the bot
+      public static final int compTop = 5;
+      public static final int practiceTop = 7;
       public static final int bottom = 8;
     }
 

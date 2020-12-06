@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import frc.robot.OurWPITalonSRX;
 import frc.robot.Robot;
 
 class PIDRoller {
@@ -12,12 +12,12 @@ class PIDRoller {
   private final int PID_LOOP_INDEX = 0;
   private final int TIMEOUT_MS = 10;
 
-  private final WPI_TalonSRX mTalon;
-  private final WPI_TalonSRX mTalonSlave;
+  private final OurWPITalonSRX mTalon;
+  private final OurWPITalonSRX mTalonSlave;
 
   PIDRoller(int talonPort, int talon2Port, double p, double i, double d, double f) {
-    mTalon = new WPI_TalonSRX(talonPort);
-    mTalonSlave = new WPI_TalonSRX(talon2Port);
+    mTalon = new OurWPITalonSRX(talonPort);
+    mTalonSlave = new OurWPITalonSRX(talon2Port);
 
     mTalon.configFactoryDefault();
     mTalonSlave.configFactoryDefault();
