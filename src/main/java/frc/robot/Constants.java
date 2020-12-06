@@ -62,6 +62,17 @@ public class Constants {
 
   /// Subsystems
   public static class Drive {
+    public enum DriveMode{
+      OLD_DRIVE,
+      WPILIB_DRIVE,
+      WPILIB_DRIVE_2,
+      MAX_DRIVE
+    }
+
+    public static double quickTurnDeadband = 0.1;
+
+    public static DriveMode driveMode = DriveMode.OLD_DRIVE;
+
     public static boolean enabled = true;
 
     public static int talonSensorTimeoutMs = 250;

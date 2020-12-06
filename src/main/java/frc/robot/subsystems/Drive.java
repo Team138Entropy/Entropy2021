@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
@@ -31,6 +32,8 @@ public class Drive extends Subsystem {
 
   private PeriodicDriveData mPeriodicDriveData = new PeriodicDriveData();
   private Logger mDriveLogger;
+
+  private DifferentialDrive mDifferentialDrive = null;
 
   public static class PeriodicDriveData {
     // INPUTS
@@ -107,6 +110,8 @@ public class Drive extends Subsystem {
 
     // TODO: figure out what this does and make it work
     setOpenLoop(DriveSignal.NEUTRAL);
+
+    mDifferentialDrive = new DifferentialDrive(mLeftMaster, mRightMaster);
   }
 
   private void configTalon(WPI_TalonSRX talon) {
@@ -323,64 +328,81 @@ public class Drive extends Subsystem {
   }
 
   public synchronized void setDrive(double throttle, double wheel) {
-    boolean quickTurn = false;
-    wheel = wheel * -1; // invert wheel
+    switch (Constants.Drive.driveMode) {
+      case OLD_DRIVE:
+        boolean quickTurn = false;
+        wheel = wheel * -1; // invert wheel
 
-    // TODO: Extract this "epsilonEquals" pattern into a "handleDeadband" method
-    // If we're not pushing forward on the throttle, automatically enable quickturn so that we
-    // don't have to
-    // explicitly enable it before turning.
-    if (Util.epsilonEquals(throttle, 0.0, 0.04)) {
-      throttle = 0.0;
-      quickTurn = true;
-    }
+        // TODO: Extract this "epsilonEquals" pattern into a "handleDeadband" method
+        // If we're not pushing forward on the throttle, automatically enable quickturn so that we
+        // don't have to
+        // explicitly enable it before turning.
+        if (Util.epsilonEquals(throttle, 0.0, 0.04)) {
+          throttle = 0.0;
+          quickTurn = true;
+        }
 
-    // This is just a convoluted way to do a deadband.
-    if (Util.epsilonEquals(wheel, 0.0, 0.020)) {
-      wheel = 0.0;
-    }
+        // This is just a convoluted way to do a deadband.
+        if (Util.epsilonEquals(wheel, 0.0, 0.020)) {
+          wheel = 0.0;
+        }
 
-    if (wheel != 0 && quickTurn) {
-      mPeriodicDriveData.isQuickturning = true;
-    } else {
-      mPeriodicDriveData.isQuickturning = false;
-    }
+        if (wheel != 0 && quickTurn) {
+          mPeriodicDriveData.isQuickturning = true;
+        } else {
+          mPeriodicDriveData.isQuickturning = false;
+        }
 
-    final double kWheelGain = 0.05;
-    final double kWheelNonlinearity = 0.05;
-    final double denominator = Math.sin(Math.PI / 2.0 * kWheelNonlinearity);
-    // Apply a sin function that's scaled to make it feel better.
-    if (!quickTurn) {
-      wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
-      wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
-      wheel = wheel / (denominator * denominator) * Math.abs(throttle);
-    }
+        final double kWheelGain = 0.05;
+        final double kWheelNonlinearity = 0.05;
+        final double denominator = Math.sin(Math.PI / 2.0 * kWheelNonlinearity);
+        // Apply a sin function that's scaled to make it feel better.
+        if (!quickTurn) {
+          wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
+          wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
+          wheel = wheel / (denominator * denominator) * Math.abs(throttle);
+        }
 
-    wheel *= kWheelGain;
-    // We pass 0 for dy because we use a differential drive and can't strafe.
-    // The wheel here is a constant curvature rather than an actual heading. This is what makes
-    // the drive cheesy.
-    DriveSignal signal = Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, wheel));
+        wheel *= kWheelGain;
+        // We pass 0 for dy because we use a differential drive and can't strafe.
+        // The wheel here is a constant curvature rather than an actual heading. This is what makes
+        // the drive cheesy.
+        DriveSignal signal = Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, wheel));
 
-    // Either the bigger of the two drive signals or 1, whichever is bigger.
-    double scaling_factor =
-        Math.max(
-            1.0,
+        // Either the bigger of the two drive signals or 1, whichever is bigger.
+        double scaling_factor =
             Math.max(
-                Math.abs(signal.getLeft()),
-                Math.abs(signal.getRight()))); // / (1 + (differenceBetweenSides * 6));
+                1.0,
+                Math.max(
+                    Math.abs(signal.getLeft()),
+                    Math.abs(signal.getRight()))); // / (1 + (differenceBetweenSides * 6));
 
-    SmartDashboard.putNumber("scaling factor", scaling_factor);
-    SmartDashboard.putNumber("left signal", (signal.getLeft() / scaling_factor) / 1.5);
-    SmartDashboard.putNumber("right signal", (signal.getRight() / scaling_factor) / 1.5);
+        SmartDashboard.putNumber("scaling factor", scaling_factor);
+        SmartDashboard.putNumber("left signal", (signal.getLeft() / scaling_factor) / 1.5);
+        SmartDashboard.putNumber("right signal", (signal.getRight() / scaling_factor) / 1.5);
 
-    if (quickTurn) {
-      setOpenLoop(
-          new DriveSignal(
-              (signal.getLeft() / scaling_factor) / 5, (signal.getRight() / scaling_factor) / 5));
-    } else {
-      setOpenLoop(
-          new DriveSignal(signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
+        if (quickTurn) {
+          setOpenLoop(
+              new DriveSignal(
+                  (signal.getLeft() / scaling_factor) / 5,
+                  (signal.getRight() / scaling_factor) / 5));
+        } else {
+          setOpenLoop(
+              new DriveSignal(
+                  signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
+        }
+
+        break;
+      case WPILIB_DRIVE:
+        mDifferentialDrive.arcadeDrive(throttle, wheel);
+        break;
+      case WPILIB_DRIVE_2:
+        mPeriodicDriveData.isQuickturning = Math.abs(throttle) > Constants.Drive.quickTurnDeadband;
+        mDifferentialDrive.curvatureDrive(throttle, wheel, mPeriodicDriveData.isQuickturning);
+        break;
+      case MAX_DRIVE:
+        // todo
+        break;
     }
   }
 
