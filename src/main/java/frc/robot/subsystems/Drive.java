@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
@@ -300,9 +299,9 @@ public class Drive extends Subsystem {
     SmartDashboard.putBoolean("rightAcceleratingBackwards", rightAcceleratingBackwards);
 
     boolean noSignal = signal.getLeft() == 0 && signal.getRight() == 0;
-    if(quickturn || (noSignal && stationary)){
+    if (quickturn || (noSignal && stationary)) {
       setOpenloopRamp(0);
-    }else{
+    } else {
       setOpenloopRamp(Constants.Drive.accelLimit);
     }
 
@@ -343,7 +342,7 @@ public class Drive extends Subsystem {
 
     if (wheel != 0 && quickTurn) {
       mPeriodicDriveData.isQuickturning = true;
-    }else{
+    } else {
       mPeriodicDriveData.isQuickturning = false;
     }
 
@@ -372,14 +371,13 @@ public class Drive extends Subsystem {
                 Math.abs(signal.getRight()))); // / (1 + (differenceBetweenSides * 6));
 
     SmartDashboard.putNumber("scaling factor", scaling_factor);
-    SmartDashboard.putNumber("left signal",  (signal.getLeft() / scaling_factor) / 1.5);
-    SmartDashboard.putNumber("right signal",  (signal.getRight() / scaling_factor) / 1.5);
+    SmartDashboard.putNumber("left signal", (signal.getLeft() / scaling_factor) / 1.5);
+    SmartDashboard.putNumber("right signal", (signal.getRight() / scaling_factor) / 1.5);
 
     if (quickTurn) {
       setOpenLoop(
           new DriveSignal(
-              (signal.getLeft() / scaling_factor) / 5,
-              (signal.getRight() / scaling_factor) / 5));
+              (signal.getLeft() / scaling_factor) / 5, (signal.getRight() / scaling_factor) / 5));
     } else {
       setOpenLoop(
           new DriveSignal(signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
