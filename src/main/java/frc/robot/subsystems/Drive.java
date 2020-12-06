@@ -313,28 +313,28 @@ public class Drive extends Subsystem {
     SmartDashboard.putNumber("left limited accel", 0);
     SmartDashboard.putNumber("right limited accel", 0);
 
-    if(leftAcceleratingForward){
+    if (leftAcceleratingForward) {
       double leftIncrease =
           closestToZero(
               accelerationLeft,
               Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
-              
+
       leftOutput = mPeriodicDriveData.left_old + leftIncrease;
 
       SmartDashboard.putNumber("left limited accel", leftIncrease);
-    }else if(leftAcceleratingBackwards){
+    } else if (leftAcceleratingBackwards) {
 
       double leftIncrease =
           closestToZero(
               accelerationLeft,
               Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
-      
+
       leftOutput = mPeriodicDriveData.left_old + leftIncrease;
-      
+
       SmartDashboard.putNumber("left limited accel", leftIncrease);
     }
 
-    if(rightAcceleratingForward){
+    if (rightAcceleratingForward) {
       double rightIncrease =
           closestToZero(
               accelerationRight,
@@ -343,7 +343,7 @@ public class Drive extends Subsystem {
       rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
       SmartDashboard.putNumber("right limited accel", rightIncrease);
-    }else if(rightAcceleratingBackwards){
+    } else if (rightAcceleratingBackwards) {
       double rightIncrease =
           closestToZero(
               accelerationRight,
