@@ -34,6 +34,8 @@ public class Storage extends Subsystem {
 
   private int mBallCount = 0;
 
+  private int mTripCount = 0;
+
   private static Storage sInstance;
 
   public static synchronized Storage getInstance() {
@@ -49,7 +51,7 @@ public class Storage extends Subsystem {
 
   private Storage() {
     if (Robot.isReal()) {
-      mLidar = new TimeOfFlight(0);
+      mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     }
     mBottomRoller = new OurWPITalonSRX(ROLLER_BOTTOM_PORT);
     mTopRoller = new OurWPITalonSRX(ROLLER_TOP_PORT);
@@ -114,7 +116,17 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean isBallDetected() {
-    return getIntakeSensor();
+    if (getIntakeSensor()) {
+      mTripCount++;
+    } else {
+      mTripCount = 0;
+    }
+
+    if (mTripCount >= Constants.Storage.minTripCount) {
+      mTripCount = 0;
+      return true;
+    }
+    return false;
   }
 
   public synchronized boolean isBallStored() {

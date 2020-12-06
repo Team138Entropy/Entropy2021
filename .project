@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Entropy2020</name>
+	<name>Entropy2021</name>
 	<comment>Project Entropy2020 created by Buildship.</comment>
 	<projects>
 	</projects>
@@ -22,7 +22,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1604632925954</id>
+			<id>0</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
