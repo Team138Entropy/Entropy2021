@@ -147,7 +147,7 @@ public class Robot extends TimedRobot {
 
   private static final DigitalInput practiceInput = new DigitalInput(Constants.practiceJumperPin);
 
-  private static boolean isPracticeBot = false;
+  private static boolean isPracticeBot = !practiceInput.get();
 
   // Looper - Running on a set period
   private final Looper mEnabledLooper = new Looper(Constants.robotLoopPeriod);
@@ -854,7 +854,6 @@ public class Robot extends TimedRobot {
         mRobotLogger.error("Unknown test state " + mTestState.toString());
         break;
     }
-    System.out.println("climber position " + mClimber.getEncoderPosition());
   }
 
   @Override
