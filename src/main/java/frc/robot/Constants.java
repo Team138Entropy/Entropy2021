@@ -62,7 +62,7 @@ public class Constants {
 
   /// Subsystems
   public static class Drive {
-    public enum DriveMode{
+    public enum DriveMode {
       OLD_DRIVE,
       WPILIB_DRIVE,
       WPILIB_DRIVE_2,
