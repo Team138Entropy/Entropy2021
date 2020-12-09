@@ -54,6 +54,7 @@ public class Drive extends Subsystem {
     public double right_feedforward;
     public double left_old = 0;
     public double right_old = 0;
+    public double velocity;
     public boolean isQuickturning = false;
   }
 
@@ -305,77 +306,120 @@ public class Drive extends Subsystem {
     SmartDashboard.putNumber("right percent output", rightOutput);
 
     // acceleration limiting begins here
-    // acceleration limiting works because we limit the amount that the motor percents can
-    // increase or decrease between frames (calls to teleopPeriodic())
-    // because speed is a factor of motor percent output, this limits the slope of speed
-    // and the derivitave (slope) of speed is acceleration
+    if (Constants.Drive.driveMode == Constants.Drive.DriveMode.BRIAN_DRIVE) {
+      /*
+            Vrobot(t) = [Vleft(t) + Vright(t)] / 2
+      The constraint should limit the change in velocity from the prior control input.  We need to scale both inputs
+      Delta velocity (t) = | Vrobot(t) - Vrobot(t-1) |
+      If delta velocity(t) > delta velocity limit
+      Vleft(t) = Vleft(t) * [ delta velocity limit / delta velocity(t) ]
+      Vright(t) = Vright(t) * [ delta velocity limit / delta velocity(t) ]
+      else if
+      Do nothing!
+      endif
+            */
 
-    // note that motor drive is not the same as velocity of that motor, as motors take some time
-    // to speed up and slow down. but it's good enough (?) for our purposes
+      // average the two velocities to find the robot velocity (?)
+      double robotVelocity = (leftOutput + rightOutput) / 2;
 
-    // speeding up when going forwards is the same acceleration direction as slowing down when
-    // reversing
-    // and thus has the same constants
-    double accelerationLeft = leftOutput - mPeriodicDriveData.left_old;
-    double accelerationRight = rightOutput - mPeriodicDriveData.right_old;
+      // find out how much our velocity changed since last tick
+      // positive if we're accelerating, negative if we're deccelerating
+      double deltaV = robotVelocity - mPeriodicDriveData.velocity;
 
-    SmartDashboard.putNumber("left accel", accelerationLeft);
-    SmartDashboard.putNumber("right accel", accelerationRight);
+      // we use two different constants for acceleration vs decceleration because our robot's mass
+      // is not
+      // evenly balanced. we don't need to check the case where deltaV is 0 because we don't need to
+      // limit
+      // acceleration there (because we're already stable)
 
-    SmartDashboard.putBoolean("is left accel limited", false);
-    SmartDashboard.putBoolean("is right accel limited", false);
-    SmartDashboard.putBoolean("is left decel limited", false);
-    SmartDashboard.putBoolean("is right decel limited", false);
-    SmartDashboard.putNumber("left limited accel", 0);
-    SmartDashboard.putNumber("right limited accel", 0);
+      double accelLimitConstant =
+          deltaV > 0
+              ? Constants.Drive.AccelerationLimiting.acceleration
+              : Constants.Drive.AccelerationLimiting.decceleration;
 
-    if (leftAcceleratingForward) {
-      double leftIncrease =
-          closestToZero(
-              accelerationLeft,
-              Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
+      if (Math.abs(deltaV) > accelLimitConstant) {
+        // is there a sign (+/-) bug here? who knows!
+        leftOutput = leftOutput * (accelLimitConstant / deltaV);
+        rightOutput = rightOutput * (accelLimitConstant / deltaV);
+      } // no else needed, because in that case our existing velocities are fine
 
-      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+      mPeriodicDriveData.velocity = robotVelocity;
+    } else {
+      // acceleration limiting works because we limit the amount that the motor percents can
+      // increase or decrease between frames (calls to teleopPeriodic())
+      // because speed is a factor of motor percent output, this limits the slope of speed
+      // and the derivitave (slope) of speed is acceleration
 
-      SmartDashboard.putNumber("left limited accel", leftIncrease);
-    } else if (leftAcceleratingBackwards) {
+      // note that motor drive is not the same as velocity of that motor, as motors take some time
+      // to speed up and slow down. but it's good enough (?) for our purposes
 
-      double leftIncrease =
-          closestToZero(
-              accelerationLeft,
-              Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
+      // speeding up when going forwards is the same acceleration direction as slowing down when
+      // reversing
+      // and thus has the same constants
+      double accelerationLeft = leftOutput - mPeriodicDriveData.left_old;
+      double accelerationRight = rightOutput - mPeriodicDriveData.right_old;
 
-      leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+      SmartDashboard.putNumber("left accel", accelerationLeft);
+      SmartDashboard.putNumber("right accel", accelerationRight);
 
-      SmartDashboard.putNumber("left limited accel", leftIncrease);
+      SmartDashboard.putBoolean("is left accel limited", false);
+      SmartDashboard.putBoolean("is right accel limited", false);
+      SmartDashboard.putBoolean("is left decel limited", false);
+      SmartDashboard.putBoolean("is right decel limited", false);
+      SmartDashboard.putNumber("left limited accel", 0);
+      SmartDashboard.putNumber("right limited accel", 0);
+
+      if (leftAcceleratingForward) {
+        double leftIncrease =
+            closestToZero(
+                accelerationLeft,
+                Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft));
+
+        leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+
+        SmartDashboard.putNumber("left limited accel", leftIncrease);
+      } else if (leftAcceleratingBackwards) {
+
+        double leftIncrease =
+            closestToZero(
+                accelerationLeft,
+                Math.copySign(
+                    Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft));
+
+        leftOutput = mPeriodicDriveData.left_old + leftIncrease;
+
+        SmartDashboard.putNumber("left limited accel", leftIncrease);
+      }
+
+      if (rightAcceleratingForward) {
+        double rightIncrease =
+            closestToZero(
+                accelerationRight,
+                Math.copySign(
+                    Constants.Drive.AccelerationLimiting.acceleration, accelerationRight));
+
+        rightOutput = mPeriodicDriveData.right_old + rightIncrease;
+
+        SmartDashboard.putNumber("right limited accel", rightIncrease);
+      } else if (rightAcceleratingBackwards) {
+        double rightIncrease =
+            closestToZero(
+                accelerationRight,
+                Math.copySign(
+                    Constants.Drive.AccelerationLimiting.decceleration, accelerationRight));
+
+        rightOutput = mPeriodicDriveData.right_old + rightIncrease;
+
+        SmartDashboard.putNumber("right limited accel", rightIncrease);
+      }
+
+      SmartDashboard.putNumber("left limited percent output", leftOutput);
+      SmartDashboard.putNumber("right limited percent output", rightOutput);
+
+      // cache our olds after we've used them to make them actually "olds"
+      mPeriodicDriveData.left_old = leftOutput;
+      mPeriodicDriveData.right_old = rightOutput;
     }
-
-    if (rightAcceleratingForward) {
-      double rightIncrease =
-          closestToZero(
-              accelerationRight,
-              Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationRight));
-
-      rightOutput = mPeriodicDriveData.right_old + rightIncrease;
-
-      SmartDashboard.putNumber("right limited accel", rightIncrease);
-    } else if (rightAcceleratingBackwards) {
-      double rightIncrease =
-          closestToZero(
-              accelerationRight,
-              Math.copySign(Constants.Drive.AccelerationLimiting.decceleration, accelerationRight));
-
-      rightOutput = mPeriodicDriveData.right_old + rightIncrease;
-
-      SmartDashboard.putNumber("right limited accel", rightIncrease);
-    }
-
-    SmartDashboard.putNumber("left limited percent output", leftOutput);
-    SmartDashboard.putNumber("right limited percent output", rightOutput);
-
-    // cache our olds after we've used them to make them actually "olds"
-    mPeriodicDriveData.left_old = leftOutput;
-    mPeriodicDriveData.right_old = rightOutput;
 
     return new double[] {leftOutput, rightOutput};
   }
@@ -389,6 +433,7 @@ public class Drive extends Subsystem {
 
   public synchronized void setDrive(double throttle, double wheel) {
     switch (Constants.Drive.driveMode) {
+      case BRIAN_DRIVE:
       case OLD_DRIVE:
         boolean quickTurn = false;
         wheel = wheel * -1; // invert wheel
@@ -451,9 +496,6 @@ public class Drive extends Subsystem {
       case WPILIB_DRIVE:
         mDifferentialDrive.arcadeDrive(throttle / 1.5, wheel / 1.5);
         mDriveLogger.log(throttle / 5 + " " + wheel / 5);
-        break;
-      case MAX_DRIVE:
-        // todo
         break;
     }
   }

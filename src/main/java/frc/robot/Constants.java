@@ -68,7 +68,7 @@ public class Constants {
     public enum DriveMode {
       OLD_DRIVE,
       WPILIB_DRIVE,
-      MAX_DRIVE
+      BRIAN_DRIVE
     }
 
     public class AccelerationLimiting {
