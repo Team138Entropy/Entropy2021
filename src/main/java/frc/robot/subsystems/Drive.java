@@ -258,6 +258,30 @@ public class Drive extends Subsystem {
     double leftOutput = signal.getLeft();
     double rightOutput = signal.getRight();
 
+    // boolean noSignal = signal.getLeft() == 0 && signal.getRight() == 0;
+    // if (quickturn || (noSignal && stationary)) {
+    //   setOpenloopRamp(0);
+    // } else {
+    //   setOpenloopRamp(Constants.Drive.accelLimit);
+    // }
+
+
+    // pass our outputs
+    double[] outputs = limitAccel(leftOutput, rightOutput);
+    leftOutput = outputs[0];
+    rightOutput = outputs[1];
+
+    SmartDashboard.putBoolean("quckturn", quickturn);
+    
+
+    // then we set our master talons, remembering that the physical right of the drivetrain is
+    // backwards, for some reason :)
+    mLeftMaster.set(ControlMode.PercentOutput, leftOutput);
+    mRightMaster.set(ControlMode.PercentOutput, rightOutput * -1);
+  }
+
+
+  private double[] limitAccel(double leftOutput, double rightOutput){
     boolean leftAcceleratingForward = false;
     boolean leftAcceleratingBackwards = false;
 
@@ -276,7 +300,6 @@ public class Drive extends Subsystem {
       rightAcceleratingBackwards = true;
     }
 
-    SmartDashboard.putBoolean("quckturn", quickturn);
     SmartDashboard.putBoolean("leftAcceleratingForward", leftAcceleratingForward);
     SmartDashboard.putBoolean("leftAcceleratingBackwards", leftAcceleratingBackwards);
     SmartDashboard.putBoolean("rightAcceleratingForward", rightAcceleratingForward);
@@ -284,18 +307,14 @@ public class Drive extends Subsystem {
     SmartDashboard.putNumber("left percent output", leftOutput);
     SmartDashboard.putNumber("right percent output", rightOutput);
 
-    // boolean noSignal = signal.getLeft() == 0 && signal.getRight() == 0;
-    // if (quickturn || (noSignal && stationary)) {
-    //   setOpenloopRamp(0);
-    // } else {
-    //   setOpenloopRamp(Constants.Drive.accelLimit);
-    // }
-
     // acceleration limiting begins here
     // acceleration limiting works because we limit the amount that the motor percents can
     // increase or decrease between frames (calls to teleopPeriodic())
     // because speed is a factor of motor percent output, this limits the slope of speed
     // and the derivitave (slope) of speed is acceleration
+
+    // note that motor drive is not the same as velocity of that motor, as motors take some time
+    // to speed up and slow down. but it's good enough (?) for our purposes
 
     // speeding up when going forwards is the same acceleration direction as slowing down when
     // reversing
@@ -361,10 +380,7 @@ public class Drive extends Subsystem {
     mPeriodicDriveData.left_old = leftOutput;
     mPeriodicDriveData.right_old = rightOutput;
 
-    // then we set our master talons, remembering that the physical right of the drivetrain is
-    // backwards, for some reason :)
-    mLeftMaster.set(ControlMode.PercentOutput, leftOutput);
-    mRightMaster.set(ControlMode.PercentOutput, rightOutput * -1);
+    return new double[] {leftOutput, rightOutput};
   }
 
   // Used for arcade turning during auto

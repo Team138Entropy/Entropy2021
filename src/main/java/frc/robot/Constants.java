@@ -73,8 +73,11 @@ public class Constants {
 
     public class AccelerationLimiting {
       // divide the reciprocal of desired seconds until full throttle (forwards or backwards) by 50
-      // to find max accel
-      // per tick
+      // to find max accel per tick (the second number below is how many seconds you want it to take)
+
+      // speeding up when going forwards is the same acceleration direction as slowing down when
+      // reversing
+      // and thus has the same constants
 
       // make this one higher if this falls forwards (rotates around the axis of the intake roller)
       public static final double acceleration = (1f / 1f) / 50f;
