@@ -4,8 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
@@ -312,7 +310,8 @@ public class Drive extends Subsystem {
     SmartDashboard.putNumber("left percent output", leftOutput + tinyValue);
     SmartDashboard.putNumber("right percent output", rightOutput + tinyValue);
 
-    SmartDashboard.putBoolean("Brian drive?", Constants.Drive.driveMode == Constants.Drive.DriveMode.BRIAN_DRIVE);
+    SmartDashboard.putBoolean(
+        "Brian drive?", Constants.Drive.driveMode == Constants.Drive.DriveMode.BRIAN_DRIVE);
 
     // acceleration limiting begins here
     if (Constants.Drive.driveMode == Constants.Drive.DriveMode.BRIAN_DRIVE) {
@@ -354,18 +353,16 @@ public class Drive extends Subsystem {
         SmartDashboard.putBoolean("accel limited", true);
         // is there a sign (+/-) bug here? who knows!
 
-        
-        mDriveLogger.info("leftOutput " + leftOutput + " * " + (accelLimitConstant / Math.abs(deltaV)));
+        mDriveLogger.info(
+            "leftOutput " + leftOutput + " * " + (accelLimitConstant / Math.abs(deltaV)));
 
-        // TODO: MALE THESE OLD OUTPUTS!!!
         leftOutput = leftOutput * (accelLimitConstant / Math.abs(deltaV));
-        rightOutput = rightOutput * (accelLimitConstant / Math.abs(deltaV));
+        rightOutput = leftOutput * (accelLimitConstant / Math.abs(deltaV));
         mDriveLogger.info("\tleftOutput " + leftOutput);
-      }else{
+      } else {
         SmartDashboard.putBoolean("accel limited", false);
       }
 
-      
       SmartDashboard.putNumber("left limited percent output", leftOutput + tinyValue);
       SmartDashboard.putNumber("right limited percent output", rightOutput + tinyValue);
 
@@ -442,11 +439,11 @@ public class Drive extends Subsystem {
       SmartDashboard.putNumber("tinyValue", tinyValue);
       SmartDashboard.putNumber("left limited percent output", leftOutput + tinyValue);
       SmartDashboard.putNumber("right limited percent output", rightOutput + tinyValue);
-
-      // cache our olds after we've used them to make them actually "olds"
-      mPeriodicDriveData.left_old = leftOutput;
-      mPeriodicDriveData.right_old = rightOutput;
     }
+    
+    // cache our olds after we've used them to make them actually "olds"
+    mPeriodicDriveData.left_old = leftOutput;
+    mPeriodicDriveData.right_old = rightOutput;
 
     return new double[] {leftOutput, rightOutput};
   }

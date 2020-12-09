@@ -89,7 +89,7 @@ public class Constants {
 
     public static double quickTurnDeadband = 0.1;
 
-    public static DriveMode driveMode = DriveMode.OLD_DRIVE;
+    public static DriveMode driveMode = DriveMode.BRIAN_DRIVE;
 
     public static boolean enabled = true;
 
