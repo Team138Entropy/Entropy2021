@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
@@ -298,12 +300,19 @@ public class Drive extends Subsystem {
       rightAcceleratingBackwards = true;
     }
 
+    // https://www.chiefdelphi.com/t/shuffleboard-graph-widget-data-updating/165723
+    // why does this happen???
+    // great job shuffleboard
+    double tinyValue = Math.random() / 100000;
+
     SmartDashboard.putBoolean("leftAcceleratingForward", leftAcceleratingForward);
     SmartDashboard.putBoolean("leftAcceleratingBackwards", leftAcceleratingBackwards);
     SmartDashboard.putBoolean("rightAcceleratingForward", rightAcceleratingForward);
     SmartDashboard.putBoolean("rightAcceleratingBackwards", rightAcceleratingBackwards);
-    SmartDashboard.putNumber("left percent output", leftOutput);
-    SmartDashboard.putNumber("right percent output", rightOutput);
+    SmartDashboard.putNumber("left percent output", leftOutput + tinyValue);
+    SmartDashboard.putNumber("right percent output", rightOutput + tinyValue);
+
+    SmartDashboard.putBoolean("Brian drive?", Constants.Drive.driveMode == Constants.Drive.DriveMode.BRIAN_DRIVE);
 
     // acceleration limiting begins here
     if (Constants.Drive.driveMode == Constants.Drive.DriveMode.BRIAN_DRIVE) {
@@ -322,9 +331,13 @@ public class Drive extends Subsystem {
       // average the two velocities to find the robot velocity (?)
       double robotVelocity = (leftOutput + rightOutput) / 2;
 
+      SmartDashboard.putNumber("robot velocity", robotVelocity + tinyValue);
+
       // find out how much our velocity changed since last tick
       // positive if we're accelerating, negative if we're deccelerating
       double deltaV = robotVelocity - mPeriodicDriveData.velocity;
+
+      SmartDashboard.putNumber("deltaV", deltaV + tinyValue);
 
       // we use two different constants for acceleration vs decceleration because our robot's mass
       // is not
@@ -338,12 +351,25 @@ public class Drive extends Subsystem {
               : Constants.Drive.AccelerationLimiting.decceleration;
 
       if (Math.abs(deltaV) > accelLimitConstant) {
+        SmartDashboard.putBoolean("accel limited", true);
         // is there a sign (+/-) bug here? who knows!
-        leftOutput = leftOutput * (accelLimitConstant / deltaV);
-        rightOutput = rightOutput * (accelLimitConstant / deltaV);
-      } // no else needed, because in that case our existing velocities are fine
 
-      mPeriodicDriveData.velocity = robotVelocity;
+        
+        mDriveLogger.info("leftOutput " + leftOutput + " * " + (accelLimitConstant / Math.abs(deltaV)));
+
+        // TODO: MALE THESE OLD OUTPUTS!!!
+        leftOutput = leftOutput * (accelLimitConstant / Math.abs(deltaV));
+        rightOutput = rightOutput * (accelLimitConstant / Math.abs(deltaV));
+        mDriveLogger.info("\tleftOutput " + leftOutput);
+      }else{
+        SmartDashboard.putBoolean("accel limited", false);
+      }
+
+      
+      SmartDashboard.putNumber("left limited percent output", leftOutput + tinyValue);
+      SmartDashboard.putNumber("right limited percent output", rightOutput + tinyValue);
+
+      mPeriodicDriveData.velocity = (leftOutput + rightOutput) / 2;
     } else {
       // acceleration limiting works because we limit the amount that the motor percents can
       // increase or decrease between frames (calls to teleopPeriodic())
@@ -366,8 +392,8 @@ public class Drive extends Subsystem {
       SmartDashboard.putBoolean("is right accel limited", false);
       SmartDashboard.putBoolean("is left decel limited", false);
       SmartDashboard.putBoolean("is right decel limited", false);
-      SmartDashboard.putNumber("left limited accel", 0);
-      SmartDashboard.putNumber("right limited accel", 0);
+      SmartDashboard.putNumber("left limited accel", tinyValue);
+      SmartDashboard.putNumber("right limited accel", tinyValue);
 
       if (leftAcceleratingForward) {
         double leftIncrease =
@@ -377,7 +403,7 @@ public class Drive extends Subsystem {
 
         leftOutput = mPeriodicDriveData.left_old + leftIncrease;
 
-        SmartDashboard.putNumber("left limited accel", leftIncrease);
+        SmartDashboard.putNumber("left limited accel", leftIncrease + tinyValue);
       } else if (leftAcceleratingBackwards) {
 
         double leftIncrease =
@@ -388,7 +414,7 @@ public class Drive extends Subsystem {
 
         leftOutput = mPeriodicDriveData.left_old + leftIncrease;
 
-        SmartDashboard.putNumber("left limited accel", leftIncrease);
+        SmartDashboard.putNumber("left limited accel", leftIncrease + tinyValue);
       }
 
       if (rightAcceleratingForward) {
@@ -400,7 +426,7 @@ public class Drive extends Subsystem {
 
         rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
-        SmartDashboard.putNumber("right limited accel", rightIncrease);
+        SmartDashboard.putNumber("right limited accel", rightIncrease + tinyValue);
       } else if (rightAcceleratingBackwards) {
         double rightIncrease =
             closestToZero(
@@ -413,8 +439,9 @@ public class Drive extends Subsystem {
         SmartDashboard.putNumber("right limited accel", rightIncrease);
       }
 
-      SmartDashboard.putNumber("left limited percent output", leftOutput);
-      SmartDashboard.putNumber("right limited percent output", rightOutput);
+      SmartDashboard.putNumber("tinyValue", tinyValue);
+      SmartDashboard.putNumber("left limited percent output", leftOutput + tinyValue);
+      SmartDashboard.putNumber("right limited percent output", rightOutput + tinyValue);
 
       // cache our olds after we've used them to make them actually "olds"
       mPeriodicDriveData.left_old = leftOutput;
@@ -432,6 +459,8 @@ public class Drive extends Subsystem {
   }
 
   public synchronized void setDrive(double throttle, double wheel) {
+    SmartDashboard.putNumber("throttle", throttle);
+    SmartDashboard.putNumber("wheel", wheel);
     switch (Constants.Drive.driveMode) {
       case BRIAN_DRIVE:
       case OLD_DRIVE:
