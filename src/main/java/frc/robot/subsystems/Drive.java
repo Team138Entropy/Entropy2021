@@ -265,14 +265,12 @@ public class Drive extends Subsystem {
     //   setOpenloopRamp(Constants.Drive.accelLimit);
     // }
 
-
     // pass our outputs
     double[] outputs = limitAccel(leftOutput, rightOutput);
     leftOutput = outputs[0];
     rightOutput = outputs[1];
 
     SmartDashboard.putBoolean("quckturn", quickturn);
-    
 
     // then we set our master talons, remembering that the physical right of the drivetrain is
     // backwards, for some reason :)
@@ -280,8 +278,7 @@ public class Drive extends Subsystem {
     mRightMaster.set(ControlMode.PercentOutput, rightOutput * -1);
   }
 
-
-  private double[] limitAccel(double leftOutput, double rightOutput){
+  private double[] limitAccel(double leftOutput, double rightOutput) {
     boolean leftAcceleratingForward = false;
     boolean leftAcceleratingBackwards = false;
 
