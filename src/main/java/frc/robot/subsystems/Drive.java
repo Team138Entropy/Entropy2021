@@ -440,7 +440,7 @@ public class Drive extends Subsystem {
       SmartDashboard.putNumber("left limited percent output", leftOutput + tinyValue);
       SmartDashboard.putNumber("right limited percent output", rightOutput + tinyValue);
     }
-    
+
     // cache our olds after we've used them to make them actually "olds"
     mPeriodicDriveData.left_old = leftOutput;
     mPeriodicDriveData.right_old = rightOutput;
