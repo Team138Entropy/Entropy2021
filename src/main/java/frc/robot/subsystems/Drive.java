@@ -280,16 +280,16 @@ public class Drive extends Subsystem {
   }
 
   /**
-     * 
-     * @param value1 The first value
-     * @param value2 The second value
-     * @param tweenAmount The tween amount, 0 returns the first value, 1 returns the second value, .5 returns the average, .25 is closer to the first, etc.
-     * @return
-     */
-    public static double tweenBetween(double value1, double value2, double tweenAmount){
-      double difference = value2 - value1;
-      return value1 + (difference * tweenAmount);
-    }
+   * @param value1 The first value
+   * @param value2 The second value
+   * @param tweenAmount The tween amount, 0 returns the first value, 1 returns the second value, .5
+   *     returns the average, .25 is closer to the first, etc.
+   * @return
+   */
+  public static double tweenBetween(double value1, double value2, double tweenAmount) {
+    double difference = value2 - value1;
+    return value1 + (difference * tweenAmount);
+  }
 
   private double[] limitAccel(double leftOutput, double rightOutput, double wheel) {
     boolean leftAcceleratingForward = false;
@@ -411,24 +411,30 @@ public class Drive extends Subsystem {
 
       straightness = straightness / straightnessFactor + (1 - (1 / straightnessFactor));
 
-      // System.out.println(straightness);
-      System.out.println(straightness);
+      SmartDashboard.putNumber("drive straightness", straightness);
 
       if (leftAcceleratingForward) {
-        double leftIncrease = tweenBetween(accelerationLeft, 
-            closestToZero(
+        double leftIncrease =
+            tweenBetween(
                 accelerationLeft,
-                Math.copySign(Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft)), straightness);
+                closestToZero(
+                    accelerationLeft,
+                    Math.copySign(
+                        Constants.Drive.AccelerationLimiting.acceleration, accelerationLeft)),
+                straightness);
 
         leftOutput = mPeriodicDriveData.left_old + leftIncrease;
 
         SmartDashboard.putNumber("left limited accel", leftIncrease + tinyValue);
       } else if (leftAcceleratingBackwards) {
-        double leftIncrease = tweenBetween(accelerationLeft,
-            closestToZero(
+        double leftIncrease =
+            tweenBetween(
                 accelerationLeft,
-                Math.copySign(
-                    Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft)), straightness);
+                closestToZero(
+                    accelerationLeft,
+                    Math.copySign(
+                        Constants.Drive.AccelerationLimiting.decceleration, accelerationLeft)),
+                straightness);
 
         leftOutput = mPeriodicDriveData.left_old + leftIncrease;
 
@@ -436,21 +442,27 @@ public class Drive extends Subsystem {
       }
 
       if (rightAcceleratingForward) {
-        double rightIncrease = tweenBetween(accelerationRight,
-            closestToZero(
+        double rightIncrease =
+            tweenBetween(
                 accelerationRight,
-                Math.copySign(
-                    Constants.Drive.AccelerationLimiting.acceleration, accelerationRight)), straightness);
+                closestToZero(
+                    accelerationRight,
+                    Math.copySign(
+                        Constants.Drive.AccelerationLimiting.acceleration, accelerationRight)),
+                straightness);
 
         rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
         SmartDashboard.putNumber("right limited accel", rightIncrease + tinyValue);
       } else if (rightAcceleratingBackwards) {
-        double rightIncrease = tweenBetween(accelerationRight,
-            closestToZero(
+        double rightIncrease =
+            tweenBetween(
                 accelerationRight,
-                Math.copySign(
-                    Constants.Drive.AccelerationLimiting.decceleration, accelerationRight)), straightness);
+                closestToZero(
+                    accelerationRight,
+                    Math.copySign(
+                        Constants.Drive.AccelerationLimiting.decceleration, accelerationRight)),
+                straightness);
 
         rightOutput = mPeriodicDriveData.right_old + rightIncrease;
 
@@ -533,7 +545,8 @@ public class Drive extends Subsystem {
           setOpenLoop(
               new DriveSignal(
                   (signal.getLeft() / scaling_factor) / 5,
-                  (signal.getRight() / scaling_factor) / 5, wheel));
+                  (signal.getRight() / scaling_factor) / 5,
+                  wheel));
         } else {
           setOpenLoop(
               new DriveSignal(
@@ -606,7 +619,8 @@ public class Drive extends Subsystem {
     setSimplePercentOutput(
         new DriveSignal(
             MathUtil.clamp(leftMotorOutput, -max, max),
-            MathUtil.clamp(rightMotorOutput, -max, max), 0));
+            MathUtil.clamp(rightMotorOutput, -max, max),
+            0));
   }
 
   /*
