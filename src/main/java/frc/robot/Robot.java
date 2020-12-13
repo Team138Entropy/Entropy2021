@@ -817,12 +817,14 @@ public class Robot extends TimedRobot {
           }
         }
 
+        /*
         // Shooter roller ON while button held
         if (mOperatorInterface.isShooterTest()) {
           mShooter.setOutput(mOperatorInterface.getOperatorThrottle());
         } else {
           mShooter.stop();
         }
+        */
 
         if (mOperatorInterface.isDriveLeftBackTest()) {
           mDrive.setOutputLeftBack(mOperatorInterface.getDriveThrottle());
