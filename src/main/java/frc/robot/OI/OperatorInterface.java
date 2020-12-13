@@ -45,6 +45,8 @@ public class OperatorInterface {
     mClimbUpWasPressed = new LatchedBoolean();
     mClimbDownWasPressed = new LatchedBoolean();
     mClimbStartWasPressed = new LatchedBoolean();
+    mRollerUp = new LatchedBoolean();
+    mRollerDown = new LatchedBoolean();
   }
 
   // Driver
@@ -225,7 +227,8 @@ public class OperatorInterface {
   }
 
   public boolean getRollerUp() {
-    return mRollerUp.update(OperatorController.getButton(NykoController.Button.LEFT_BUMPER));
+    boolean mLeftBumper = OperatorController.getButton(NykoController.Button.LEFT_BUMPER);
+    return mRollerUp.update(mLeftBumper);
   }
 
   public boolean getRollerDown() {
