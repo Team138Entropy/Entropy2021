@@ -858,7 +858,7 @@ public class Robot extends TimedRobot {
         if (mOperatorInterface.getRollerDown()) {
           mRollerSpeed -= 0.05;
         }
-        
+
         if (mOperatorInterface.getRollerReset()) {
           mRollerSpeed = 0;
         }
