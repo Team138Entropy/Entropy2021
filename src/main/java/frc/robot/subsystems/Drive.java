@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
@@ -18,7 +20,7 @@ public class Drive extends Subsystem {
   private static Drive mInstance;
 
   // Drive Talons
-  private OurWPITalonSRX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
+  private WPI_TalonFX mLeftMaster, mRightMaster, mLeftSlave, mRightSlave;
 
   public enum DriveControlState {
     OPEN_LOOP, // open loop voltage control
@@ -84,16 +86,16 @@ public class Drive extends Subsystem {
   private Drive() {
     mDriveLogger = new Logger(Constants.Loggers.DRIVE);
 
-    mLeftMaster = new OurWPITalonSRX(Constants.Talons.Drive.leftMaster);
+    mLeftMaster = new WPI_TalonFX(Constants.Talons.Drive.leftMaster);
     // configureSpark(mLeftMaster, true, true);
 
-    mLeftSlave = new OurWPITalonSRX(Constants.Talons.Drive.leftSlave);
+    mLeftSlave = new WPI_TalonFX(Constants.Talons.Drive.leftSlave);
     // configureSpark(mLeftSlave, true, false);
 
-    mRightMaster = new OurWPITalonSRX(Constants.Talons.Drive.rightMaster);
+    mRightMaster = new WPI_TalonFX(Constants.Talons.Drive.rightMaster);
     // configureSpark(mRightMaster, false, true);
 
-    mRightSlave = new OurWPITalonSRX(Constants.Talons.Drive.rightSlave);
+    mRightSlave = new WPI_TalonFX(Constants.Talons.Drive.rightSlave);
     // configureSpark(mRightSlave, false, false);
 
     configTalon(mLeftMaster);
@@ -115,7 +117,7 @@ public class Drive extends Subsystem {
     }
   }
 
-  private void configTalon(OurWPITalonSRX talon) {
+  private void configTalon(WPI_TalonFX talon) {
     talon.configFactoryDefault();
     talon.configNominalOutputForward(0., 0);
     talon.configNominalOutputReverse(0., 0);
