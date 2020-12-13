@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.SpeedLookupTable;
 
 /** Singleton that represents the shooter mechanism. */
@@ -27,7 +28,7 @@ public class Shooter extends Subsystem {
 
   // TEMPORARY STUFF BEGINS HERE
   private final int ROLLER_PORT = Constants.Talons.Shooter.master;
-  private final int ROLLER_SLAVE_PORT = Constants.Talons.Shooter.slave;
+  private final int ROLLER_SLAVE_PORT = Constants.Talons.Shooter.slavePractice;
 
   private final int DEFAULT_ROLLER_SPEED = 2000; // Encoder ticks per 100ms, change this value
   private int mVelocityAdjustment = 0;
@@ -41,7 +42,7 @@ public class Shooter extends Subsystem {
   private int mTimeSinceWeWereAtVelocity = SPEED_DEADBAND_DELAY;
 
   private Shooter() {
-    mRoller = new PIDRoller(ROLLER_PORT, ROLLER_SLAVE_PORT, P, I, D, FEEDFORWARD);
+    mRoller = new PIDRoller(ROLLER_PORT, Robot.getIsPracticeBot() ? Constants.Talons.Shooter.slavePractice : Constants.Talons.Shooter.slaveComp, P, I, D, FEEDFORWARD);
   }
 
   public static synchronized Shooter getInstance() {

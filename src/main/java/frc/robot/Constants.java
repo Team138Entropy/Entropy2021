@@ -55,7 +55,8 @@ public class Constants {
 
     public static class Shooter {
       public static final int master = 6;
-      public static final int slave = 7;
+      public static final int slavePractice = 5;// TODO: this should be 7 in comp
+      public static final int slaveComp = 7;
     }
 
     public static final int turret = 9;

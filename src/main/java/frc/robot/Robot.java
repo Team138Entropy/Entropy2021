@@ -225,7 +225,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    readIsPracticeBot();
     SmartDashboard.putBoolean("Correct Controllers", mOperatorInterface.checkControllers());
+    SmartDashboard.putBoolean("Practice Bot", getIsPracticeBot());
   }
 
   private void updateSmartDashboard() {
