@@ -81,6 +81,8 @@ public class Robot extends TimedRobot {
     AUTO_DRIVE
   }
 
+  private double mRollerSpeed = 0;
+
   // Vision Related Valuables
   private double LastDistance = -1;
   private int LastTurretVisionID = -1; // use IDs to filter out bad ideas
@@ -849,6 +851,15 @@ public class Robot extends TimedRobot {
         if (mOperatorInterface.getFunctional()) {
           mTestState = TestState.START;
         }
+
+        if(mOperatorInterface.getRollerUp()){
+          mRollerSpeed += 0.05;
+        }
+        if(mOperatorInterface.getRollerDown()){
+          mRollerSpeed -= 0.05;
+        }
+
+        mShooter.setOutput(mRollerSpeed);
         break;
       default:
         mRobotLogger.error("Unknown test state " + mTestState.toString());

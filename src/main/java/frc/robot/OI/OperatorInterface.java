@@ -29,6 +29,9 @@ public class OperatorInterface {
   private LatchedBoolean mClimbDownWasPressed;
   private LatchedBoolean mClimbStartWasPressed;
 
+  private LatchedBoolean mRollerUp;
+  private LatchedBoolean mRollerDown;
+
   public static synchronized OperatorInterface getInstance() {
     if (mInstance == null) {
       mInstance = new OperatorInterface();
@@ -219,6 +222,14 @@ public class OperatorInterface {
 
   public boolean getFunctional() {
     return OperatorController.getButton(NykoController.Button.MIDDLE_10);
+  }
+
+  public boolean getRollerUp() {
+    return mRollerUp.update(OperatorController.getButton(NykoController.Button.RIGHT_BUMPER));
+  }
+
+  public boolean getRollerDown() {
+    return mRollerDown.update(OperatorController.getButton(NykoController.Button.RIGHT_TRIGGER));
   }
 
   /**
