@@ -648,10 +648,10 @@ public class Drive extends Subsystem {
     if (Robot.isReal()) {
       mLeftMaster
           .getSensorCollection()
-          .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+          .setIntegratedSensorPosition(0, Constants.Drive.talonSensorTimeoutMs);
       mRightMaster
           .getSensorCollection()
-          .setQuadraturePosition(0, Constants.Drive.talonSensorTimeoutMs);
+          .setIntegratedSensorPosition(0, Constants.Drive.talonSensorTimeoutMs);
     }
   }
 
