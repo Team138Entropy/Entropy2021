@@ -229,7 +229,7 @@ public class OperatorInterface {
   }
 
   public boolean getRollerDown() {
-    return mRollerDown.update(OperatorController.getButton(NykoController.Button.RIGHT_TRIGGER));
+    return mRollerDown.update(OperatorController.getButton(NykoController.Button.LEFT_TRIGGER));
   }
 
   public boolean getRollerReset() {
