@@ -11,7 +11,6 @@ import frc.robot.OurWPITalonSRX;
 public class Climber extends Subsystem {
   private final int PORT_NUMBER = Constants.Talons.climber;
 
-  // TODO: Tune these values
   private final int DETECT_BAND = Constants.Climber.detectionRange;
   private final int EXTENDED_HEIGHT_IN_ENCODER_TICKS = Constants.Climber.Positions.extended;
   private final int RETRACTED_HEIGHT_IN_ENCODER_TICKS = Constants.Climber.Positions.retracted;

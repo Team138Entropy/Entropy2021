@@ -136,7 +136,6 @@ public class GoalTrack {
         // just set our current position (smoothed position)
         mSmoothedPosition = mObservedPositions.lastEntry().getValue();
         VisionDistance = mSmoothedPosition.StoredDistance;
-        int iii = 0;
       } else {
         // We have Samples
         // Average each Sample
@@ -149,7 +148,6 @@ public class GoalTrack {
         // Create a new Pose2D object
         mSmoothedPosition = new Pose2d(x, y, new Rotation2d(cos, sin, true));
         VisionDistance = (vd / ValueCount);
-        int iiii = 0;
       }
     }
   }

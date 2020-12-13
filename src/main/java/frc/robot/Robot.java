@@ -930,8 +930,6 @@ public class Robot extends TimedRobot {
   }
 
   public void driveTrainLoop() {
-    // TODO: Cache whether or not the robot has a drivetrain. We shouldn't be calling the config
-    // system every tick.
     if (Constants.Drive.enabled) {
       // Check User Inputs
       double driveThrottle = mOperatorInterface.getDriveThrottle();
@@ -1205,7 +1203,6 @@ public class Robot extends TimedRobot {
   }
 
   private boolean checkTransitionToClimbing() {
-    // TODO: Remove the check that climber is enabled
     if (mOperatorInterface.climbStart() && Constants.Climber.enabled) {
       mRobotLogger.log("Changing to climbing");
 

@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.*;
-
 public class ShuffleboardHandler extends Subsystem {
   private static ShuffleboardHandler mInstance;
 

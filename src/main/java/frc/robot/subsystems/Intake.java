@@ -16,7 +16,6 @@ public class Intake extends Subsystem {
 
   private final int ROLLER_PORT = Constants.Talons.intakeRoller;
 
-  // TODO: Tune these values
   private final double ROLLER_SPEED = Constants.Intake.intakeRollerSpeed;
 
   private final OurWPITalonSRX mRoller;

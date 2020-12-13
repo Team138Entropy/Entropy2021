@@ -104,8 +104,7 @@ public class Turret extends Subsystem {
 
     } else if (mCurrentState == TurretState.SEARCHING) {
       // searching for a track
-      // TODO
-      // move in between two areas
+      // TODO: move in between two areas
 
     } else if (mCurrentState == TurretState.MANUAL_AIM) {
       // Manual Control

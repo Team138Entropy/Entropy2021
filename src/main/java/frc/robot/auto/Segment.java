@@ -26,7 +26,7 @@ public abstract class Segment {
   public abstract boolean finished();
 
   /**
-   * Returns a new Segment created with the same parameters. TODO: Find a better way to do this
+   * Returns a new Segment created with the same parameters.
    *
    * @return a copy of this segment.
    */
