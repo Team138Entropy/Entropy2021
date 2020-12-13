@@ -42,7 +42,16 @@ public class Shooter extends Subsystem {
   private int mTimeSinceWeWereAtVelocity = SPEED_DEADBAND_DELAY;
 
   private Shooter() {
-    mRoller = new PIDRoller(ROLLER_PORT, Robot.getIsPracticeBot() ? Constants.Talons.Shooter.slavePractice : Constants.Talons.Shooter.slaveComp, P, I, D, FEEDFORWARD);
+    mRoller =
+        new PIDRoller(
+            ROLLER_PORT,
+            Robot.getIsPracticeBot()
+                ? Constants.Talons.Shooter.slavePractice
+                : Constants.Talons.Shooter.slaveComp,
+            P,
+            I,
+            D,
+            FEEDFORWARD);
   }
 
   public static synchronized Shooter getInstance() {
