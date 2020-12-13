@@ -852,10 +852,10 @@ public class Robot extends TimedRobot {
           mTestState = TestState.START;
         }
 
-        if(mOperatorInterface.getRollerUp()){
+        if (mOperatorInterface.getRollerUp()) {
           mRollerSpeed += 0.05;
         }
-        if(mOperatorInterface.getRollerDown()){
+        if (mOperatorInterface.getRollerDown()) {
           mRollerSpeed -= 0.05;
         }
 
