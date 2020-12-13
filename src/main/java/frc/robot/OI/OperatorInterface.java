@@ -225,11 +225,15 @@ public class OperatorInterface {
   }
 
   public boolean getRollerUp() {
-    return mRollerUp.update(OperatorController.getButton(NykoController.Button.RIGHT_BUMPER));
+    return mRollerUp.update(OperatorController.getButton(NykoController.Button.LEFT_BUMPER));
   }
 
   public boolean getRollerDown() {
     return mRollerDown.update(OperatorController.getButton(NykoController.Button.RIGHT_TRIGGER));
+  }
+  
+  public boolean getRollerReset() {
+    return OperatorController.getButton(NykoController.Button.MIDDLE_11);
   }
 
   /**

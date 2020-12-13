@@ -858,8 +858,14 @@ public class Robot extends TimedRobot {
         if (mOperatorInterface.getRollerDown()) {
           mRollerSpeed -= 0.05;
         }
+        
+        if (mOperatorInterface.getRollerReset()) {
+          mRollerSpeed = 0;
+        }
 
         mShooter.setOutput(mRollerSpeed);
+
+        SmartDashboard.putNumber("roller speed", mRollerSpeed);
         break;
       default:
         mRobotLogger.error("Unknown test state " + mTestState.toString());
