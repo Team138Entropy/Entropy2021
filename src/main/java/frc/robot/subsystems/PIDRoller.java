@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
-import frc.robot.OurWPITalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.robot.Robot;
 
 class PIDRoller {
@@ -12,15 +12,17 @@ class PIDRoller {
   private final int PID_LOOP_INDEX = 0;
   private final int TIMEOUT_MS = 10;
 
-  private final OurWPITalonSRX mTalon;
-  private final OurWPITalonSRX mTalonSlave;
+  private final TalonFX mTalon;
+  private final TalonFX mTalonSlave;
 
   PIDRoller(int talonPort, int talon2Port, double p, double i, double d, double f) {
-    mTalon = new OurWPITalonSRX(talonPort);
-    mTalonSlave = new OurWPITalonSRX(talon2Port);
+    mTalon = new TalonFX(talonPort);
+    mTalonSlave = new TalonFX(talon2Port);
+    mTalonSlave.follow(mTalon);
 
     mTalon.configFactoryDefault();
     mTalonSlave.configFactoryDefault();
+    mTalonSlave.follow(mTalon);
 
     // All of this was ripped from the 2019 elevator code
     mTalon.configNominalOutputForward(0, TIMEOUT_MS);
@@ -46,6 +48,10 @@ class PIDRoller {
     mTalon.config_IntegralZone(PID_LOOP_INDEX, 200, TIMEOUT_MS);
 
     if (!Robot.getIsPracticeBot()) mTalon.setInverted(true);
+    else {
+      mTalon.setInverted(true);
+      // mTalonSlave.setInverted(true);
+    }
 
     // Set to Slave Mode
     mTalonSlave.follow(mTalon);
