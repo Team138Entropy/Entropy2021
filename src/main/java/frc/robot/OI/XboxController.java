@@ -50,8 +50,8 @@ public class XboxController {
   }
 
   public boolean checkNameAndPort() {
-    if (!mController.getName().equals(Constants.Controllers.Driver.name)
-        || mController.getPort() != 0) {
+    if (!Constants.Controllers.ignore && (!mController.getName().equals(Constants.Controllers.Driver.name)
+        || mController.getPort() != 0)) {
       DriverStation.reportError(
           "Xbox Controller not found in port 0! Got name "
               + mController.getName()

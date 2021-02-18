@@ -63,7 +63,7 @@ public class NykoController {
     // passes this on to us, so we get something that makes no sense and is bad to debug. is it one
     // space? ten? a tab? something else stupid? we trim the string anyway
     String name = mController.getName().trim();
-    if (!name.equals(Constants.Controllers.Operator.name) || mController.getPort() != 1) {
+    if (!Constants.Controllers.ignore && (!name.equals(Constants.Controllers.Operator.name) || mController.getPort() != 1)) {
       DriverStation.reportError(
           "Airflo Controller not found in port 1! Got name "
               + mController.getName()
