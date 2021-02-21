@@ -111,6 +111,175 @@ import datetime
 PacketQueue = queue.Queue()
 
 
+
+
+
+
+__hsv_threshold_0_hue = [30.755395683453237, 80.35681042506978]
+__hsv_threshold_0_saturation = [87.14028776978417, 255.0]
+__hsv_threshold_0_value = [57.32913669064748, 255.0]
+
+hsv_threshold_0_output = None
+
+
+__hsv_threshold_1_hue = [0.0, 27.95221843003414]
+__hsv_threshold_1_saturation = [52.74280575539568, 255.0]
+__hsv_threshold_1_value = [71.08812949640287, 255.0]
+
+hsv_threshold_1_output = None
+
+__cv_bitwise_not_src1 = hsv_threshold_1_output
+
+cv_bitwise_not_output = None
+
+__mask_input = hsv_threshold_0_output
+__mask_mask = cv_bitwise_not_output
+
+mask_output = None
+
+__find_contours_input = mask_output
+__find_contours_external_only = True
+
+find_contours_output = None
+
+__filter_contours_contours = find_contours_output
+__filter_contours_min_area = 10.0
+__filter_contours_min_perimeter = 0.0
+__filter_contours_min_width = 20.0
+__filter_contours_max_width = 1000.0
+__filter_contours_min_height = 20.0
+__filter_contours_max_height = 60.0
+__filter_contours_solidity = [10.166358595194085, 30.313497671010627]
+__filter_contours_max_vertices = 100.0
+__filter_contours_min_vertices = 30.0
+__filter_contours_min_ratio = 1.5
+__filter_contours_max_ratio = 5.0
+
+filter_contours_output = None
+
+__convex_hulls_contours = filter_contours_output
+
+convex_hulls_output = None
+
+
+
+
+def __hsv_threshold(input, hue, sat, val):
+    """Segment an image based on hue, saturation, and value ranges.
+    Args:
+        input: A BGR numpy.ndarray.
+        hue: A list of two numbers the are the min and max hue.
+        sat: A list of two numbers the are the min and max saturation.
+        lum: A list of two numbers the are the min and max value.
+    Returns:
+        A black and white numpy.ndarray.
+    """
+    out = cv2.cvtColor(input, cv2.COLOR_BGR2HSV)
+    return cv2.inRange(out, (hue[0], sat[0], val[0]),  (hue[1], sat[1], val[1]))
+
+
+def __cv_bitwise_not(src1):
+    """Computes the per element inverse of an image.
+    Args:
+        src1: A numpy.ndarray.
+    Returns:
+        The inverse of the numpy.ndarray.
+    """
+    return cv2.bitwise_not(src1)
+
+
+def __mask(input, mask):
+    """Filter out an area of an image using a binary mask.
+    Args:
+        input: A three channel numpy.ndarray.
+        mask: A black and white numpy.ndarray.
+    Returns:
+        A three channel numpy.ndarray.
+    """
+    return cv2.bitwise_and(input, input, mask=mask)
+
+
+def __find_contours(input, external_only):
+    """Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+    Args:
+        input: A numpy.ndarray.
+        external_only: A boolean. If true only external contours are found.
+    Return:
+        A list of numpy.ndarray where each one represents a contour.
+    """
+    if(external_only):
+        mode = cv2.RETR_EXTERNAL
+    else:
+        mode = cv2.RETR_LIST
+    method = cv2.CHAIN_APPROX_SIMPLE
+    im2, contours, hierarchy =cv2.findContours(input, mode=mode, method=method)
+    return contours
+
+def __filter_contours(input_contours, min_area, min_perimeter, min_width, max_width,
+                    min_height, max_height, solidity, max_vertex_count, min_vertex_count,
+                    min_ratio, max_ratio):
+    """Filters out contours that do not meet certain criteria.
+    Args:
+        input_contours: Contours as a list of numpy.ndarray.
+        min_area: The minimum area of a contour that will be kept.
+        min_perimeter: The minimum perimeter of a contour that will be kept.
+        min_width: Minimum width of a contour.
+        max_width: MaxWidth maximum width.
+        min_height: Minimum height.
+        max_height: Maximimum height.
+        solidity: The minimum and maximum solidity of a contour.
+        min_vertex_count: Minimum vertex Count of the contours.
+        max_vertex_count: Maximum vertex Count.
+        min_ratio: Minimum ratio of width to height.
+        max_ratio: Maximum ratio of width to height.
+    Returns:
+        Contours as a list of numpy.ndarray.
+    """
+    output = []
+    for contour in input_contours:
+        x,y,w,h = cv2.boundingRect(contour)
+        if (w < min_width or w > max_width):
+            continue
+        if (h < min_height or h > max_height):
+            continue
+        area = cv2.contourArea(contour)
+        if (area < min_area):
+            continue
+        if (cv2.arcLength(contour, True) < min_perimeter):
+            continue
+        hull = cv2.convexHull(contour)
+        solid = 100 * area / cv2.contourArea(hull)
+        if (solid < solidity[0] or solid > solidity[1]):
+            continue
+        if (len(contour) < min_vertex_count or len(contour) > max_vertex_count):
+            continue
+        ratio = (float)(w) / h
+        if (ratio < min_ratio or ratio > max_ratio):
+            continue
+        output.append(contour)
+    return output
+
+def __convex_hulls(input_contours):
+    """Computes the convex hulls of contours.
+    Args:
+        input_contours: A list of numpy.ndarray that each represent a contour.
+    Returns:
+        A list of numpy.ndarray that each represent a contour.
+    """
+    output = []
+    for contour in input_contours:
+        output.append(cv2.convexHull(contour))
+    return output
+
+
+
+
+
+
+
+
+
+
 # Creates a socket
 class SocketWorker(threading.Thread):
     def __init__(self, q, *args, **kwargs):
@@ -746,10 +915,45 @@ def findBalls(frame):
 # boolean to whether we want ball tracking or tape tracking
 def ProcessFrame(frame, tape):
     if (tape == True):
-        threshold = threshold_video(lower_green, upper_green, frame)
+        source0 = frame
+
+        # Step HSV_Threshold0:
+        __hsv_threshold_0_input = source0
+        (hsv_threshold_0_output) = __hsv_threshold(__hsv_threshold_0_input, __hsv_threshold_0_hue, __hsv_threshold_0_saturation, __hsv_threshold_0_value)
+
+        # Step HSV_Threshold1:
+        __hsv_threshold_1_input = source0
+        (hsv_threshold_1_output) = __hsv_threshold(__hsv_threshold_1_input, __hsv_threshold_1_hue, __hsv_threshold_1_saturation, __hsv_threshold_1_value)
+
+        # Step CV_bitwise_not0:
+        __cv_bitwise_not_src1 = hsv_threshold_1_output
+        (cv_bitwise_not_output) = __cv_bitwise_not(__cv_bitwise_not_src1)
+
+        # Step Mask0:
+        __mask_input = hsv_threshold_0_output
+        __mask_mask = cv_bitwise_not_output
+        (mask_output) = __mask(__mask_input, __mask_mask)
+
+        # Step Find_Contours0:
+        __find_contours_input = mask_output
+        (find_contours_output) = __find_contours(__find_contours_input, __find_contours_external_only)
+
+        # Step Filter_Contours0:
+        __filter_contours_contours = find_contours_output
+        (filter_contours_output) = __filter_contours(__filter_contours_contours, __filter_contours_min_area, __filter_contours_min_perimeter, __filter_contours_min_width, __filter_contours_max_width, __filter_contours_min_height, __filter_contours_max_height, __filter_contours_solidity, __filter_contours_max_vertices, __filter_contours_min_vertices, __filter_contours_min_ratio, __filter_contours_max_ratio)
+
+        # Step Convex_Hulls0:
+        __convex_hulls_contours = filter_contours_output
+        (convex_hulls_output) = __convex_hulls(__convex_hulls_contours)
+
+
+
+
+
+        # threshold = threshold_video(lower_green, upper_green, frame)
 
         rect1 = cv2.rectangle(frame, (0, 300), (640, 480), (0,0,0), -1)
-        processedValues = findTargets(rect1, threshold, vals_to_send, centerX, centerY)
+        processedValues = findTargets(rect1, mask_output, vals_to_send, centerX, centerY)
 
         #if processedValues[3] != None:
             #print(processedValues[3])
