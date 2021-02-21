@@ -83,11 +83,11 @@ solidity_high = .3
 #Vertices is acts as "length"
 minArea = 10
 minWidth = 20
-maxWidth = 1000
+maxWidth = 250
 minHeight = 20
-maxHeight = 60
-maxVertices = 100
-minVertices = 30
+maxHeight = 500
+maxVertices = 200
+minVertices = 0
 
 hsv_threshold_hue = [15, 166]
 hsv_threshold_saturation = [71, 255]
@@ -136,6 +136,65 @@ class SocketWorker(threading.Thread):
                     print("Socket Exception " + str(e))
             except Exception as e1:
                 pass
+
+
+# Class to examine Frames per second of camera stream. Currently not used.
+class FPS:
+    def __init__(self):
+        # store the start time, end time, and total number of frames
+        # that were examined between the start and end intervals
+        self._start = None
+        self._end = None
+        self._numFrames = 0
+
+    def start(self):
+        # start the timer
+        self._start = datetime.datetime.now()
+        return self
+
+    def stop(self):
+        # stop the timer
+        self._end = datetime.datetime.now()
+
+    def update(self):
+        # increment the total number of frames examined during the
+        # start and end intervals
+        self._numFrames += 1
+
+    def elapsed(self):
+        # return the total number of seconds between the start and
+        # end interval
+        return (self._end - self._start).total_seconds()
+
+    def fps(self):
+        # compute the (approximate) frames per second
+        return self._numFrames / self.elapsed()
+
+
+# class that runs separate thread for showing video,
+class VideoShow:
+    """
+    Class that continuously shows a frame using a dedicated thread.
+    """
+
+    def __init__(self, imgWidth, imgHeight, cameraServer, frame=None, name='stream'):
+        self.outputStream = cameraServer.putVideo(name, imgWidth, imgHeight)
+        self.frame = frame
+        self.stopped = False
+
+    def start(self):
+        Thread(target=self.show, args=()).start()
+        return self
+
+    def show(self):
+        while not self.stopped:
+            self.outputStream.putFrame(self.frame)
+
+    def stop(self):
+        self.stopped = True
+
+    def notifyError(self, error):
+        self.outputStream.notifyError(error)
 
 
 class WebcamVideoStream:
@@ -273,7 +332,7 @@ def findTargets(frame, mask, value_array, centerX, centerY):
     # Gets the shape of video
     # Gets center of height and width
     # Copies frame and stores it in image
-    
+
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
         value_array = findTape(contours, frame, centerX, centerY)
@@ -289,7 +348,7 @@ def findTargets(frame, mask, value_array, centerX, centerY):
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 def findBall(contours, image, centerX, centerY):
-    screenHeight, screenWidth, channels = image.shape
+    screenHeight, screenWidth, channels = image.shape;
     # Seen vision targets (correct angle, adjacent to each other)
     cargo = []
 
@@ -384,7 +443,7 @@ def findBall(contours, image, centerX, centerY):
 
 def findTape(contours, image, centerX, centerY):
     sendValues = [None] * 4
-    screenHeight, screenWidth, channels = image.shape
+    screenHeight, screenWidth, channels = image.shape;
     # Seen vision targets (correct angle, adjacent to each other)
     targets = []
     if len(contours) >= 2:
@@ -400,10 +459,10 @@ def findTape(contours, image, centerX, centerY):
             cntArea = cv2.contourArea(cnt)
             # calculate area of convex hull
             hullArea = cv2.contourArea(hull)
-            
+
             perimeter = cv2.arcLength(cnt, True)
             approxCurve = cv2.approxPolyDP(cnt, perimeter * .01, True)
-            
+
 
             if cntArea != 0 and hullArea != 0:
                 mySolidity = float (cntArea)/hullArea
@@ -413,14 +472,14 @@ def findTape(contours, image, centerX, centerY):
             x, y, w, h = cv2.boundingRect(cnt)
             ratio = float(w) / h
             # Filters contours based off of size
-            if len(approxCurve) >= 8 and (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (x > minWidth) and (x < maxWidth) and (y > minHeight) and (checkContours(cntArea, hullArea, ratio, cnt)):
+            if len(approxCurve) >= 8 and len(approxCurve) < 10 and (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (w > minWidth) and (w < maxWidth) and (h > minHeight) and (h < maxHeight) and (checkContours(cntArea, hullArea, ratio, cnt)):
                 # Next three lines are for debugging the contouring
                 contimage = cv2.drawContours(image, cnt, -1, (0, 255, 0), 3)
-                
+
                 #cv2.imwrite("1drawncontours.jpg", contimage)
                 #time.sleep(1)
                 #print("writing image")
-                
+
                 ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
                 # Gets the centeroids of contour
                 if M["m00"] != 0:
@@ -448,7 +507,7 @@ def findTape(contours, image, centerX, centerY):
                     if abs(myDistFeet-mean(distanceHoldValues)) > 1.5:
                         outlierCount = outlierCount + 1
                         myDistFeet = None
-                        
+
                     else:
                         outlierCount = 0
                         distanceHoldValues.pop()
@@ -467,8 +526,8 @@ def findTape(contours, image, centerX, centerY):
                     sendValues[0] = cx
                     sendValues[1] = cy
                     sendValues[3] = myDistFeet
-                    print(sendValues[3])
-                    
+                    #print(sendValues[3])
+
                 else:
                     cx, cy = 0, 0
                 if (len(biggestCnts) < 13):
@@ -534,7 +593,7 @@ def findTape(contours, image, centerX, centerY):
     cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), (255, 255, 255), 2)
 
     # cv2.imwrite("latest.jpg", image);
-    
+
     return sendValues
 
 
@@ -559,13 +618,13 @@ def translateRotation(rotation, width, height):
 
 def calculateDistanceFeet(targetPixelWidth):
     # d = Tft*FOVpixel/(2*Tpixel*tanΘ)
-    #Target width in feet * 
+    #Target width in feet *
     distEst = Tft * camPixelWidth / (2 * targetPixelWidth * tanFOV)
-    
+
     # Unsure as to what measurement distEst is producing in the above line, but multiplying it by .32 will return your distance in feet
     distEstFeet = distEst * .32
     #distEstInches = distEstFeet *.32*12
-    return (distEstFeet)
+    return (abs(distEstFeet))
 
 
 # Uses trig and focal length of camera to find yaw.
@@ -658,7 +717,7 @@ def findBalls(frame):
             OkayBall = AspectRatioCheck
             if OkayBall == True:
                 # This is a Target!
-                #		Lets calculate now!
+                #               Lets calculate now!
                 ball = {}
                 ball['Type'] = 1
                 ball['CX'] = cx
@@ -688,24 +747,26 @@ def findBalls(frame):
 def ProcessFrame(frame, tape):
     if (tape == True):
         threshold = threshold_video(lower_green, upper_green, frame)
-        
+
         rect1 = cv2.rectangle(frame, (0, 300), (640, 480), (0,0,0), -1)
         processedValues = findTargets(rect1, threshold, vals_to_send, centerX, centerY)
-        
-        if processedValues[3] != None:
-            print(processedValues[3])
+
+        #if processedValues[3] != None:
+            #print(processedValues[3])
 
 
         highGoal = {}
-        highGoal['x'] = processedValues[0]
-        highGoal['y'] = processedValues[1]
+        highGoal['y'] = processedValues[0]
+        highGoal['z'] = processedValues[1]
         highGoal['yaw'] = processedValues[2]
         if processedValues[3] != None:
             processedValues[3] = abs(round(processedValues[3], 2))
         highGoal['dis'] = processedValues[3]
+
         highGoal['targid'] = 0
 
         if processedValues[3] != None:
+            print(processedValues[3])
             PacketQueue.put_nowait(highGoal)
 
 
@@ -787,8 +848,8 @@ def getEllipseRotation(image, cnt):
 configFile = "/boot/frc.json"
 
 
-class CameraConfig: 
-    pass
+class CameraConfig: pass
+
 
 team = None
 server = False
