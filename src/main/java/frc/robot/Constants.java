@@ -219,13 +219,13 @@ public class Constants {
     public static final double trackSwitchingWeight = 100.0;
     public static final double cameraFrameRate = 90.0; // fps
 
-    public static final double kP = .01; //this is a reasonable constant i think
+    public static final double kP = .015; //this is a reasonable constant i think
 
     // these are percent outputs
     public static final double minSpeed = .05;
     public static final double maxSpeed = .20;
 
-    public static final double autoAimDeadband = 2;
+    public static final double autoAimDeadband = 1;
   }
 
   public static class Cameras {

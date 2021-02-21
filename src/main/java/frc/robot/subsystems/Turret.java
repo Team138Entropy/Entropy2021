@@ -107,6 +107,8 @@ public class Turret extends Subsystem {
       speed = Math.max(speed, -Constants.Vision.maxSpeed);
     }
 
+    speed = speed * -1;
+
     SmartDashboard.putNumber("vision.processedSpeed", speed);
     return speed;
   }
@@ -130,6 +132,8 @@ public class Turret extends Subsystem {
 
         double speed = getSpeed(mPeriodicIO.angle);
         mTurretTalon.set(ControlMode.PercentOutput, speed);
+      }else{
+        SmartDashboard.putNumber("vision.processedSpeed", 0);
       }
 
     } else if (mCurrentState == TurretState.HOME) {
@@ -186,7 +190,7 @@ public class Turret extends Subsystem {
     velocity = Math.abs(velocity);
 
     // Shooter is offset
-    if (velocity <= Constants.Turret.maxAimVelocity) {
+    if (true || velocity <= Constants.Turret.maxAimVelocity) {
       mPeriodicIO.angle = angle;
       double setpoint = mPeriodicIO.CurrentPosition - (angle * TicksPerDegree);
       mPeriodicIO.demand = setpoint;
