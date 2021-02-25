@@ -7,68 +7,101 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import frc.robot.OurWPITalonSRX;
 import frc.robot.Robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 class PIDRoller {
 
   private final int PID_LOOP_INDEX = 0;
   private final int TIMEOUT_MS = 10;
 
-  private final OurWPITalonSRX mTalon;
-  private final OurWPITalonSRX mTalonSlave;
+  //private final OurWPITalonSRX //mTalon;
+
+  private final WPI_TalonFX FalconMotor1;
+  private final WPI_TalonFX FalconMotor2;
 
   PIDRoller(int talonPort, int talon2Port, double p, double i, double d, double f) {
-    mTalon = new OurWPITalonSRX(talonPort);
-    mTalonSlave = new OurWPITalonSRX(talon2Port);
+    FalconMotor1 = new WPI_TalonFX(talonPort);
+    FalconMotor2 = new WPI_TalonFX(talon2Port);    
+    //mTalon = new OurWPITalonSRX(talonPort);
+    //mTalonSlave = new OurWPITalonSRX(talon2Port);   
 
-    mTalon.configFactoryDefault();
-    mTalonSlave.configFactoryDefault();
+    FalconMotor1.configFactoryDefault();
+    FalconMotor2.configFactoryDefault();
+    //mTalon.configFactoryDefault();
+    //mTalonSlave.configFactoryDefault();
 
     // All of this was ripped from the 2019 elevator code
-    mTalon.configNominalOutputForward(0, TIMEOUT_MS);
-    mTalon.configNominalOutputReverse(0, TIMEOUT_MS);
-    mTalon.configPeakOutputForward(1, TIMEOUT_MS);
-    mTalon.configPeakOutputReverse(-1, TIMEOUT_MS);
+    FalconMotor1.configNominalOutputForward(0, TIMEOUT_MS);
+    FalconMotor1.configNominalOutputReverse(0, TIMEOUT_MS);
+    FalconMotor1.configPeakOutputForward(1, TIMEOUT_MS);
+    FalconMotor1.configPeakOutputReverse(-1, TIMEOUT_MS);
+    //mTalon.configNominalOutputForward(0, TIMEOUT_MS);
+    //mTalon.configNominalOutputReverse(0, TIMEOUT_MS);
+    //mTalon.configPeakOutputForward(1, TIMEOUT_MS);
+    //mTalon.configPeakOutputReverse(-1, TIMEOUT_MS);
 
-    mTalon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, 50);
-    mTalon.configVelocityMeasurementWindow(64);
-    mTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
-    mTalon.setSensorPhase(!Robot.getIsPracticeBot());
+    FalconMotor1.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, 50);
+    FalconMotor1.configVelocityMeasurementWindow(64);
+    FalconMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    FalconMotor1.setSensorPhase(!Robot.getIsPracticeBot());
+    //mTalon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, 50);
+    //mTalon.configVelocityMeasurementWindow(64);
+    //mTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+    //mTalon.setSensorPhase(!Robot.getIsPracticeBot());
 
-    // mTalon.enableVoltageCompensation(true); // turn on/off feature
-    mTalon.configAllowableClosedloopError(PID_LOOP_INDEX, 50, TIMEOUT_MS);
 
-    mTalon.config_kP(PID_LOOP_INDEX, p);
-    mTalon.config_kI(PID_LOOP_INDEX, i);
-    mTalon.config_kD(PID_LOOP_INDEX, d);
-    mTalon.config_kF(PID_LOOP_INDEX, f);
+    //FalconMotor1.enableVoltageCompensation(true); // turn on/off feature
+    //FalconMotor1.configAllowableClosedloopError(PID_LOOP_INDEX, 50, TIMEOUT_MS);
+    //mTalon.enableVoltageCompensation(true); // turn on/off feature
+    //mTalon.configAllowableClosedloopError(PID_LOOP_INDEX, 50, TIMEOUT_MS);
 
-    mTalon.setNeutralMode(NeutralMode.Coast);
 
-    mTalon.config_IntegralZone(PID_LOOP_INDEX, 200, TIMEOUT_MS);
+    FalconMotor1.config_kP(PID_LOOP_INDEX, p);
+    FalconMotor1.config_kI(PID_LOOP_INDEX, i);
+    FalconMotor1.config_kD(PID_LOOP_INDEX, d);
+    FalconMotor1.config_kF(PID_LOOP_INDEX, f);
+    //mTalon.config_kP(PID_LOOP_INDEX, p);
+    //mTalon.config_kI(PID_LOOP_INDEX, i);
+    //mTalon.config_kD(PID_LOOP_INDEX, d);
+    //mTalon.config_kF(PID_LOOP_INDEX, f);
 
-    if (!Robot.getIsPracticeBot()) mTalon.setInverted(true);
+    FalconMotor1.setNeutralMode(NeutralMode.Coast);
+    //mTalon.setNeutralMode(NeutralMode.Coast);
 
+    FalconMotor1.config_IntegralZone(PID_LOOP_INDEX, 200, TIMEOUT_MS);
+    //mTalon.config_IntegralZone(PID_LOOP_INDEX, 200, TIMEOUT_MS);
+
+    FalconMotor2.setInverted(true);
+    //if (!Robot.getIsPracticeBot()) //mTalon.setInverted(true);
+    
     // Set to Slave Mode
-    mTalonSlave.follow(mTalon);
+    FalconMotor2.follow(FalconMotor1); 
+    //mTalonSlave.follow(//mTalon);
   }
 
   public int getVelocity() {
-    return -mTalon.getSelectedSensorVelocity();
+    return -FalconMotor1.getSelectedSensorVelocity();
+    //return -mTalon.getSelectedSensorVelocity();
   }
 
   public double getCurrent() {
-    return mTalon.getStatorCurrent();
+    return FalconMotor1.getStatorCurrent();
+    //return mTalon.getStatorCurrent();
   }
 
   void setPercentOutput(double output) {
     // System.out.println(getVelocity() + " velocity at output " + output);
-    mTalon.set(ControlMode.PercentOutput, -output);
+    FalconMotor1.set(ControlMode.PercentOutput, -output);
+    //mTalon.set(ControlMode.PercentOutput, -output);
   }
 
   void setSpeed(int posPer100Ms) {
     if (posPer100Ms == 0) {
-      mTalon.set(ControlMode.PercentOutput, 0);
+      FalconMotor1.set(ControlMode.PercentOutput, 0);
+      //mTalon.set(ControlMode.PercentOutput, 0);
     } else {
-      mTalon.set(ControlMode.Velocity, -posPer100Ms);
+      FalconMotor1.set(ControlMode.Velocity, -posPer100Ms);
+      //mTalon.set(ControlMode.Velocity, -posPer100Ms);
     }
   }
 }

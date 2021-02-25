@@ -193,203 +193,66 @@ public class Drive extends Subsystem {
   }
 
   /** Configure talons for open loop control */
-  public synchronized void setOpenLoop(DriveSignal signal) {
-    // are we quickturning?
-    boolean quickturn = mPeriodicDriveData.isQuickturning;
-
-    // Slow down climbing if the climber is extended so we can't rip it off (as easily)
-    double peakOutput = Constants.Drive.maxSpeedWhenClimbing;
-
-    if (mPeriodicDriveData.climbingSpeed && !quickturn) {
-      mLeftMaster.configPeakOutputForward(peakOutput, 0);
-      mLeftMaster.configPeakOutputReverse(-peakOutput, 0);
-
-      mRightMaster.configPeakOutputForward(peakOutput, 0);
-      mRightMaster.configPeakOutputReverse(-peakOutput, 0);
-    } else {
-      mLeftMaster.configPeakOutputForward(1, 0);
-      mLeftMaster.configPeakOutputReverse(-1, 0);
-
-      mRightMaster.configPeakOutputForward(1, 0);
-      mRightMaster.configPeakOutputReverse(-1, 0);
-    }
-
-    // A lot of the space in this function is taken up by local copies of stuff
-    double accelSpeed = Constants.Drive.accelSpeed;
-    double brakeSpeed = Constants.Drive.brakeSpeed;
-
-    // Segments are started by the variables they will need
-    boolean leftStationary = false;
-    boolean rightStationary = false;
-
-    if (mLeftMaster.getSupplyCurrent() == 0) {
-      leftStationary = true;
-    }
-
-    if (mRightMaster.getSupplyCurrent() == 0) {
-      rightStationary = true;
-    }
-
-    // Splitting up var definitions to their unique sections makes the code more readable
-    boolean stationary = false;
-
-    if (leftStationary && rightStationary) {
-      stationary = true;
-    }
-
-    // Don't know why this is here but I'm not gonna remove it
-    if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-      // setBrakeMode(true);
-      mDriveLogger.verbose("switching to open loop " + signal);
-      mDriveControlState = DriveControlState.OPEN_LOOP;
-    }
-
-    // Cache our signals for more readable code. right is backwards because reasons out of our
-    // control
-    double leftOutput = signal.getLeft();
-    double rightOutput = signal.getRight();
-
-    // Ramping is calculated through a series of "abstractions", calculating the acceleration
-    // directions
-    // of hierarchical components in the drivetrain.
-    boolean leftAcceleratingForward = false;
-    boolean leftAcceleratingBackwards = false;
-
-    boolean rightAcceleratingForward = false;
-    boolean rightAcceleratingBackwards = false;
-
-    if (leftOutput > mPeriodicDriveData.left_old) {
-      leftAcceleratingForward = true;
-    } else if (leftOutput < mPeriodicDriveData.left_old) {
-      leftAcceleratingBackwards = true;
-    }
-
-    if (rightOutput > mPeriodicDriveData.right_old) {
-      rightAcceleratingForward = true;
-    } else if (rightOutput < mPeriodicDriveData.right_old) {
-      rightAcceleratingBackwards = true;
-    }
-
-    // Whether our velocity is increasing or decreasing
-    boolean acceleratingForward = false;
-    boolean acceleratingBackwards = false;
-
-    if (leftAcceleratingForward && rightAcceleratingForward) {
-      acceleratingForward = true;
-    } else if (leftAcceleratingBackwards && rightAcceleratingBackwards) {
-      acceleratingBackwards = true;
-    }
-
-    // Whether we are going forwards or in reverse
-    boolean velocityForwards = false;
-    boolean velocityReverse = false;
-
-    if (leftOutput > 0) {
-      velocityForwards = true;
-    } else if (leftOutput < 0) {
-      velocityReverse = true;
-    }
-
-    // this is [0, 1)
-    double differenceBetweenSides =
-        Math.abs(Math.abs(signal.getLeft()) - Math.abs(signal.getRight()));
-
-    double accelSpeedWhenTurningFactor = 1 - differenceBetweenSides;
-
-    // This is where the actual accel limiting logic begins
-    if (velocityForwards) {
-      if (acceleratingForward) {
-        setOpenloopRamp(accelSpeed * accelSpeedWhenTurningFactor);
-      }
-    } else if (velocityReverse) {
-      // if (acceleratingForward) {
-      //   setOpenloopRamp(brakeSpeed * accelSpeedWhenTurningFactor);
-      // }
-
-      // PittDrive mode - symmetry between forward and reverse accel
-      setOpenloopRamp(brakeSpeed * accelSpeedWhenTurningFactor);
-    } else if (stationary) {
-      setOpenloopRamp(0);
-    } else if (quickturn) {
-      setOpenloopRamp(0);
-    }
-
-    // cache our olds after we've used them to make them actually "olds"
-    mPeriodicDriveData.left_old = leftOutput;
-    mPeriodicDriveData.right_old = rightOutput;
-
-    // then we set our master talons, remembering that the physical right of the drivetrain is
-    // backwards
-    mLeftMaster.set(ControlMode.PercentOutput, leftOutput);
-    mRightMaster.set(ControlMode.PercentOutput, rightOutput * -1);
-  }
 
   // Used for arcade turning during auto
   public void setSimplePercentOutput(DriveSignal signal) {
-    setOpenloopRamp(0); // Just in case
     mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
     mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
   }
 
+ /**
+     * Configure talons for open loop control
+     */
+    public synchronized void setOpenLoop(DriveSignal signal) {
+      if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+          //setBrakeMode(true);
+          System.out.println("switching to open loop");
+          System.out.println(signal);
+          mDriveControlState = DriveControlState.OPEN_LOOP;
+      }
+
+  
+
+      signal.PrintLog();
+      mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
+  mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
+
+  }
+
+
   public synchronized void setDrive(double throttle, double wheel, boolean quickTurn) {
-    wheel = wheel * -1; // invert wheel
+                  wheel = wheel * -1; //invert wheel
+/*
+      if(throttle >= 0){
+      }
+      */
 
-    // TODO: Extract this "epsilonEquals" pattern into a "handleDeadband" method
-    // If we're not pushing forward on the throttle, automatically enable quickturn so that we
-    // don't have to
-    // explicitly enable it before turning.
-    if (Util.epsilonEquals(throttle, 0.0, 0.04)) {
-      throttle = 0.0;
-      quickTurn = true;
-    }
+      if (Util.epsilonEquals(throttle, 0.0, 0.04)) {
+          throttle = 0.0;
+          quickTurn = true;
+      }
 
-    // This is just a convoluted way to do a deadband.
-    if (Util.epsilonEquals(wheel, 0.0, 0.020)) {
-      wheel = 0.0;
-    }
+      if (Util.epsilonEquals(wheel, 0.0, 0.035)) {
+          wheel = 0.0;
+      }
+throttle *= .45;
+      final double kWheelGain = 0.05;
+      final double kWheelNonlinearity = 0.05;
+      final double denominator = Math.sin(Math.PI / 2.0 * kWheelNonlinearity);
+      // Apply a sin function that's scaled to make it feel better.
+      if (!quickTurn) {
+          wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
+          wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
+          wheel = wheel / (denominator * denominator) * Math.abs(throttle);
+      }
 
-    if (wheel != 0 && quickTurn) {
-      mPeriodicDriveData.isQuickturning = true;
-    }
-
-    final double kWheelGain = 0.05;
-    final double kWheelNonlinearity = 0.05;
-    final double denominator = Math.sin(Math.PI / 2.0 * kWheelNonlinearity);
-    // Apply a sin function that's scaled to make it feel better.
-    if (!quickTurn) {
-      wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
-      wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
-      wheel = wheel / (denominator * denominator) * Math.abs(throttle);
-    }
-
-    wheel *= kWheelGain;
-    // We pass 0 for dy because we use a differential drive and can't strafe.
-    // The wheel here is a constant curvature rather than an actual heading. This is what makes
-    // the drive cheesy.
-    DriveSignal signal = Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, wheel));
-
-    // Either the bigger of the two drive signals or 1, whichever is bigger.
-    double scaling_factor =
-        Math.max(
-            1.0,
-            Math.max(
-                Math.abs(signal.getLeft()),
-                Math.abs(signal.getRight()))); // / (1 + (differenceBetweenSides * 6));
-    if (quickTurn) {
-      setOpenLoop(
-          new DriveSignal(
-              (signal.getLeft() / scaling_factor) / 1.5,
-              (signal.getRight() / scaling_factor) / 1.5));
-    } else {
-      setOpenLoop(
-          new DriveSignal(signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
-    }
+      wheel *= kWheelGain;
+      DriveSignal signal = Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, wheel));
+      double scaling_factor = Math.max(1.0, Math.max(Math.abs(signal.getLeft()), Math.abs(signal.getRight())));
+      setOpenLoop(new DriveSignal(signal.getLeft() / scaling_factor, signal.getRight() / scaling_factor));
   }
 
-  public void setOpenloopRamp(double speed) {
-    mLeftMaster.configOpenloopRamp(speed);
-    mRightMaster.configOpenloopRamp(speed);
-  }
+
 
   /**
    * WPILib's arcade drive. We need this for auto turning because it allows us to set a rotation

@@ -48,14 +48,14 @@ public class Constants {
 
     public static class Storage {
       // 2 different tops depending on the bot
-      public static final int compTop = 5;
+      public static final int compTop = 7;
       public static final int practiceTop = 7;
       public static final int bottom = 8;
     }
 
     public static class Shooter {
       public static final int master = 6;
-      public static final int slave = 7;
+      public static final int slave = 5;
     }
 
     public static final int turret = 9;
