@@ -235,7 +235,14 @@ public class Drive extends Subsystem {
       if (Util.epsilonEquals(wheel, 0.0, 0.035)) {
           wheel = 0.0;
       }
-throttle *= .45;
+      //Graph to see on desmos
+      //y=\left(x\cdot.9\right)^{2}\ \left\{0<x\ \ \le1\right\}
+      if(throttle < 0){
+        throttle = (Math.pow((throttle*.70),2)) * -1;
+      }
+      else{
+        throttle = Math.pow((throttle*.70),2);
+      }
       final double kWheelGain = 0.05;
       final double kWheelNonlinearity = 0.05;
       final double denominator = Math.sin(Math.PI / 2.0 * kWheelNonlinearity);
