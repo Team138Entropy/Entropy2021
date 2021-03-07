@@ -71,7 +71,7 @@ class PIDRoller {
     FalconMotor1.config_IntegralZone(PID_LOOP_INDEX, 200, TIMEOUT_MS);
     //mTalon.config_IntegralZone(PID_LOOP_INDEX, 200, TIMEOUT_MS);
 
-    FalconMotor2.setInverted(true);
+    FalconMotor1.setInverted(true);
     //if (!Robot.getIsPracticeBot()) //mTalon.setInverted(true);
     
     // Set to Slave Mode
