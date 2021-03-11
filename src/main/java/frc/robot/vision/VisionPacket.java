@@ -47,6 +47,8 @@ public class VisionPacket {
   }
 
   public double getTurretOffset() {
-    return Math.toDegrees(Math.atan(.4 / Distance));
+    // our camera is centered horizontally with the ball, so zero this
+    return 0;
+    // return Math.toDegrees(Math.atan(.4 / Distance));
   }
 }

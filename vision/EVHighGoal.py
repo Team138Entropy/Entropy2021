@@ -83,11 +83,11 @@ solidity_high = .3
 #Vertices is acts as "length"
 minArea = 10
 minWidth = 20
-maxWidth = 1000
+maxWidth = 250
 minHeight = 20
-maxHeight = 60
-maxVertices = 100
-minVertices = 30
+maxHeight = 500
+maxVertices = 200
+minVertices = 0
 
 hsv_threshold_hue = [15, 166]
 hsv_threshold_saturation = [71, 255]
@@ -109,6 +109,175 @@ import datetime
 # Queue of Packets
 # Thread Safe.. Packets being sent to robot are placed here!
 PacketQueue = queue.Queue()
+
+
+
+
+
+
+__hsv_threshold_0_hue = [30.755395683453237, 80.35681042506978]
+__hsv_threshold_0_saturation = [87.14028776978417, 255.0]
+__hsv_threshold_0_value = [57.32913669064748, 255.0]
+
+hsv_threshold_0_output = None
+
+
+__hsv_threshold_1_hue = [0.0, 27.95221843003414]
+__hsv_threshold_1_saturation = [52.74280575539568, 255.0]
+__hsv_threshold_1_value = [71.08812949640287, 255.0]
+
+hsv_threshold_1_output = None
+
+__cv_bitwise_not_src1 = hsv_threshold_1_output
+
+cv_bitwise_not_output = None
+
+__mask_input = hsv_threshold_0_output
+__mask_mask = cv_bitwise_not_output
+
+mask_output = None
+
+__find_contours_input = mask_output
+__find_contours_external_only = True
+
+find_contours_output = None
+
+__filter_contours_contours = find_contours_output
+__filter_contours_min_area = 10.0
+__filter_contours_min_perimeter = 0.0
+__filter_contours_min_width = 20.0
+__filter_contours_max_width = 1000.0
+__filter_contours_min_height = 20.0
+__filter_contours_max_height = 60.0
+__filter_contours_solidity = [10.166358595194085, 30.313497671010627]
+__filter_contours_max_vertices = 100.0
+__filter_contours_min_vertices = 30.0
+__filter_contours_min_ratio = 1.5
+__filter_contours_max_ratio = 5.0
+
+filter_contours_output = None
+
+__convex_hulls_contours = filter_contours_output
+
+convex_hulls_output = None
+
+
+
+
+def __hsv_threshold(input, hue, sat, val):
+    """Segment an image based on hue, saturation, and value ranges.
+    Args:
+        input: A BGR numpy.ndarray.
+        hue: A list of two numbers the are the min and max hue.
+        sat: A list of two numbers the are the min and max saturation.
+        lum: A list of two numbers the are the min and max value.
+    Returns:
+        A black and white numpy.ndarray.
+    """
+    out = cv2.cvtColor(input, cv2.COLOR_BGR2HSV)
+    return cv2.inRange(out, (hue[0], sat[0], val[0]),  (hue[1], sat[1], val[1]))
+
+
+def __cv_bitwise_not(src1):
+    """Computes the per element inverse of an image.
+    Args:
+        src1: A numpy.ndarray.
+    Returns:
+        The inverse of the numpy.ndarray.
+    """
+    return cv2.bitwise_not(src1)
+
+
+def __mask(input, mask):
+    """Filter out an area of an image using a binary mask.
+    Args:
+        input: A three channel numpy.ndarray.
+        mask: A black and white numpy.ndarray.
+    Returns:
+        A three channel numpy.ndarray.
+    """
+    return cv2.bitwise_and(input, input, mask=mask)
+
+
+def __find_contours(input, external_only):
+    """Sets the values of pixels in a binary image to their distance to the nearest black pixel.
+    Args:
+        input: A numpy.ndarray.
+        external_only: A boolean. If true only external contours are found.
+    Return:
+        A list of numpy.ndarray where each one represents a contour.
+    """
+    if(external_only):
+        mode = cv2.RETR_EXTERNAL
+    else:
+        mode = cv2.RETR_LIST
+    method = cv2.CHAIN_APPROX_SIMPLE
+    im2, contours, hierarchy =cv2.findContours(input, mode=mode, method=method)
+    return contours
+
+def __filter_contours(input_contours, min_area, min_perimeter, min_width, max_width,
+                    min_height, max_height, solidity, max_vertex_count, min_vertex_count,
+                    min_ratio, max_ratio):
+    """Filters out contours that do not meet certain criteria.
+    Args:
+        input_contours: Contours as a list of numpy.ndarray.
+        min_area: The minimum area of a contour that will be kept.
+        min_perimeter: The minimum perimeter of a contour that will be kept.
+        min_width: Minimum width of a contour.
+        max_width: MaxWidth maximum width.
+        min_height: Minimum height.
+        max_height: Maximimum height.
+        solidity: The minimum and maximum solidity of a contour.
+        min_vertex_count: Minimum vertex Count of the contours.
+        max_vertex_count: Maximum vertex Count.
+        min_ratio: Minimum ratio of width to height.
+        max_ratio: Maximum ratio of width to height.
+    Returns:
+        Contours as a list of numpy.ndarray.
+    """
+    output = []
+    for contour in input_contours:
+        x,y,w,h = cv2.boundingRect(contour)
+        if (w < min_width or w > max_width):
+            continue
+        if (h < min_height or h > max_height):
+            continue
+        area = cv2.contourArea(contour)
+        if (area < min_area):
+            continue
+        if (cv2.arcLength(contour, True) < min_perimeter):
+            continue
+        hull = cv2.convexHull(contour)
+        solid = 100 * area / cv2.contourArea(hull)
+        if (solid < solidity[0] or solid > solidity[1]):
+            continue
+        if (len(contour) < min_vertex_count or len(contour) > max_vertex_count):
+            continue
+        ratio = (float)(w) / h
+        if (ratio < min_ratio or ratio > max_ratio):
+            continue
+        output.append(contour)
+    return output
+
+def __convex_hulls(input_contours):
+    """Computes the convex hulls of contours.
+    Args:
+        input_contours: A list of numpy.ndarray that each represent a contour.
+    Returns:
+        A list of numpy.ndarray that each represent a contour.
+    """
+    output = []
+    for contour in input_contours:
+        output.append(cv2.convexHull(contour))
+    return output
+
+
+
+
+
+
+
+
 
 
 # Creates a socket
@@ -136,6 +305,65 @@ class SocketWorker(threading.Thread):
                     print("Socket Exception " + str(e))
             except Exception as e1:
                 pass
+
+
+# Class to examine Frames per second of camera stream. Currently not used.
+class FPS:
+    def __init__(self):
+        # store the start time, end time, and total number of frames
+        # that were examined between the start and end intervals
+        self._start = None
+        self._end = None
+        self._numFrames = 0
+
+    def start(self):
+        # start the timer
+        self._start = datetime.datetime.now()
+        return self
+
+    def stop(self):
+        # stop the timer
+        self._end = datetime.datetime.now()
+
+    def update(self):
+        # increment the total number of frames examined during the
+        # start and end intervals
+        self._numFrames += 1
+
+    def elapsed(self):
+        # return the total number of seconds between the start and
+        # end interval
+        return (self._end - self._start).total_seconds()
+
+    def fps(self):
+        # compute the (approximate) frames per second
+        return self._numFrames / self.elapsed()
+
+
+# class that runs separate thread for showing video,
+class VideoShow:
+    """
+    Class that continuously shows a frame using a dedicated thread.
+    """
+
+    def __init__(self, imgWidth, imgHeight, cameraServer, frame=None, name='stream'):
+        self.outputStream = cameraServer.putVideo(name, imgWidth, imgHeight)
+        self.frame = frame
+        self.stopped = False
+
+    def start(self):
+        Thread(target=self.show, args=()).start()
+        return self
+
+    def show(self):
+        while not self.stopped:
+            self.outputStream.putFrame(self.frame)
+
+    def stop(self):
+        self.stopped = True
+
+    def notifyError(self, error):
+        self.outputStream.notifyError(error)
 
 
 class WebcamVideoStream:
@@ -273,7 +501,7 @@ def findTargets(frame, mask, value_array, centerX, centerY):
     # Gets the shape of video
     # Gets center of height and width
     # Copies frame and stores it in image
-    
+
     # Processes the contours, takes in (contours, output_image, (centerOfImage)
     if len(contours) != 0:
         value_array = findTape(contours, frame, centerX, centerY)
@@ -289,7 +517,7 @@ def findTargets(frame, mask, value_array, centerX, centerY):
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 def findBall(contours, image, centerX, centerY):
-    screenHeight, screenWidth, channels = image.shape
+    screenHeight, screenWidth, channels = image.shape;
     # Seen vision targets (correct angle, adjacent to each other)
     cargo = []
 
@@ -384,7 +612,7 @@ def findBall(contours, image, centerX, centerY):
 
 def findTape(contours, image, centerX, centerY):
     sendValues = [None] * 4
-    screenHeight, screenWidth, channels = image.shape
+    screenHeight, screenWidth, channels = image.shape;
     # Seen vision targets (correct angle, adjacent to each other)
     targets = []
     if len(contours) >= 2:
@@ -400,10 +628,10 @@ def findTape(contours, image, centerX, centerY):
             cntArea = cv2.contourArea(cnt)
             # calculate area of convex hull
             hullArea = cv2.contourArea(hull)
-            
+
             perimeter = cv2.arcLength(cnt, True)
             approxCurve = cv2.approxPolyDP(cnt, perimeter * .01, True)
-            
+
 
             if cntArea != 0 and hullArea != 0:
                 mySolidity = float (cntArea)/hullArea
@@ -413,14 +641,14 @@ def findTape(contours, image, centerX, centerY):
             x, y, w, h = cv2.boundingRect(cnt)
             ratio = float(w) / h
             # Filters contours based off of size
-            if len(approxCurve) >= 8 and (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (x > minWidth) and (x < maxWidth) and (y > minHeight) and (checkContours(cntArea, hullArea, ratio, cnt)):
+            if len(approxCurve) >= 8 and len(approxCurve) < 10 and (cntArea > minArea) and (mySolidity > solidity_low) and (mySolidity < solidity_high) and (w > minWidth) and (w < maxWidth) and (h > minHeight) and (h < maxHeight) and (checkContours(cntArea, hullArea, ratio, cnt)):
                 # Next three lines are for debugging the contouring
                 contimage = cv2.drawContours(image, cnt, -1, (0, 255, 0), 3)
-                
+
                 #cv2.imwrite("1drawncontours.jpg", contimage)
                 #time.sleep(1)
                 #print("writing image")
-                
+
                 ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
                 # Gets the centeroids of contour
                 if M["m00"] != 0:
@@ -448,7 +676,7 @@ def findTape(contours, image, centerX, centerY):
                     if abs(myDistFeet-mean(distanceHoldValues)) > 1.5:
                         outlierCount = outlierCount + 1
                         myDistFeet = None
-                        
+
                     else:
                         outlierCount = 0
                         distanceHoldValues.pop()
@@ -467,8 +695,8 @@ def findTape(contours, image, centerX, centerY):
                     sendValues[0] = cx
                     sendValues[1] = cy
                     sendValues[3] = myDistFeet
-                    print(sendValues[3])
-                    
+                    #print(sendValues[3])
+
                 else:
                     cx, cy = 0, 0
                 if (len(biggestCnts) < 13):
@@ -534,7 +762,7 @@ def findTape(contours, image, centerX, centerY):
     cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), (255, 255, 255), 2)
 
     # cv2.imwrite("latest.jpg", image);
-    
+
     return sendValues
 
 
@@ -559,13 +787,13 @@ def translateRotation(rotation, width, height):
 
 def calculateDistanceFeet(targetPixelWidth):
     # d = Tft*FOVpixel/(2*Tpixel*tanΘ)
-    #Target width in feet * 
+    #Target width in feet *
     distEst = Tft * camPixelWidth / (2 * targetPixelWidth * tanFOV)
-    
+
     # Unsure as to what measurement distEst is producing in the above line, but multiplying it by .32 will return your distance in feet
     distEstFeet = distEst * .32
     #distEstInches = distEstFeet *.32*12
-    return (distEstFeet)
+    return (abs(distEstFeet))
 
 
 # Uses trig and focal length of camera to find yaw.
@@ -658,7 +886,7 @@ def findBalls(frame):
             OkayBall = AspectRatioCheck
             if OkayBall == True:
                 # This is a Target!
-                #		Lets calculate now!
+                #               Lets calculate now!
                 ball = {}
                 ball['Type'] = 1
                 ball['CX'] = cx
@@ -687,25 +915,62 @@ def findBalls(frame):
 # boolean to whether we want ball tracking or tape tracking
 def ProcessFrame(frame, tape):
     if (tape == True):
-        threshold = threshold_video(lower_green, upper_green, frame)
-        
+        source0 = frame
+
+        # Step HSV_Threshold0:
+        __hsv_threshold_0_input = source0
+        (hsv_threshold_0_output) = __hsv_threshold(__hsv_threshold_0_input, __hsv_threshold_0_hue, __hsv_threshold_0_saturation, __hsv_threshold_0_value)
+
+        # Step HSV_Threshold1:
+        __hsv_threshold_1_input = source0
+        (hsv_threshold_1_output) = __hsv_threshold(__hsv_threshold_1_input, __hsv_threshold_1_hue, __hsv_threshold_1_saturation, __hsv_threshold_1_value)
+
+        # Step CV_bitwise_not0:
+        __cv_bitwise_not_src1 = hsv_threshold_1_output
+        (cv_bitwise_not_output) = __cv_bitwise_not(__cv_bitwise_not_src1)
+
+        # Step Mask0:
+        __mask_input = hsv_threshold_0_output
+        __mask_mask = cv_bitwise_not_output
+        (mask_output) = __mask(__mask_input, __mask_mask)
+
+        # Step Find_Contours0:
+        __find_contours_input = mask_output
+        (find_contours_output) = __find_contours(__find_contours_input, __find_contours_external_only)
+
+        # Step Filter_Contours0:
+        __filter_contours_contours = find_contours_output
+        (filter_contours_output) = __filter_contours(__filter_contours_contours, __filter_contours_min_area, __filter_contours_min_perimeter, __filter_contours_min_width, __filter_contours_max_width, __filter_contours_min_height, __filter_contours_max_height, __filter_contours_solidity, __filter_contours_max_vertices, __filter_contours_min_vertices, __filter_contours_min_ratio, __filter_contours_max_ratio)
+
+        # Step Convex_Hulls0:
+        __convex_hulls_contours = filter_contours_output
+        (convex_hulls_output) = __convex_hulls(__convex_hulls_contours)
+
+
+
+
+
+        # threshold = threshold_video(lower_green, upper_green, frame)
+
         rect1 = cv2.rectangle(frame, (0, 300), (640, 480), (0,0,0), -1)
-        processedValues = findTargets(rect1, threshold, vals_to_send, centerX, centerY)
-        
-        if processedValues[3] != None:
-            print(processedValues[3])
+        processedValues = findTargets(rect1, mask_output, vals_to_send, centerX, centerY)
+
+        #if processedValues[3] != None:
+            #print(processedValues[3])
 
 
         highGoal = {}
-        highGoal['x'] = processedValues[0]
-        highGoal['y'] = processedValues[1]
+        highGoal['y'] = processedValues[0]
+        highGoal['z'] = processedValues[1]
         highGoal['yaw'] = processedValues[2]
         if processedValues[3] != None:
             processedValues[3] = abs(round(processedValues[3], 2))
         highGoal['dis'] = processedValues[3]
+
         highGoal['targid'] = 0
 
         if processedValues[3] != None:
+            print(processedValues[3])
             PacketQueue.put_nowait(highGoal)
 
 
@@ -787,8 +1052,8 @@ def getEllipseRotation(image, cnt):
 configFile = "/boot/frc.json"
 
 
-class CameraConfig: 
-    pass
+class CameraConfig: pass
+
 
 team = None
 server = False

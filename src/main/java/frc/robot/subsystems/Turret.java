@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.Constants;
 import frc.robot.OurWPITalonSRX;
@@ -19,7 +20,8 @@ public class Turret extends Subsystem {
   private final double HomePosition = 0;
 
   // How Close the Turret can be
-  private final double AutoAimDeadband = 0.3;
+  // in units of mPeriodicIO.angle
+  private final double AutoAimDeadband = Constants.Vision.autoAimDeadband;
 
   enum TurretState {
     AUTO_AIM,
@@ -70,6 +72,15 @@ public class Turret extends Subsystem {
     mTurretTalon.config_kD(0, 0);
     mTurretTalon.config_IntegralZone(0, 50);
     mTurretTalon.setNeutralMode(NeutralMode.Brake);
+
+    // double[] angles = {-40, -20, -10, -1, 0, 1, 10, 20, 40};
+    // for (double angle : angles) {
+    //   System.out.println("vision " + angle + "\t" + getSpeed(angle));
+    // }
+
+    for(double angle = -40; angle < 41; angle++){
+      System.out.println("vision " + angle + "\t" + getSpeed(angle));
+    }
   }
 
   // peridocally read inputs
@@ -80,16 +91,49 @@ public class Turret extends Subsystem {
     mPeriodicIO.Velocity = mTurretTalon.getSelectedSensorVelocity();
   }
 
+  public synchronized double getSpeed(double angle){
+    // might need to make this negative
+    double speed = angle * Constants.Vision.kP;
+    SmartDashboard.putNumber("vision.rawSpeed", speed);
+    SmartDashboard.putNumber("vision.kP", Constants.Vision.kP);
+    
+    if(speed > 0){
+      // Math.max returns the greater (closer to +Infinity) of the two values,
+      // so we need to do this differently because we want further from zero
+      speed = Math.max(speed, Constants.Vision.minSpeed);
+      speed = Math.min(speed, Constants.Vision.maxSpeed);
+    }else if(speed < 0){
+      speed = Math.min(speed, -Constants.Vision.minSpeed);
+      speed = Math.max(speed, -Constants.Vision.maxSpeed);
+    }
+
+    speed = speed * -1;
+
+    SmartDashboard.putNumber("vision.processedSpeed", speed);
+    return speed;
+  }
+
   // periodically write outputs
   @Override
   public synchronized void writePeriodicOutputs() {
+    SmartDashboard.putNumber("vision.processedAngle", mPeriodicIO.angle);
+    SmartDashboard.putString("vision.turretState", mCurrentState.name());
 
     // Control Turret Based on State
     if (mCurrentState == TurretState.AUTO_AIM) {
       // Perform Auto Aim!
+    
+      SmartDashboard.putNumber("vision.aimDeadband", AutoAimDeadband);
+      SmartDashboard.putBoolean("vision.isOutOfDeadband", Math.abs(mPeriodicIO.angle) > AutoAimDeadband);
+
       // deadband: Angle error must be greater than 1 degree
       if (Math.abs(mPeriodicIO.angle) > AutoAimDeadband) {
-        mTurretTalon.set(ControlMode.Position, mPeriodicIO.demand);
+        // mTurretTalon.set(ControlMode.Position, mPeriodicIO.demand);
+
+        double speed = getSpeed(mPeriodicIO.angle);
+        mTurretTalon.set(ControlMode.PercentOutput, speed);
+      }else{
+        SmartDashboard.putNumber("vision.processedSpeed", 0);
       }
 
     } else if (mCurrentState == TurretState.HOME) {
@@ -146,7 +190,7 @@ public class Turret extends Subsystem {
     velocity = Math.abs(velocity);
 
     // Shooter is offset
-    if (velocity <= Constants.Turret.maxAimVelocity) {
+    if (true || velocity <= Constants.Turret.maxAimVelocity) {
       mPeriodicIO.angle = angle;
       double setpoint = mPeriodicIO.CurrentPosition - (angle * TicksPerDegree);
       mPeriodicIO.demand = setpoint;

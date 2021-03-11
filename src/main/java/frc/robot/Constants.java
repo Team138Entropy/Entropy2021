@@ -195,6 +195,8 @@ public class Constants {
   }
 
   public static class Controllers {
+    public static final boolean ignore = true;
+
     public static final double joystickDeadband = 0.15;
     public static final double triggerDeadband = 0.15;
 
@@ -219,6 +221,14 @@ public class Constants {
     public static final double trackAgeWeight = 10.0;
     public static final double trackSwitchingWeight = 100.0;
     public static final double cameraFrameRate = 90.0; // fps
+
+    public static final double kP = .015; //this is a reasonable constant i think
+
+    // these are percent outputs
+    public static final double minSpeed = .05;
+    public static final double maxSpeed = .20;
+
+    public static final double autoAimDeadband = 1;
   }
 
   public static class Cameras {

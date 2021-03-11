@@ -889,6 +889,9 @@ public class Robot extends TimedRobot {
       if (vp.HasValue == true) {
         // We have Target Information
         LastDistance = vp.Distance;
+        SmartDashboard.putNumber("vision.distance", LastDistance);
+        SmartDashboard.putNumber("vision.rawAngle", vp.Error_Angle);
+        SmartDashboard.putNumber("vision.turretOffset", vp.getTurretOffset());
 
         // verify we haven't already commanded this packet!
         if (vp.ID != LastTurretVisionID) {
