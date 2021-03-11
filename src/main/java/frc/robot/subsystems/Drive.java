@@ -253,6 +253,15 @@ public class Drive extends Subsystem {
           wheel = wheel / (denominator * denominator) * Math.abs(throttle);
       }
 
+      if(quickTurn){
+        if(wheel > 0){
+          wheel = Math.pow((wheel*.5),2);
+        }
+        else if(wheel < 0){
+          wheel = Math.pow((wheel*.5),2) * -1;
+        }
+      }
+
       wheel *= kWheelGain;
       DriveSignal signal = Kinematics.inverseKinematics(new Twist2d(throttle, 0.0, wheel));
       double scaling_factor = Math.max(1.0, Math.max(Math.abs(signal.getLeft()), Math.abs(signal.getRight())));

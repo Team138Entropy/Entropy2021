@@ -225,10 +225,10 @@ public class Constants {
     public static final double kP = .015; //this is a reasonable constant i think
 
     // these are percent outputs
-    public static final double minSpeed = .05;
-    public static final double maxSpeed = .20;
+    public static final double minSpeed = .15;
+    public static final double maxSpeed = 1;
 
-    public static final double autoAimDeadband = 1;
+    public static final double autoAimDeadband = 3;
   }
 
   public static class Cameras {

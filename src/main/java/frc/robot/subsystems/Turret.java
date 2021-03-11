@@ -96,18 +96,34 @@ public class Turret extends Subsystem {
     double speed = angle * Constants.Vision.kP;
     SmartDashboard.putNumber("vision.rawSpeed", speed);
     SmartDashboard.putNumber("vision.kP", Constants.Vision.kP);
+
+    double maxAngle = 15;
+    double minAngle = Constants.Vision.autoAimDeadband;
+    double slope = (Constants.Vision.maxSpeed - Constants.Vision.minSpeed)/(maxAngle - minAngle);
+    speed = angle * slope;
+    System.out.println("Slope: " + slope);
+    System.out.println("Slope: " + speed);
+
     
     if(speed > 0){
       // Math.max returns the greater (closer to +Infinity) of the two values,
       // so we need to do this differently because we want further from zero
-      speed = Math.max(speed, Constants.Vision.minSpeed);
-      speed = Math.min(speed, Constants.Vision.maxSpeed);
+      if(angle < minAngle){
+        speed = 0;
+      }else if(angle > maxAngle){
+        speed = Constants.Vision.maxSpeed;
+      }
+    
     }else if(speed < 0){
-      speed = Math.min(speed, -Constants.Vision.minSpeed);
-      speed = Math.max(speed, -Constants.Vision.maxSpeed);
+      if(angle > -minAngle){
+        speed = 0;
+      }else if(angle < -maxAngle){
+        speed = Constants.Vision.maxSpeed;
+      }
     }
 
     speed = speed * -1;
+
 
     SmartDashboard.putNumber("vision.processedSpeed", speed);
     return speed;
@@ -125,6 +141,8 @@ public class Turret extends Subsystem {
     
       SmartDashboard.putNumber("vision.aimDeadband", AutoAimDeadband);
       SmartDashboard.putBoolean("vision.isOutOfDeadband", Math.abs(mPeriodicIO.angle) > AutoAimDeadband);
+      System.out.println("error ange: " + mPeriodicIO.angle);
+      System.out.println("Deadband: " + AutoAimDeadband);
 
       // deadband: Angle error must be greater than 1 degree
       if (Math.abs(mPeriodicIO.angle) > AutoAimDeadband) {
@@ -134,6 +152,7 @@ public class Turret extends Subsystem {
         mTurretTalon.set(ControlMode.PercentOutput, speed);
       }else{
         SmartDashboard.putNumber("vision.processedSpeed", 0);
+        mTurretTalon.set(ControlMode.PercentOutput, 0);
       }
 
     } else if (mCurrentState == TurretState.HOME) {
