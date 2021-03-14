@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.lang.invoke.ClassSpecializer.Factory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -109,14 +108,11 @@ class PIDRoller {
       FalconMotor1.set(ControlMode.PercentOutput, 0);
       speedSetPoint = 0;
     }else{
-      //limit output
-      if(speedSetPoint < 1){
-        speedSetPoint += .01;
-      }
+      System.out.println("SETTING PERC OUTPUT: " + output);
 
      if(getVelocity() < 3000){
        FalconMotor1.set(ControlMode.PercentOutput, .2);
-     }else if(getVelocity()  < 10000){
+     }else if(getVelocity()  < 6000){
        FalconMotor1.set(ControlMode.PercentOutput, .5);
      }
      else{
