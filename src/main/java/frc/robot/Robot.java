@@ -1260,9 +1260,12 @@ public class Robot extends TimedRobot {
           mShootingState = ShootingState.SHOOT_BALL;
           // reset cooldown timer
           mCurrentCooldown = ShotCooldown;
+        }else{
+          System.out.println("NOT AT VELOCITY");
         }
 
         if (mOperatorInterface.getShoot()) {
+          System.out.println("Is this booming our shot?");
           mShootingState = ShootingState.SHOOTING_COMPLETE;
           mStorage.stop();
         }
