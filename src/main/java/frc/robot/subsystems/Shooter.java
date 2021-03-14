@@ -121,7 +121,7 @@ public class Shooter extends Subsystem {
 
   public boolean isBallFired() {
     boolean didDropVelocity =
-        Math.abs(mRoller.getVelocity() - getAdjustedVelocitySetpoint()) >= (DROP_DEADBAND);
+        Math.abs(mRoller.getVelocity() - 15640) >= (DROP_DEADBAND);
     boolean ballFired = didDropVelocity;
     if (ballFired) {
       System.out.println("BALL FIRED!");
