@@ -114,9 +114,12 @@ class PIDRoller {
         speedSetPoint += .01;
       }
 
-     if(getVelocity() < 1000){
-       FalconMotor1.set(ControlMode.PercentOutput, .3);
-     }else{
+     if(getVelocity() < 3000){
+       FalconMotor1.set(ControlMode.PercentOutput, .2);
+     }else if(getVelocity()  < 10000){
+       FalconMotor1.set(ControlMode.PercentOutput, .5);
+     }
+     else{
        FalconMotor1.set(ControlMode.PercentOutput, output);
      }
 
