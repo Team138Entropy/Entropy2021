@@ -112,6 +112,7 @@ public class Shooter extends Subsystem {
     //just sample this
     System.out.println("IF Velocity: " + mRoller.getVelocity());
     int velocity = mRoller.getVelocity();
+    System.out.println("AT Velcoicty to shoot: " + (velocity >= 15640));
     return (velocity >= 15640);
    // return isAtVelocityDebounced;
 

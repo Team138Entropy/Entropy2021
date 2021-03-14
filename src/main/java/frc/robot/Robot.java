@@ -1256,6 +1256,7 @@ public class Robot extends TimedRobot {
 
         /* If rollers are spun up, changes to next state */
         if (mShooter.isAtVelocity() /* TODO: && Target Acquired */) {
+          System.out.println("We are at velocity.. shoot  pls");
           mShootingState = ShootingState.SHOOT_BALL;
           // reset cooldown timer
           mCurrentCooldown = ShotCooldown;
