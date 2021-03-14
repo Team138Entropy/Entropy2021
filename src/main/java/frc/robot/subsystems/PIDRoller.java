@@ -21,6 +21,8 @@ class PIDRoller {
 
   private int rollupLevel = -1;
 
+  private double speedSetPoint = 0;
+
   PIDRoller(int talonPort, int talon2Port, double p, double i, double d, double f) {
     FalconMotor1 = new WPI_TalonFX(talonPort);
     FalconMotor2 = new WPI_TalonFX(talon2Port);    
@@ -64,7 +66,7 @@ class PIDRoller {
     FalconMotor1.config_kD(PID_LOOP_INDEX, d);
     FalconMotor1.config_kF(PID_LOOP_INDEX, f);
     */
-    FalconMotor1.configClosedloopRamp(15);
+   // FalconMotor1.configClosedloopRamp(15);
     //mTalon.config_kP(PID_LOOP_INDEX, p);
     //mTalon.config_kI(PID_LOOP_INDEX, i);
     //mTalon.config_kD(PID_LOOP_INDEX, d);
@@ -100,9 +102,17 @@ class PIDRoller {
   }
 
   void setPercentOutput(double output) {
-    // System.out.println(getVelocity() + " velocity at output " + output);
-    FalconMotor1.set(ControlMode.PercentOutput, output);
-  
+    // System.out.println(getVelocity() + " velocity at output " + output); 
+    if(output == 0){
+      FalconMotor1.set(ControlMode.PercentOutput, 0);
+      speedSetPoint = 0;
+    }else{
+      //limit output
+      if(output < 1){
+        output += .01;
+      }
+      FalconMotor1.set(ControlMode.PercentOutput, output);
+    }
     //mTalon.set(ControlMode.PercentOutput, -output);
   }
 
