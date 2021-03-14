@@ -108,10 +108,11 @@ class PIDRoller {
       speedSetPoint = 0;
     }else{
       //limit output
-      if(output < 1){
-        output += .01;
+      if(speedSetPoint < 1){
+        speedSetPoint += .01;
       }
-      FalconMotor1.set(ControlMode.PercentOutput, output);
+     // System.out.println("setPercentOutput: " + output;)
+      FalconMotor1.set(ControlMode.PercentOutput, speedSetPoint);
     }
     //mTalon.set(ControlMode.PercentOutput, -output);
   }
