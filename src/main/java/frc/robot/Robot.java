@@ -1269,17 +1269,19 @@ public class Robot extends TimedRobot {
         break;
       case SHOOT_BALL:
         mStorage.ejectBall();
-
+        System.out.println("Shoot the ball");
         mShooter.start();
 
         // turn off shooting
         if (mOperatorInterface.getShoot() || mStorage.isEmpty()) {
+          System.out.println("Turn off shooting");
           mShootingState = ShootingState.SHOOTING_COMPLETE;
           mStorage.stop();
         }
 
         /* If finished shooting, changes to next state*/
         if (mShooter.isBallFired()) {
+          System.out.println("is ball fired");
           mShootingState = ShootingState.SHOOT_BALL_COMPLETE;
         }
         break;
@@ -1299,7 +1301,7 @@ public class Robot extends TimedRobot {
         mShootingState = ShootingState.PREPARE_TO_SHOOT;
         break;
       case SHOOTING_COMPLETE:
-
+        System.out.println("Shooting complete???");
         /* Stops the roller and returns to intake state */
         mShooter.stop();
         mShootingState = ShootingState.IDLE;
