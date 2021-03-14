@@ -64,7 +64,7 @@ class PIDRoller {
     FalconMotor1.config_kD(PID_LOOP_INDEX, d);
     FalconMotor1.config_kF(PID_LOOP_INDEX, f);
     */
-    FalconMotor1.configClosedloopRamp(5);
+    FalconMotor1.configClosedloopRamp(15);
     //mTalon.config_kP(PID_LOOP_INDEX, p);
     //mTalon.config_kI(PID_LOOP_INDEX, i);
     //mTalon.config_kD(PID_LOOP_INDEX, d);
@@ -101,7 +101,7 @@ class PIDRoller {
 
   void setPercentOutput(double output) {
     // System.out.println(getVelocity() + " velocity at output " + output);
-    FalconMotor1.set(ControlMode.PercentOutput, -output);
+    FalconMotor1.set(ControlMode.PercentOutput, output);
   
     //mTalon.set(ControlMode.PercentOutput, -output);
   }
