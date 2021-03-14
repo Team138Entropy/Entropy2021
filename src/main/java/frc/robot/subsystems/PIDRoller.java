@@ -88,7 +88,7 @@ class PIDRoller {
   }
 
   public int getVelocity() {
-    return -FalconMotor1.getSelectedSensorVelocity();
+    return FalconMotor1.getSelectedSensorVelocity();
     //return -mTalon.getSelectedSensorVelocity();
   }
 
