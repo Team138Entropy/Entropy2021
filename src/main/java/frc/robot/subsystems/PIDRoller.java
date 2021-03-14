@@ -123,7 +123,7 @@ class PIDRoller {
      }
      */
     if(speedSetPoint < output){
-      speedSetPoint += .05;
+      speedSetPoint += .01;
     }
     if(speedSetPoint >= 1){
       atSetpointTarget = true;
