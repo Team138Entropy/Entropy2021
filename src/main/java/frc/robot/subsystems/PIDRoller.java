@@ -23,6 +23,7 @@ class PIDRoller {
   private int rollupLevel = -1;
 
   private double speedSetPoint = 0;
+  private boolean atSetpointTarget = false;
 
   PIDRoller(int talonPort, int talon2Port, double p, double i, double d, double f) {
     FalconMotor1 = new WPI_TalonFX(talonPort);
@@ -107,9 +108,11 @@ class PIDRoller {
     if(output == 0){
       FalconMotor1.set(ControlMode.PercentOutput, 0);
       speedSetPoint = 0;
+      atSetpointTarget = false;
     }else{
       System.out.println("SETTING PERC OUTPUT: " + output);
 
+      /*
      if(getVelocity() < 3000){
        FalconMotor1.set(ControlMode.PercentOutput, .2);
      }else if(getVelocity()  < 6000){
@@ -118,6 +121,18 @@ class PIDRoller {
      else{
        FalconMotor1.set(ControlMode.PercentOutput, output);
      }
+     */
+    if(speedSetPoint < output){
+      speedSetPoint += .05;
+    }
+    if(speedSetPoint >= 1){
+      atSetpointTarget = true;
+    }
+    if(atSetpointTarget){
+      FalconMotor1.set(ControlMode.PercentOutput, output);
+    }else{
+      FalconMotor1.set(ControlMode.PercentOutput, speedSetPoint);
+    }
 
      // System.out.println("setPercentOutput: " + output;)
      // FalconMotor1.set(ControlMode.PercentOutput, speedSetPoint);
