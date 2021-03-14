@@ -53,8 +53,9 @@ public class Shooter extends Subsystem {
 
   /** Starts the roller. */
   public void start() {
-    mRoller.setSpeed(getAdjustedVelocitySetpoint());
-    SmartDashboard.putNumber("ShooterCurrent", mRoller.getCurrent());
+   // mRoller.setSpeed(getAdjustedVelocitySetpoint());
+   // SmartDashboard.putNumber("ShooterCurrent", mRoller.getCurrent());
+   mRoller.setPercentOutput(1);
   }
 
   /** Stops the roller. */
@@ -108,7 +109,11 @@ public class Shooter extends Subsystem {
     // if the time is at least 0, we are "at velocity"
     boolean isAtVelocityDebounced = mTimeSinceWeWereAtVelocity <= 0;
 
-    return isAtVelocityDebounced;
+    //just sample this
+    System.out.println("IF Velocity: " + mRoller.getVelocity());
+    int velocity = mRoller.getVelocity();
+    return (velocity >= 15640);
+   // return isAtVelocityDebounced;
 
     // return false;
   }

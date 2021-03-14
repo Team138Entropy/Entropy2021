@@ -52,7 +52,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
   private static Logger mLogger = new Logger(Constants.Loggers.SIMULATEDTALON);
 
   public OurWPITalonSRX(int deviceNumber) {
-    this.deviceNumber = deviceNumber;
+  this.deviceNumber = deviceNumber;
     if (Robot.isReal()) {
       thisTalon = new WPI_TalonSRX(deviceNumber);
     }
