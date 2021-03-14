@@ -221,7 +221,7 @@ public class Drive extends Subsystem {
 
 
   public synchronized void setDrive(double throttle, double wheel, boolean quickTurn) {
-                  wheel = wheel * -1; //invert wheel
+      wheel = wheel * -1; //invert wheel
 /*
       if(throttle >= 0){
       }

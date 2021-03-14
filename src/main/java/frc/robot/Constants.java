@@ -49,7 +49,7 @@ public class Constants {
     public static class Storage {
       // 2 different tops depending on the bot
       public static final int compTop = 5;
-      public static final int practiceTop = 7;
+      public static final int practiceTop = 5;
       public static final int bottom = 8;
     }
 
@@ -119,8 +119,8 @@ public class Constants {
     // continuous & peak current limit for both storage talons
     public static final int currentLimit = 7;
 
-    public static final double rollerStoreSpeed = .5;
-    public static final double rollerEjectSpeed = .5;
+    public static final double rollerStoreSpeed = .30;
+    public static final double rollerEjectSpeed = .8;
 
     // the storage roller goes x times faster in test mode
     public static final double testRollerSpeedFactor = .5;
@@ -130,8 +130,8 @@ public class Constants {
 
     // in encoder ticks
     public static class BallDistances {
-      public static final double practice = 250;
-      public static final double competition = 300;
+      public static final double practice = 400;
+      public static final double competition = 400;
     }
   }
 

@@ -1251,9 +1251,9 @@ public class Robot extends TimedRobot {
         // should help between shots and solve low velocity issue
         if (mCurrentCooldown > 0) {
           mCurrentCooldown--;
-          return; // skip the rest of this loop
+           // skip the rest of this loop
         }
-
+        
         /* If rollers are spun up, changes to next state */
         if (mShooter.isAtVelocity() /* TODO: && Target Acquired */) {
           System.out.println("We are at velocity.. shoot  pls");

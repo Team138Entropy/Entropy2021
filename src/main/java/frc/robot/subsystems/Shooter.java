@@ -11,7 +11,7 @@ public class Shooter extends Subsystem {
   private final double MAX_SPEED = 3600.0;
   // private static final double SPEED_DEADBAND = 20;
   private final double SPEED_DEADBAND = 5;
-  private final double DROP_DEADBAND = 250;
+  private final double DROP_DEADBAND = 500;
   private final int SPEED_DEADBAND_DELAY = 15;
   private final double FEEDFORWARD = 1023d / MAX_SPEED;
   // private static final double P = (.3 * 1023) / 50;
@@ -55,7 +55,7 @@ public class Shooter extends Subsystem {
   public void start() {
    // mRoller.setSpeed(getAdjustedVelocitySetpoint());
    // SmartDashboard.putNumber("ShooterCurrent", mRoller.getCurrent());
-   mRoller.setPercentOutput(1);
+   mRoller.setPercentOutput(.85);
   }
 
   /** Stops the roller. */
@@ -112,8 +112,8 @@ public class Shooter extends Subsystem {
     //just sample this
     System.out.println("IF Velocity: " + mRoller.getVelocity());
     int velocity = mRoller.getVelocity();
-    System.out.println("AT Velcoicty to shoot: " + (velocity >= 15640));
-    return (velocity >= 15640);
+    System.out.println("AT Velcoicty to shoot: " + (velocity >= 15600));
+    return (velocity >= 15600);
    // return isAtVelocityDebounced;
 
     // return false;
@@ -121,7 +121,7 @@ public class Shooter extends Subsystem {
 
   public boolean isBallFired() {
     boolean didDropVelocity =
-        Math.abs(mRoller.getVelocity() - 15640) >= (DROP_DEADBAND);
+        Math.abs(mRoller.getVelocity() - 15600) >= (DROP_DEADBAND);
     boolean ballFired = didDropVelocity;
     if (ballFired) {
       System.out.println("BALL FIRED!");
