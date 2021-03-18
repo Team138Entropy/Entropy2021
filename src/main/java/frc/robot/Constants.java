@@ -120,7 +120,7 @@ public class Constants {
     public static final int currentLimit = 7;
 
     public static final double rollerStoreSpeed = .30;
-    public static final double rollerEjectSpeed = .8;
+    public static final double rollerEjectSpeed = .58;
 
     // the storage roller goes x times faster in test mode
     public static final double testRollerSpeedFactor = .5;

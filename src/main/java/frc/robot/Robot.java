@@ -1276,7 +1276,7 @@ public class Robot extends TimedRobot {
         mShooter.start();
 
         // turn off shooting
-        if (mOperatorInterface.getShoot() || mStorage.isEmpty()) {
+        if (mOperatorInterface.getShoot()) {
           System.out.println("Turn off shooting");
           mShootingState = ShootingState.SHOOTING_COMPLETE;
           mStorage.stop();
@@ -1285,7 +1285,7 @@ public class Robot extends TimedRobot {
         /* If finished shooting, changes to next state*/
         if (mShooter.isBallFired()) {
           System.out.println("is ball fired");
-          mShootingState = ShootingState.SHOOT_BALL_COMPLETE;
+          //mShootingState = ShootingState.SHOOT_BALL_COMPLETE;
         }
         break;
       case SHOOT_BALL_COMPLETE:
