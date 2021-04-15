@@ -228,12 +228,12 @@ public class Drive extends Subsystem {
       */
       System.out.println(throttle);
 
-      if (Util.epsilonEquals(throttle, 0.0, 0.04)) {
+      if (Util.epsilonEquals(throttle, 0.0, 0.05)) {
           throttle = 0.0;
           quickTurn = true;
       }
 
-      if (Util.epsilonEquals(wheel, 0.0, 0.035)) {
+      if (Util.epsilonEquals(wheel, 0.0, 0.045)) {
           wheel = 0.0;
       }
       //Graph to see on desmos
@@ -252,6 +252,13 @@ public class Drive extends Subsystem {
           wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
           wheel = Math.sin(Math.PI / 2.0 * kWheelNonlinearity * wheel);
           wheel = wheel / (denominator * denominator) * Math.abs(throttle);
+          wheel = wheel * .80;
+          /*
+          if(throttle < 0){
+            wheel = wheel * -1;
+          }
+          */
+          
       }
 
       if(quickTurn){
