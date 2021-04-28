@@ -252,6 +252,17 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "0,9": {
+            "size": [
+              5,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Raw Intake Sensor",
+              "_title": "SmartDashboard/Raw Intake Sensor"
+            }
           }
         }
       }
@@ -1262,6 +1273,28 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/ShooterCurrent",
               "_title": "ShooterCurrent"
+            }
+          },
+          "5,11": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Has Intake Sensor",
+              "_title": "Has Intake Sensor"
+            }
+          },
+          "6,11": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Raw Intake Sensor",
+              "_title": "Raw Intake Sensor"
             }
           }
         }

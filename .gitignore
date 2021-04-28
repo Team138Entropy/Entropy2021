@@ -85,3 +85,4 @@ fabric.properties
 # macOS garbage
 src/main/java/frc/robot/vision/.DS_Store
 .settings/org.eclipse.buildship.core.prefs
+.settings/org.eclipse.jdt.core.prefs

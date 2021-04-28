@@ -47,6 +47,7 @@ public class Constants {
     }
 
     public static class Storage {
+      public static final int lidarCanID = 0;
       // 2 different tops depending on the bot
       public static final int compTop = 5;
       public static final int practiceTop = 5;
@@ -128,6 +129,10 @@ public class Constants {
     // the bottom roller goes x times faster than the top one
     public static final double bottomRollerSpeedFactor = 1.15;
 
+    // minimum distance for the lidar sensor for to count something as a ball
+    public static final int lidarMinDistance = 180;
+    public static final int minTripCount = 3;
+    
     // in encoder ticks
     public static class BallDistances {
       public static final double practice = 400;

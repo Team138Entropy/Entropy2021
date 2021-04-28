@@ -3,11 +3,13 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.playingwithfusion.TimeOfFlight;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.OurWPITalonSRX;
 import frc.robot.Robot;
+import javax.annotation.Nullable;
 
 /** Add your docs here. */
 public class Storage extends Subsystem {
@@ -22,7 +24,7 @@ public class Storage extends Subsystem {
   private final double BOTTOM_SPEED_FACTOR = Constants.Storage.bottomRollerSpeedFactor;
   private final double EJECT_SPEED = Constants.Storage.rollerEjectSpeed;
   private final double BALL_DISTANCE_IN_ENCODER_TICKS;
-
+  @Nullable private TimeOfFlight mLidar;
   private final int INTAKE_SENSOR_PORT = 0;
 
   private DigitalInput mIntakeSensor;
@@ -31,6 +33,8 @@ public class Storage extends Subsystem {
   private final OurWPITalonSRX mTopRoller;
 
   private int mBallCount = 0;
+
+  private int mTripCount = 0;
 
   private static Storage sInstance;
 
@@ -46,6 +50,7 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
+      mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     ROLLER_TOP_PORT =
         Robot.getIsPracticeBot()
             ? Constants.Talons.Storage.practiceTop
@@ -65,8 +70,6 @@ public class Storage extends Subsystem {
 
     mBottomRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
     mBottomRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
-
-    mIntakeSensor = new DigitalInput(INTAKE_SENSOR_PORT);
 
     if (Robot.getIsPracticeBot()) {
       BALL_DISTANCE_IN_ENCODER_TICKS = Constants.Storage.BallDistances.practice;
@@ -102,11 +105,31 @@ public class Storage extends Subsystem {
   }
 
   public synchronized boolean getIntakeSensor() {
-    return Robot.getIsPracticeBot() ? mIntakeSensor.get() : !mIntakeSensor.get();
+    if (Robot.isReal()) {
+      return mLidar.getRange() < Constants.Storage.lidarMinDistance;
+    }
+    return false;
+  }
+
+  public synchronized double getSensorDistance() {
+    if (Robot.isReal()) {
+      return mLidar.getRange();
+    }
+    return 0;
   }
 
   public synchronized boolean isBallDetected() {
-    return getIntakeSensor();
+    if (getIntakeSensor()) {
+      mTripCount++;
+    } else {
+      mTripCount = 0;
+    }
+
+    if (mTripCount >= Constants.Storage.minTripCount) {
+      mTripCount = 0;
+      return true;
+    }
+    return false;
   }
 
   public synchronized boolean isBallStored() {
@@ -120,11 +143,7 @@ public class Storage extends Subsystem {
     SmartDashboard.putNumber("Encoder Distance Raw", getEncoder());
 
     // if we've hit our encoder distance target
-    if (encoderDistance >= BALL_DISTANCE_IN_ENCODER_TICKS) {
-      return true;
-    } else {
-      return false;
-    }
+    return encoderDistance >= BALL_DISTANCE_IN_ENCODER_TICKS;
   }
 
   public synchronized void barf() {
