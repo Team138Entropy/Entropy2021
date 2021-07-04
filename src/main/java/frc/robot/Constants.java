@@ -13,7 +13,7 @@ public class Constants {
     PID(SupportedLevels.INFO),
     ROBOT(SupportedLevels.WARN),
     TURRET(SupportedLevels.VERBOSE),
-    DRIVE(SupportedLevels.INFO),
+    DRIVE(SupportedLevels.DEBUG),
     SUBSYSTEM(SupportedLevels.INFO),
     BALL_STORED(SupportedLevels.INFO),
     EVENT_WATCHER_THREAD(SupportedLevels.INFO),
@@ -65,16 +65,40 @@ public class Constants {
 
   /// Subsystems
   public static class Drive {
+    public enum DriveMode {
+      OLD_DRIVE,
+      WPILIB_DRIVE,
+      BRIAN_DRIVE
+    }
+
+    public class AccelerationLimiting {
+      // divide the reciprocal of desired seconds until full throttle (forwards or backwards) by 50
+      // to find max accel per tick (the second number below is how many seconds you want it to
+      // take)
+
+      // speeding up when going forwards is the same acceleration direction as slowing down when
+      // reversing
+      // and thus has the same constants
+
+      // make this one higher if this falls forwards (rotates around the axis of the intake roller)
+      public static final double acceleration = (1f / 1f) / 50f;
+
+      // make this one higher if this falls backwards
+      public static final double decceleration = (1f / 1.25f) / 50f;
+    }
+
+    public static double quickTurnDeadband = 0.1;
+
+    public static DriveMode driveMode = DriveMode.OLD_DRIVE;
+
     public static boolean enabled = true;
 
     public static int talonSensorTimeoutMs = 250;
 
     public static double maxSpeedWhenClimbing = .3;
 
-    // TODO: determine if this is actually "DRIVE__FORWARD_ACCEL_RAMP_TIME_SECONDS", as it was
-    // previously named
-    public static double accelSpeed = 1;
-    public static double brakeSpeed = 1;
+    // acceleration speed (in ms)
+    public static double accelLimit = 3;
 
     public static class Encoders {
       // ticks = (19711 + 19582) / 2
