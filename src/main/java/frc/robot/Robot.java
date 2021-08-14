@@ -19,8 +19,12 @@ import frc.robot.subsystems.*;
 import frc.robot.util.LatchedBoolean;
 import frc.robot.util.loops.Looper;
 import frc.robot.vision.VisionPacket;
+import edu.wpi.first.wpilibj.Jaguar;
 import java.io.IOException;
 import java.net.InetAddress;
+import frc.robot.OI.NykoController.Axis;
+import frc.robot.OI.NykoController.DPad;
+
 
 /**
  * The VM is configured to automatically run this class. If you change the name of this class or the
@@ -86,6 +90,8 @@ public class Robot extends TimedRobot {
   private int LastTurretVisionID = -1; // use IDs to filter out bad ideas
 
   private double mTurretAdjust = 0;
+
+   
 
   public enum TestState {
     START,
@@ -181,11 +187,18 @@ public class Robot extends TimedRobot {
   private int mTestPosition;
   private Timer mTestTimer = new Timer();
 
+  private Jaguar Jag1 = new Jaguar(0); 
+  double jagSpeed = 0; 
+  //private final NykoController OperatorController;
+
   @Override
+
   public void robotInit() {
-    SmartDashboard.putNumber("Auto Layout", 0);
+    Jag1.set(0);
+    //SmartDashboard.putNumber("Auto Layout", 0);
     SmartDashboard.putBoolean("Correct Controllers", mOperatorInterface.checkControllers());
 
+    /*
     // Read the jumper pin for practice bot
     readIsPracticeBot();
 
@@ -219,6 +232,7 @@ public class Robot extends TimedRobot {
     }
 
     sGyro.calibrate();
+    */
   }
 
   @Override
@@ -464,401 +478,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    double timePerTest = Constants.TestMode.timePerTest;
-    int expectedStorageDistance = Constants.TestMode.expectedStorageDistance;
-    int storageAcceptableError = Constants.TestMode.acceptableStorageError;
-    int expectedShooterSpeed = Constants.TestMode.expectedShooterSpeed;
-    int shooterAcceptableError = Constants.TestMode.acceptableShooterError;
 
-    SmartDashboard.putString("Test State", mTestState.toString());
-    SmartDashboard.putBoolean("Driver Cameras", mCameraManager.getCameraStatus());
-    SmartDashboard.putBoolean("Garage Door", mStorage.getIntakeSensor());
-    SmartDashboard.putNumber("Climber Position", mClimber.getEncoderPosition());
-    SmartDashboard.putNumber("Storage encoder", mStorage.getEncoder());
-
-    switch (mTestState) {
-      case START:
-        mTestTimer.reset();
-        mTestTimer.start();
-        mTestState = TestState.TEST_PI;
-        // mTestState = TestState.DRIVE1_FORWARD_TEST;
-        mStorage.updateEncoderPosition();
-        break;
-      case TEST_PI:
-        try {
-          InetAddress address = InetAddress.getByName("10.1.38.41");
-          boolean reachable = address.isReachable(1000);
-          if (reachable) {
-            SmartDashboard.putBoolean("Raspberry PI Passed", true);
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        mTestState = TestState.TEST_LIGHT;
-        break;
-      case TEST_LIGHT:
-        visionLight.set(Relay.Value.kForward);
-        mTestState = TestState.INTAKE_FORWARD;
-        mTestTimer.reset();
-        mTestTimer.start();
-        break;
-      case INTAKE_FORWARD:
-        if (runMotorTest(mIntake::setOutput, "Intake Forwards", false, 0, 0, timePerTest)) {
-          mTestState = TestState.INTAKE_BACKWARD;
-        }
-        break;
-      case INTAKE_BACKWARD:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                mIntake.setOutput(-output);
-              }
-            },
-            "Intake Backwards",
-            false,
-            0,
-            0,
-            timePerTest)) {
-          mTestState = TestState.STORAGE_ENCODER_FORWARDS_TEST;
-        }
-        break;
-      case STORAGE_ENCODER_FORWARDS_TEST:
-
-        // intentional fallthrough
-      case STORAGE_ENCODER_BACKWARDS_TEST:
-        if (mTestState == TestState.STORAGE_ENCODER_FORWARDS_TEST) {
-          mTestState = TestState.STORAGE_ENCODER_FORWARDS_TEST_WAITING;
-        } else {
-          mTestState = TestState.STORAGE_ENCODER_BACKWARDS_TEST_WAITING;
-        }
-
-        setupMotorTest(
-            new JustAnEncoder() {
-              @Override
-              public int getEncoder() {
-                return mStorage.getEncoder();
-              }
-            });
-        break;
-      case STORAGE_ENCODER_FORWARDS_TEST_WAITING:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public int getEncoder() {
-                return mStorage.getEncoder();
-              }
-
-              @Override
-              public void percentOutput(double output) {
-                if (mIsPracticeBot) {
-                  mStorage.setBottomOutput(output);
-                } else {
-                  mStorage.setTopOutput(output);
-                }
-              }
-            },
-            "Storage Forwards Test",
-            true,
-            expectedStorageDistance,
-            storageAcceptableError,
-            timePerTest)) {
-          mTestState = TestState.STORAGE_ENCODER_STOP;
-        }
-        break;
-      case STORAGE_ENCODER_STOP:
-        if (mTestTimer.get() >= timePerTest) {
-          mTestTimer.reset();
-          mTestTimer.start();
-          mTestState = TestState.STORAGE_ENCODER_BACKWARDS_TEST;
-        }
-        break;
-      case STORAGE_ENCODER_BACKWARDS_TEST_WAITING:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public int getEncoder() {
-                return mStorage.getEncoder();
-              }
-
-              @Override
-              public void percentOutput(double output) {
-                if (mIsPracticeBot) {
-                  mStorage.setBottomOutput(-output);
-                } else {
-                  mStorage.setTopOutput(-output);
-                }
-              }
-            },
-            "Storage Backwards Test",
-            true,
-            -expectedStorageDistance,
-            storageAcceptableError,
-            timePerTest)) {
-          mTestState = TestState.STORAGE_ENCODER_NO_ENCODER_FORWARDS_TEST;
-        }
-        break;
-      case STORAGE_ENCODER_NO_ENCODER_FORWARDS_TEST:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                if (mIsPracticeBot) {
-                  mStorage.setTopOutput(output);
-                } else {
-                  mStorage.setBottomOutput(output);
-                }
-              }
-            },
-            "Storage No Encoder Forwards Test",
-            false,
-            0,
-            0,
-            timePerTest)) {
-          mTestState = TestState.STORAGE_ENCODER_NO_ENCODER_BACKWARDS_TEST;
-        }
-        break;
-      case STORAGE_ENCODER_NO_ENCODER_BACKWARDS_TEST:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                if (mIsPracticeBot) {
-                  mStorage.setTopOutput(-output);
-                } else {
-                  mStorage.setBottomOutput(-output);
-                }
-              }
-            },
-            "Storage No Encoder Backwards Test",
-            false,
-            0,
-            0,
-            timePerTest)) {
-          mTestState = TestState.SHOOTER_ENCODER_TEST;
-        }
-        break;
-      case SHOOTER_ENCODER_TEST:
-        setupMotorTest(new JustAnEncoder() {});
-
-        if (mShooter.getSpeed() != 0) {
-          SmartDashboard.putBoolean("Shooter Initial Speed Test Passed", false);
-        } else {
-          SmartDashboard.putBoolean("Shooter Initial Speed Test Passed", true);
-        }
-
-        mTestState = TestState.SHOOTER_ENCODER_TEST_WAITING;
-        break;
-      case SHOOTER_ENCODER_TEST_WAITING:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public int getEncoder() {
-                return mShooter.getSpeed();
-              }
-
-              @Override
-              public void percentOutput(double output) {
-                mShooter.setOutput(output);
-              }
-            },
-            "Shooter Speed Test",
-            true,
-            expectedShooterSpeed,
-            shooterAcceptableError,
-            timePerTest)) {
-          mTestState = TestState.DRIVE_LEFT_FRONT;
-
-          setupMotorTest(
-              new JustAnEncoder() {
-                @Override
-                public int getEncoder() {
-                  return (int) mDrive.getLeftEncoderDistance();
-                }
-              });
-        }
-        break;
-      case DRIVE_LEFT_FRONT:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                mDrive.setOutputLeftFront(output / 2);
-              }
-
-              @Override
-              public int getEncoder() {
-                return (int) mDrive.getLeftEncoderDistance();
-              }
-            },
-            "Drive Left Front",
-            true,
-            1139,
-            200,
-            timePerTest)) {
-          mTestState = TestState.DRIVE_LEFT_BACK;
-          setupMotorTest(
-              new JustAnEncoder() {
-                @Override
-                public int getEncoder() {
-                  return (int) mDrive.getLeftEncoderDistance();
-                }
-              });
-        }
-        break;
-      case DRIVE_LEFT_BACK:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                mDrive.setOutputLeftBack(output / 2);
-              }
-
-              @Override
-              public int getEncoder() {
-                return (int) mDrive.getLeftEncoderDistance();
-              }
-            },
-            "Drive Left Back",
-            true,
-            1231,
-            200,
-            timePerTest)) {
-          mTestState = TestState.DRIVE_RIGHT_FRONT;
-          setupMotorTest(
-              new JustAnEncoder() {
-                @Override
-                public int getEncoder() {
-                  return (int) mDrive.getRightEncoderDistance();
-                }
-              });
-        }
-        break;
-      case DRIVE_RIGHT_FRONT:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                mDrive.setOutputRightFront(output / 2);
-              }
-
-              @Override
-              public int getEncoder() {
-                return (int) mDrive.getRightEncoderDistance();
-              }
-            },
-            "Drive Right Front",
-            true,
-            873,
-            200,
-            timePerTest)) {
-          mTestState = TestState.DRIVE_RIGHT_BACK;
-          setupMotorTest(
-              new JustAnEncoder() {
-                @Override
-                public int getEncoder() {
-                  return (int) mDrive.getRightEncoderDistance();
-                }
-              });
-        }
-        break;
-      case DRIVE_RIGHT_BACK:
-        if (runMotorTest(
-            new MotorWithEncoder() {
-              @Override
-              public void percentOutput(double output) {
-                mDrive.setOutputRightBack(output / 2);
-              }
-
-              @Override
-              public int getEncoder() {
-                return mDrive.getRightEncoderDistance();
-              }
-            },
-            "Drive Right Back",
-            true,
-            1485,
-            200,
-            timePerTest)) {
-          mTestState = TestState.MANUAL;
-        }
-        break;
-      case MANUAL:
-        if (mOperatorInterface.isClimberTest()) {
-          mClimber.jog(mOperatorInterface.getClimberJogSpeed() * Constants.Climber.jogSpeedFactor);
-        } else {
-          mClimber.stop();
-        }
-        // Intake roller ON while button held
-        if (mOperatorInterface.isIntakeRollerTest()) {
-          mIntake.setOutput(mOperatorInterface.getOperatorThrottle());
-        } else if (mOperatorInterface.isBarf()) {
-          mIntake.barf();
-        } else {
-          mIntake.stop();
-        }
-
-        if (mOperatorInterface.isBarf()) {
-          mStorage.barf();
-        } else {
-          // Bottom storage rollers ON while button held
-          if (mOperatorInterface.isStorageRollerBottomTest()) {
-            mStorage.setBottomOutput(mOperatorInterface.getOperatorThrottle());
-          } else {
-            mStorage.setBottomOutput(0);
-          }
-
-          // Top storage rollers ON while button held
-          if (mOperatorInterface.isStorageRollerTopTest()) {
-            mStorage.setTopOutput(mOperatorInterface.getOperatorThrottle());
-          } else {
-            mStorage.setTopOutput(0);
-          }
-        }
-
-        // Shooter roller ON while button held
-        if (mOperatorInterface.isShooterTest()) {
-          mShooter.setOutput(mOperatorInterface.getOperatorThrottle());
-        } else {
-          mShooter.stop();
-        }
-
-        if (mOperatorInterface.isDriveLeftBackTest()) {
-          mDrive.setOutputLeftBack(mOperatorInterface.getDriveThrottle());
-        } else {
-          mDrive.setOutputLeftBack(0);
-        }
-
-        if (mOperatorInterface.isDriveLeftFrontTest()) {
-          mDrive.setOutputLeftFront(mOperatorInterface.getDriveThrottle());
-        } else {
-          mDrive.setOutputLeftFront(0);
-        }
-
-        if (mOperatorInterface.isDriveRightBackTest()) {
-          mDrive.setOutputRightBack(mOperatorInterface.getDriveThrottle());
-        } else {
-          mDrive.setOutputRightBack(0);
-        }
-
-        if (mOperatorInterface.isDriveRightFrontTest()) {
-          mDrive.setOutputRightFront(mOperatorInterface.getDriveThrottle());
-        } else {
-          mDrive.setOutputRightFront(0);
-        }
-
-        if (mOperatorInterface.getFunctional()) {
-          mTestState = TestState.START;
-        }
-        break;
-      default:
-        mRobotLogger.error("Unknown test state " + mTestState.toString());
-        break;
-    }
   }
 
   @Override
   public void disabledInit() {
+    Jag1.set(0);
+
     visionLight.set(Relay.Value.kOff);
 
     // zero the encoder
@@ -939,7 +565,8 @@ public class Robot extends TimedRobot {
         // mDrive.autoSteerFeederStation(driveThrottle, vp.Error_Angle);
       } else {
         // Standard Manual Drive
-        mDrive.setDrive(driveThrottle, driveTurn, false);
+        
+        //mDrive.setDrive(driveThrottle, driveTurn, false);
 
         // if we were previously in auto drive.. turn it off
         if (mDriveState == DriveState.AUTO_DRIVE) {
@@ -948,6 +575,8 @@ public class Robot extends TimedRobot {
       }
     }
   }
+
+
 
   public void toggleVision() {
     if (mTurretState == TurretState.AUTO_AIM) {
@@ -967,18 +596,39 @@ public class Robot extends TimedRobot {
     Called constantly, houses the main functionality of robot
   */
   public void RobotLoop() {
+    
+
+    if(mOperatorInterface.getSpinUp()){
+      jagSpeed = jagSpeed + .1;
+      Jag1.set(jagSpeed);
+      System.out.println(jagSpeed);
+    }
+
+    if(mOperatorInterface.getShoot()){
+      jagSpeed = jagSpeed - .1;
+      Jag1.set(jagSpeed);
+      System.out.println(jagSpeed);
+    }
+
+    if(mOperatorInterface.isStorageRollerBottomTest()){
+      jagSpeed = 0;
+      Jag1.set(jagSpeed);
+      System.out.println(jagSpeed);
+    }
+
+    /*
     if (mOperatorInterface.getVisionToggle()) {
       toggleVision();
     }
 
     mShooter.updateDistance(LastDistance);
-
     turretLoop();
-
     driveTrainLoop();
 
     updateSmartDashboard();
+    */
 
+    /*
     State prevState = mState;
     IntakeState prevIntakeState = mIntakeState;
     ClimbingState prevClimbState = mClimbingState;
@@ -1046,6 +696,7 @@ public class Robot extends TimedRobot {
     } else if (mOperatorInterface.getResetVelocityTrim()) {
       mShooter.resetVelocity();
     }
+    */
   }
 
   private void executeRobotStateMachine() {
