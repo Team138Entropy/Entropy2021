@@ -21,10 +21,11 @@ import frc.robot.util.loops.Looper;
 import frc.robot.vision.VisionPacket;
 import edu.wpi.first.wpilibj.Jaguar;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
-import frc.robot.OI.NykoController.Axis;
-import frc.robot.OI.NykoController.DPad;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The VM is configured to automatically run this class. If you change the name of this class or the
@@ -187,14 +188,36 @@ public class Robot extends TimedRobot {
   private int mTestPosition;
   private Timer mTestTimer = new Timer();
 
-  private Jaguar Jag1 = new Jaguar(0); 
+  private Jaguar jag0, jag1, jag2, jag3, jag4, jag5;
+  List<Jaguar> allJags = new ArrayList<Jaguar>();
+  int allMotors;
   double jagSpeed = 0; 
+  private int selectedMotor = 0;
+  
+  
+
+
+
   //private final NykoController OperatorController;
 
   @Override
 
   public void robotInit() {
-    Jag1.set(0);
+    allJags.add(jag0 = new Jaguar(0));
+    allJags.add(jag1 = new Jaguar(1));
+    allJags.add(jag2 = new Jaguar(2));
+    allJags.add(jag3 = new Jaguar(3));
+    allJags.add(jag4 = new Jaguar(4));
+    allJags.add(jag5 = new Jaguar(5));
+
+    for(int i = 0; i < allJags.size(); i++ ){
+      allJags.get(i).set(0);
+    }
+
+    allMotors = allJags.size() + 1;
+
+    
+
     //SmartDashboard.putNumber("Auto Layout", 0);
     SmartDashboard.putBoolean("Correct Controllers", mOperatorInterface.checkControllers());
 
@@ -483,7 +506,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    Jag1.set(0);
+    
 
     visionLight.set(Relay.Value.kOff);
 
@@ -596,23 +619,69 @@ public class Robot extends TimedRobot {
     Called constantly, houses the main functionality of robot
   */
   public void RobotLoop() {
-    
+
+    //Select the next motor
+    if(mOperatorInterface.getShooterVelocityTrimUp()){
+      selectedMotor = selectedMotor+1;
+      if(selectedMotor > allMotors){
+        selectedMotor = 0;
+      }
+      if(selectedMotor != allMotors){
+        System.out.println("Selected motor is:" + selectedMotor);
+      }
+      else{
+        System.out.println("Controlling all motors");
+      }
+    }
+    //Select the previous motor
+    else if(mOperatorInterface.getShooterVelocityTrimDown()){
+      selectedMotor = selectedMotor-1;
+      if(selectedMotor < 0){
+        selectedMotor = allMotors;
+      }
+      if(selectedMotor != allMotors){
+        System.out.println("Selected motor is:" + selectedMotor);
+      }
+      else{
+        System.out.println("Controlling all motors");
+      }
+    }
 
     if(mOperatorInterface.getSpinUp()){
       jagSpeed = jagSpeed + .1;
-      Jag1.set(jagSpeed);
       System.out.println(jagSpeed);
+
+      if(selectedMotor == allMotors){
+        System.out.println("Speed up all motors");
+        for(int i = 0; i < allJags.size(); i++){
+          allJags.get(i).set(jagSpeed);
+        }
+      }
+      else if(selectedMotor != 7){
+        allJags.get(selectedMotor).set(jagSpeed);
+      }
     }
 
     if(mOperatorInterface.getShoot()){
       jagSpeed = jagSpeed - .1;
-      Jag1.set(jagSpeed);
+      if(selectedMotor == allMotors){
+        System.out.println("Slow all motors");
+        for(int i = 0; i < allJags.size(); i++){
+          allJags.get(i).set(jagSpeed);
+        }
+      }
+      else if(selectedMotor != 7){
+        allJags.get(selectedMotor).set(jagSpeed);
+      }
       System.out.println(jagSpeed);
     }
 
     if(mOperatorInterface.isStorageRollerBottomTest()){
+      System.out.println("Stop all motors");
       jagSpeed = 0;
-      Jag1.set(jagSpeed);
+      for(int i = 0; i < allJags.size(); i++){
+        allJags.get(i).set(jagSpeed);
+      }
       System.out.println(jagSpeed);
     }
 
