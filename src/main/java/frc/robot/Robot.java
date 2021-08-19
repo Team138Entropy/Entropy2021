@@ -32,6 +32,7 @@ import java.util.List;
  * package after creating this project, you must also update the build.gradle file in the project.
  */
 public class Robot extends TimedRobot {
+  
 
   // Modes
   public enum Mode {
@@ -152,6 +153,9 @@ public class Robot extends TimedRobot {
   private final Turret mTurret = Turret.getInstance();
   private final Drive mDrive = Drive.getInstance();
 
+  //Kicker mKicker = new Kicker();
+  private final Kicker mKicker = Kicker.getInstance();
+
   private static final DigitalInput practiceInput = new DigitalInput(Constants.practiceJumperPin);
 
   private static boolean isPracticeBot = !practiceInput.get();
@@ -182,41 +186,20 @@ public class Robot extends TimedRobot {
   Logger mRobotLogger = new Logger(Constants.Loggers.ROBOT);
 
   // Shooter velocity trim state
-  LatchedBoolean mShooterVelocityTrimUp = new LatchedBoolean();
-  LatchedBoolean mShooterVelocityTrimDown = new LatchedBoolean();
+  // LatchedBoolean mShooterVelocityTrimUp = new LatchedBoolean();
+  // LatchedBoolean mShooterVelocityTrimDown = new LatchedBoolean();
 
   private int mTestPosition;
   private Timer mTestTimer = new Timer();
 
-  private Jaguar jag0, jag1, jag2, jag3, jag4, jag5;
-  List<Jaguar> allJags = new ArrayList<Jaguar>();
-  int allMotors;
-  double jagSpeed = 0; 
-  private int selectedMotor = 0;
-  
-  
 
-
+  
 
   //private final NykoController OperatorController;
 
   @Override
 
   public void robotInit() {
-    allJags.add(jag0 = new Jaguar(0));
-    allJags.add(jag1 = new Jaguar(1));
-    allJags.add(jag2 = new Jaguar(2));
-    allJags.add(jag3 = new Jaguar(3));
-    allJags.add(jag4 = new Jaguar(4));
-    allJags.add(jag5 = new Jaguar(5));
-
-    for(int i = 0; i < allJags.size(); i++ ){
-      allJags.get(i).set(0);
-    }
-
-    allMotors = allJags.size() + 1;
-
-    
 
     //SmartDashboard.putNumber("Auto Layout", 0);
     SmartDashboard.putBoolean("Correct Controllers", mOperatorInterface.checkControllers());
@@ -373,53 +356,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    mClimber.resetEncoder();
-
-    visionLight.set(Relay.Value.kOff);
-    mAuto = false;
-    sIsSpinningUp = false;
-    mRobotLogger.log("Teleop Init!");
-
-    // Start background looper
-    // collections information periodically
-    mEnabledLooper.start();
-
-    mOperatorInterface.checkControllers();
-
-    // Set the initial Robot State
-    mState = State.INTAKE;
-    mIntakeState = IntakeState.IDLE;
-    mClimbingState = ClimbingState.IDLE;
-    mShootingState = ShootingState.IDLE;
-
-    mDrive.zeroEncoders();
-
-    // updated in Intake.java
-    SmartDashboard.putBoolean("Intake Spinning Up", false);
-    SmartDashboard.putBoolean("Intake Overcurrent", false);
-    SmartDashboard.putBoolean("Intake Overcurrent Debounced", false);
-    SmartDashboard.putNumber("Intake Current", 0);
-    SmartDashboard.putNumber("Intake Current Countdown", 0);
-    SmartDashboard.putNumber("Encoder Distance", 0);
-    SmartDashboard.putNumber("Encoder Distance Raw", 0);
-  }
+    mKicker.zeroTicks();
+    return;
+     }
 
   @Override
   public void teleopPeriodic() {
-
-    int left = mDrive.getLeftEncoderDistance();
-    int right = -mDrive.getRightEncoderDistance();
-    SmartDashboard.putNumber("Left", left);
-    SmartDashboard.putNumber("Right", right);
-
-    try {
-      RobotLoop();
-    } catch (Exception e) {
-      mRobotLogger.log("RobotLoop Exception: " + e.getMessage());
-
-      // print the exception to the system error
-      e.printStackTrace(System.err);
+    while(mOperatorInterface.jogUp()){
+      mKicker.jogUp();
     }
+    while(mOperatorInterface.jogDown()){
+      mKicker.jogDown();
+    }
+    mKicker.getTicks(); 
   }
 
   @Override
@@ -619,7 +568,7 @@ public class Robot extends TimedRobot {
     Called constantly, houses the main functionality of robot
   */
   public void RobotLoop() {
-
+/*
     //Select the next motor
     if(mOperatorInterface.getShooterVelocityTrimUp()){
       selectedMotor = selectedMotor+1;
@@ -824,7 +773,7 @@ public class Robot extends TimedRobot {
         break;
       case INTAKE:
         // Check transition to shooting before we start intake of a new ball
-        if (!checkTransitionToShooting()) {
+        /*if (!checkTransitionToShooting()) {
           mIntake.start();
 
           // If a ball is detected, store it
@@ -839,7 +788,7 @@ public class Robot extends TimedRobot {
           if (mOperatorInterface.startIntake()) {
             mIntakeState = IntakeState.IDLE;
           }
-        }
+        }*/
         break;
       case STORE_BALL:
         mStorage.storeBall();
@@ -862,7 +811,7 @@ public class Robot extends TimedRobot {
         }
 
         // Check transition to shooting after storage of ball
-        checkTransitionToShooting();
+        //checkTransitionToShooting();
 
         mIntake.resetOvercurrentCooldown();
         break;
@@ -882,34 +831,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  private boolean checkTransitionToShooting() {
-    // result.HasResult ensures that our vision system sees a target
-    if (mOperatorInterface.getShoot() /* && (!mStorage.isEmpty()) && result.HasResult*/) {
-      mRobotLogger.log("Changing to shoot because our driver said so...");
-      switch (mState) {
 
-          /** Disables intake if transitioning from intake */
-        case INTAKE:
-          mIntake.stop();
-          mStorage.stop();
-          mIntakeState = IntakeState.IDLE;
-          break;
-        default:
-          break;
-      }
-      mState = State.SHOOTING;
-
-      /** Sets the shooting state to preparing if it's not already */
-      if (mShootingState == ShootingState.IDLE) {
-        mShootingState = ShootingState.PREPARE_TO_SHOOT;
-      }
-      return true;
-    } else {
-      // mRobotLogger.info("Could not shoot because " + (!mStorage.isEmpty()) + " " +
-      // mOperatorInterface.getShoot());
-      return false;
-    }
-  }
 
   private boolean checkTransitionToClimbing() {
     // TODO: Remove the check that climber is enabled
@@ -984,25 +906,27 @@ public class Robot extends TimedRobot {
         }else{
           System.out.println("NOT AT VELOCITY");
         }
-
+        /*
         if (mOperatorInterface.getShoot()) {
           System.out.println("Is this booming our shot?");
           mShootingState = ShootingState.SHOOTING_COMPLETE;
           mStorage.stop();
         }
+        */
         break;
       case SHOOT_BALL:
         mStorage.ejectBall();
         System.out.println("Shoot the ball");
         mShooter.start();
 
+        /*
         // turn off shooting
         if (mOperatorInterface.getShoot()) {
           System.out.println("Turn off shooting");
           mShootingState = ShootingState.SHOOTING_COMPLETE;
           mStorage.stop();
         }
-
+        */
         /* If finished shooting, changes to next state*/
         if (mShooter.isBallFired()) {
           System.out.println("is ball fired");

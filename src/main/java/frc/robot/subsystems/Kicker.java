@@ -1,0 +1,72 @@
+package frc.robot.subsystems;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import edu.wpi.first.wpilibj.Encoder;
+import com.playingwithfusion.TimeOfFlight;
+
+import edu.wpi.first.wpilibj.Jaguar;
+import frc.robot.Constants;
+
+public class Kicker {
+
+    private TimeOfFlight mLidar;
+    List<Jaguar> allJags = new ArrayList<Jaguar>();
+    int maxDistance = 150;
+    int totalJags = 6;
+    Encoder revEncoder = new Encoder(6, 7);
+    
+    private static Kicker sInstance;
+
+    public static synchronized Kicker getInstance() {
+        if (sInstance == null) {
+            sInstance = new Kicker();
+        }
+        return sInstance;
+        }
+
+    public Kicker(){
+    for(int i = 0; i < totalJags; i++){
+        try{
+            allJags.add(new Jaguar(i)); 
+        } catch (Exception e){
+        }
+    }
+    mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
+    }
+
+    public void jogUp(){
+    for(int i = 0; i < totalJags; i++){
+        allJags.get(i).set(.1);
+    }
+    }
+
+    public void jogDown(){
+    for(int i = 0; i < totalJags; i++){
+        allJags.get(i).set(-.1);
+    }
+    }
+
+    public void windup(){
+    while(mLidar.getRange() > maxDistance){
+        for(int i = 0; i < totalJags; i++){
+            allJags.get(i).set(.1);
+        }
+    }
+    }
+
+    public void kick(){
+    for(int i = 0; i < totalJags; i++){
+        allJags.get(i).set(1);
+    }
+    }
+
+    public void getTicks(){
+    int ticks = revEncoder.get();
+    System.out.println(ticks);
+    }
+
+    public void zeroTicks(){
+    revEncoder.reset();
+    }
+}
