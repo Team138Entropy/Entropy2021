@@ -130,7 +130,7 @@ public class OperatorInterface {
 
   // Operator
   public boolean stopAll() {
-    return OperatorController.getButton(NykoController.Button.BUTTON_3));
+    return OperatorController.getButton(NykoController.Button.BUTTON_3);
   }
 
   public boolean jogDown() {
