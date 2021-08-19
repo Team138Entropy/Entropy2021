@@ -362,10 +362,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    while(mOperatorInterface.jogUp()){
+    if(mOperatorInterface.jogUp()){
       mKicker.jogUp();
     }
-    while(mOperatorInterface.jogDown()){
+    if(mOperatorInterface.jogDown()){
       mKicker.jogDown();
     }
     mKicker.getTicks(); 

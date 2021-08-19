@@ -10,11 +10,14 @@ import frc.robot.Constants;
 
 public class Kicker {
 
-    private TimeOfFlight mLidar;
+    private TimeOfFlight mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     List<Jaguar> allJags = new ArrayList<Jaguar>();
-    int maxDistance = 150;
+    //TODO: Test for actual range
+    int detectionDistancee = 150;
+    //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
     Encoder revEncoder = new Encoder(6, 7);
+    int jagSpeed = 0;
     
     private static Kicker sInstance;
 
@@ -23,7 +26,7 @@ public class Kicker {
             sInstance = new Kicker();
         }
         return sInstance;
-        }
+    }
 
     public Kicker(){
         for(int i = 0; i < totalJags; i++){
@@ -32,23 +35,22 @@ public class Kicker {
             } catch (Exception e){
             }
         }
-        mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     }
 
     public void jogUp(){
         for(int i = 0; i < totalJags; i++){
-            allJags.get(i).set(.1);
+            allJags.get(i).set(jagSpeed + .1);
         }
     }
 
     public void jogDown(){
         for(int i = 0; i < totalJags; i++){
-            allJags.get(i).set(-.1);
+            allJags.get(i).set(jagSpeed - .1);
         }
     }
 
     public void windup(){
-        while(mLidar.getRange() > maxDistance){
+        while(mLidar.getRange() > detectionDistancee){
             for(int i = 0; i < totalJags; i++){
                 allJags.get(i).set(.1);
             }
@@ -56,14 +58,14 @@ public class Kicker {
     }
 
     public void kick(){
+        //May need to ramp this
         for(int i = 0; i < totalJags; i++){
             allJags.get(i).set(1);
         }
     }
 
-    public void getTicks(){
-        int ticks = revEncoder.get();
-        System.out.println(ticks);
+    public int getTicks(){
+        return(revEncoder.get());
     }
 
     public void zeroTicks(){

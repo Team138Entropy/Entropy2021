@@ -134,11 +134,11 @@ public class OperatorInterface {
   }
 
   public boolean jogDown() {
-    return mShootLatch.update(OperatorController.getButton(NykoController.Button.BUTTON_1));
+    return OperatorController.getButton(NykoController.Button.BUTTON_1);
   }
 
   public boolean jogUp() {
-    return mSpinUpLatch.update(OperatorController.getButton(NykoController.Button.BUTTON_4));
+    return OperatorController.getButton(NykoController.Button.BUTTON_4);
   }
 
   public boolean getStateReset() {
