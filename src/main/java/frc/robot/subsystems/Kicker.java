@@ -49,6 +49,12 @@ public class Kicker {
         }
     }
 
+    public void stop(){
+        for(int i = 0; i < totalJags; i++){
+            allJags.get(i).set(0);
+        }
+    }
+
     public void windup(){
         while(mLidar.getRange() > detectionDistancee){
             for(int i = 0; i < totalJags; i++){

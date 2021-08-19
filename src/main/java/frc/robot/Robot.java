@@ -368,7 +368,10 @@ public class Robot extends TimedRobot {
     if(mOperatorInterface.jogDown()){
       mKicker.jogDown();
     }
-    mKicker.getTicks(); 
+    if(mOperatorInterface.stopAll()){
+      mKicker.stop();
+    }
+    //System.out.println(mKicker.getTicks());
   }
 
   @Override

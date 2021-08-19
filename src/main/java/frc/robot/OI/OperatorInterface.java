@@ -129,8 +129,8 @@ public class OperatorInterface {
   }
 
   // Operator
-  public boolean getVisionToggle() {
-    return mVisionToggle.update(OperatorController.getButton(NykoController.Button.BUTTON_3));
+  public boolean stopAll() {
+    return OperatorController.getButton(NykoController.Button.BUTTON_3));
   }
 
   public boolean jogDown() {
