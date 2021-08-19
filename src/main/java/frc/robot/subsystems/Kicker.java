@@ -26,47 +26,47 @@ public class Kicker {
         }
 
     public Kicker(){
-    for(int i = 0; i < totalJags; i++){
-        try{
-            allJags.add(new Jaguar(i)); 
-        } catch (Exception e){
+        for(int i = 0; i < totalJags; i++){
+            try{
+                allJags.add(new Jaguar(i)); 
+            } catch (Exception e){
+            }
         }
-    }
-    mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
+        mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     }
 
     public void jogUp(){
-    for(int i = 0; i < totalJags; i++){
-        allJags.get(i).set(.1);
-    }
-    }
-
-    public void jogDown(){
-    for(int i = 0; i < totalJags; i++){
-        allJags.get(i).set(-.1);
-    }
-    }
-
-    public void windup(){
-    while(mLidar.getRange() > maxDistance){
         for(int i = 0; i < totalJags; i++){
             allJags.get(i).set(.1);
         }
     }
+
+    public void jogDown(){
+        for(int i = 0; i < totalJags; i++){
+            allJags.get(i).set(-.1);
+        }
+    }
+
+    public void windup(){
+        while(mLidar.getRange() > maxDistance){
+            for(int i = 0; i < totalJags; i++){
+                allJags.get(i).set(.1);
+            }
+        }
     }
 
     public void kick(){
-    for(int i = 0; i < totalJags; i++){
-        allJags.get(i).set(1);
-    }
+        for(int i = 0; i < totalJags; i++){
+            allJags.get(i).set(1);
+        }
     }
 
     public void getTicks(){
-    int ticks = revEncoder.get();
-    System.out.println(ticks);
+        int ticks = revEncoder.get();
+        System.out.println(ticks);
     }
 
     public void zeroTicks(){
-    revEncoder.reset();
+        revEncoder.reset();
     }
 }
