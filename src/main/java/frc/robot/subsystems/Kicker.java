@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import edu.wpi.first.wpilibj.Encoder;
 import com.playingwithfusion.TimeOfFlight;
@@ -103,12 +102,24 @@ public class Kicker {
         if (selectedMotor > totalJags){
             selectedMotor = 0;
         }
+        if(selectedMotor != 6){
+            System.out.println("Motor selected: " + selectedMotor);
+        }
+        else{
+            System.out.println("All motors");
+        }
     }
 
     public void selectMotorDown(){
         selectedMotor = selectedMotor - 1;
         if (selectedMotor < 0){
             selectedMotor = totalJags;
+        }
+        if(selectedMotor != 6){
+            System.out.println("Motor selected: " + selectedMotor);
+        }
+        else{
+            System.out.println("All motors");
         }
     }
 }
