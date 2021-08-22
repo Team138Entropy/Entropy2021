@@ -16,8 +16,10 @@ public class Kicker {
     int detectionDistancee = 150;
     //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
-    Encoder revEncoder = new Encoder(6, 7);
     int jagSpeed = 0;
+    int selectedMotor = 0;
+    Encoder revEncoder = new Encoder(6, 7);
+
     
     private static Kicker sInstance;
 
@@ -38,15 +40,28 @@ public class Kicker {
     }
 
     public void jogUp(){
-        for(int i = 0; i < totalJags; i++){
-            allJags.get(i).set(jagSpeed + .1);
+        //If selectMotor is 6, all jags run
+        if(selectedMotor == totalJags){
+            for(int i = 0; i < totalJags; i++){
+                allJags.get(i).set(jagSpeed + .1);
+            }
+        }
+        else{
+            allJags.get(selectedMotor).set(jagSpeed + .1);
         }
     }
 
     public void jogDown(){
-        for(int i = 0; i < totalJags; i++){
-            allJags.get(i).set(jagSpeed - .1);
+        //If selectMotor is 6, all jags run
+        if(selectedMotor == totalJags){
+            for(int i = 0; i < totalJags; i++){
+                allJags.get(i).set(jagSpeed - .1);
+            }
         }
+        else{
+            allJags.get(selectedMotor).set(jagSpeed - .1);
+        }
+        
     }
 
     public void stop(){
@@ -65,8 +80,13 @@ public class Kicker {
 
     public void kick(){
         //May need to ramp this
-        for(int i = 0; i < totalJags; i++){
-            allJags.get(i).set(1);
+        if(selectedMotor == totalJags){
+            for(int i = 0; i < totalJags; i++){
+                allJags.get(i).set(1);
+            }
+        }
+        else{
+            allJags.get(selectedMotor).set(1);
         }
     }
 
@@ -76,5 +96,19 @@ public class Kicker {
 
     public void zeroTicks(){
         revEncoder.reset();
+    }
+
+    public void selectMotorUp(){
+        selectedMotor = selectedMotor + 1;
+        if (selectedMotor > totalJags){
+            selectedMotor = 0;
+        }
+    }
+
+    public void selectMotorDown(){
+        selectedMotor = selectedMotor - 1;
+        if (selectedMotor < 0){
+            selectedMotor = totalJags;
+        }
     }
 }

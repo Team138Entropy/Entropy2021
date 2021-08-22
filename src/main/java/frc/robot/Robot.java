@@ -371,6 +371,12 @@ public class Robot extends TimedRobot {
     if(mOperatorInterface.stopAll()){
       mKicker.stop();
     }
+    if(mOperatorInterface.jaguarSelectUp()){
+      mKicker.selectMotorUp();
+    }
+    if(mOperatorInterface.jaguarSelectDown()){
+      mKicker.selectMotorDown();
+    }
     //System.out.println(mKicker.getTicks());
   }
 

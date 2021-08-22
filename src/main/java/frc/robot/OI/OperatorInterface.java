@@ -159,11 +159,11 @@ public class OperatorInterface {
     return OperatorController.getJoystick(NykoController.Side.LEFT, Axis.X);
   }
 
-  public boolean getShooterVelocityTrimUp() {
+  public boolean jaguarSelectUp() {
     return OperatorController.getDPad() == DPad.UP;
   }
 
-  public boolean getShooterVelocityTrimDown() {
+  public boolean jaguarSelectDown() {
     return OperatorController.getDPad() == DPad.DOWN;
   }
 
