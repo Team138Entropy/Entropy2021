@@ -29,6 +29,9 @@ public class OperatorInterface {
   private LatchedBoolean mClimbDownWasPressed;
   private LatchedBoolean mClimbStartWasPressed;
 
+  private LatchedBoolean mKickPressed;
+  private LatchedBoolean mWindPressed;
+
   public static synchronized OperatorInterface getInstance() {
     if (mInstance == null) {
       mInstance = new OperatorInterface();
@@ -42,6 +45,10 @@ public class OperatorInterface {
     mClimbUpWasPressed = new LatchedBoolean();
     mClimbDownWasPressed = new LatchedBoolean();
     mClimbStartWasPressed = new LatchedBoolean();
+
+    //kicker stuff
+    mKickPressed = new LatchedBoolean();
+    mWindPressed = new LatchedBoolean();
   }
 
   // Driver
@@ -133,13 +140,6 @@ public class OperatorInterface {
     return OperatorController.getButton(NykoController.Button.BUTTON_3);
   }
 
-  public boolean jogDown() {
-    return OperatorController.getButton(NykoController.Button.BUTTON_1);
-  }
-
-  public boolean jogUp() {
-    return OperatorController.getButton(NykoController.Button.BUTTON_4);
-  }
 
   public boolean getStateReset() {
     return OperatorController.getButton(NykoController.Button.MIDDLE_10);
@@ -219,6 +219,27 @@ public class OperatorInterface {
 
   public boolean getFunctional() {
     return OperatorController.getButton(NykoController.Button.MIDDLE_10);
+  }
+
+  /*
+    public boolean isBarf() {
+    return mBarfLatch.update(DriverController.getButton(XboxController.Button.START));
+  }
+
+   mKickPressed = new LatchedBoolean();
+    mWindPressed = new LatchedBoolean();
+  */
+
+  public boolean jogDown() {
+    return OperatorController.getButton(NykoController.Button.BUTTON_1);
+  }
+
+  public boolean jogUp() {
+    return OperatorController.getButton(NykoController.Button.BUTTON_4);
+  }
+
+  public boolean isKick(){
+    return false;
   }
 
   /**

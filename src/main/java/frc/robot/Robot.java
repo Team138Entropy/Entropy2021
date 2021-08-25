@@ -37,6 +37,11 @@ public class Robot extends TimedRobot {
   private final OperatorInterface mOperatorInterface = OperatorInterface.getInstance();
   private final Kicker mKicker = Kicker.getInstance();
 
+  //kicker latched booleans
+  private LatchedBoolean mJogUp = new LatchedBoolean();
+  private LatchedBoolean mJogDown = new LatchedBoolean();
+
+
 
   /**
    * The robot's gyro. Don't use this for absolute measurements. See {@link #getGyro()} for more
@@ -79,7 +84,29 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    boolean kickPressed = mOperatorInterface.jogUp();
+    boolean windPressed = mOperatorInterface.jogDown();
 
+    if(kickPressed){
+      mKicker.kick();
+    }else if(windPressed){
+      mKicker.windup();
+    }else{
+      mKicker.stopKicker();
+    }
+  }
+
+  @Override
+  public void testPeriodic() {
+    boolean jogDownPressed = mOperatorInterface.jogDown();
+    boolean jogUpPressed = mOperatorInterface.jogUp();
+    if(mJogUp.update(jogUpPressed)){
+      //jog up
+      mKicker.jogUp();
+    }else if(mJogDown.update(jogDownPressed)){
+      //jog down
+      mKicker.jogDown();
+    }
   }
 
   @Override
@@ -102,10 +129,7 @@ public class Robot extends TimedRobot {
   }
 
 
-  @Override
-  public void testPeriodic() {
 
-  }
 
   @Override
   public void disabledInit() {
