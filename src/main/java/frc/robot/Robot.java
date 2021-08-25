@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
   // Controller Reference
   private final OperatorInterface mOperatorInterface = OperatorInterface.getInstance();
   private final Kicker mKicker = Kicker.getInstance();
+  private final Drive mDrive = Drive.getInstance();
 
   //kicker latched booleans
   private LatchedBoolean mJogUp = new LatchedBoolean();
@@ -94,6 +95,14 @@ public class Robot extends TimedRobot {
     }else{
       mKicker.stopKicker();
     }
+
+    driveLoop();
+  }
+
+  public void driveLoop(){
+    double driveThrottle = mOperatorInterface.getDriveThrottle();
+    double driveTurn = mOperatorInterface.getDriveTurn();
+    mDrive.setDrive(driveThrottle, driveTurn, false);
   }
 
   @Override
