@@ -226,7 +226,7 @@ public class Drive extends Subsystem {
       if(throttle >= 0){
       }
       */
-      System.out.println(throttle);
+      //System.out.println(throttle);
 
       if (Util.epsilonEquals(throttle, 0.0, 0.05)) {
           throttle = 0.0;

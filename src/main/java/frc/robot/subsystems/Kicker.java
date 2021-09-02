@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.*;
 import edu.wpi.first.wpilibj.Encoder;
 import com.playingwithfusion.TimeOfFlight;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.Jaguar;
 import frc.robot.Constants;
@@ -18,8 +20,9 @@ public class Kicker {
     int totalJags = 6;
     double jagSpeed = 0;
     int selectedMotor = 0;
-    Encoder revEncoder = new Encoder(6, 7);
+    Encoder revEncoder = new Encoder(0, 1);
     private boolean mWoundUp = false;
+    private int resetPos;
 
     
     private static Kicker sInstance;
@@ -40,8 +43,25 @@ public class Kicker {
         }
     }
 
+    public void kick2(){
+        int currentPos = Math.abs(getTicks());
+        double currentRate = revEncoder.getRate();
+        double distancePerPulse = revEncoder.getDistancePerPulse();
+        double velocity = currentRate * distancePerPulse;
+        int targetEncoderPosition = 2048;
+        if (Math.abs(currentPos - resetPos) < targetEncoderPosition){
+            updateSpeed();
+        }
+        else {
+            stop();
+        }
+        System.out.println("Ticks: " + getTicks());
+        SmartDashboard.putNumber("Kicker Speed", velocity);
+
+    }
+
     public void jogUp(){
-        jagSpeed += .1;
+        jagSpeed += .05;
         if(jagSpeed > 1){
             jagSpeed = 1;
         }
@@ -49,23 +69,41 @@ public class Kicker {
     }
 
     public void jogDown(){
-        jagSpeed -= .1;
-        if(jagSpeed < 0){
-            jagSpeed =0;
+        jagSpeed -= .05;
+        if(jagSpeed < -1){
+            jagSpeed = -1;
         }
         updateSpeed();        
     }
 
+    public void fakejogUp(){
+        jagSpeed += .1;
+        if(jagSpeed > 1){
+            jagSpeed = 1;
+        }
+        System.out.println("Jag speed: " + jagSpeed);
+    }
+
+    public void fakejogDown(){
+        jagSpeed -= .1;
+        if(jagSpeed < -1){
+            jagSpeed = -1;
+        }
+        System.out.println("Jag speed: " + jagSpeed);
+    }
+
+    public void kickReset2(){
+        System.out.println("Kick Reset!");
+        zeroTicks();
+        resetPos = Math.abs(getTicks());
+    }
+
     private void updateSpeed(){
         //If selectMotor is 6, all jugs run
-        if(selectedMotor == totalJags){
-            for(int i = 0; i < totalJags; i++){
-                allJags.get(i).set(jagSpeed);
-            }
+        for(int i = 0; i < totalJags; i++){
+            allJags.get(i).set(jagSpeed);
         }
-        else{
-            allJags.get(selectedMotor).set(jagSpeed);
-        }
+
     }
 
     public void stop(){
@@ -101,6 +139,7 @@ public class Kicker {
         }
     
         updateSpeed();
+        System.out.println("Ticks: " + getTicks());
     }
 
     //

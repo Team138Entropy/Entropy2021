@@ -41,9 +41,10 @@ public class Robot extends TimedRobot {
   //kicker latched booleans
   private LatchedBoolean mJogUp = new LatchedBoolean();
   private LatchedBoolean mJogDown = new LatchedBoolean();
+  private LatchedBoolean mJogReset = new LatchedBoolean();
+  private LatchedBoolean mJogFire = new LatchedBoolean();
 
-
-
+  
   /**
    * The robot's gyro. Don't use this for absolute measurements. See {@link #getGyro()} for more
    * details.
@@ -80,23 +81,43 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    
+    mKicker.zeroTicks();
   }
 
   @Override
   public void teleopPeriodic() {
+    boolean firePressed = mOperatorInterface.fireTrigger();
     boolean kickPressed = mOperatorInterface.jogUp();
     boolean windPressed = mOperatorInterface.jogDown();
+    boolean resetPressed = mOperatorInterface.jogReset();
 
-    if(kickPressed){
-      mKicker.kick();
-    }else if(windPressed){
-      mKicker.windup();
-    }else{
-      mKicker.stopKicker();
+    if(mJogUp.update(kickPressed)){
+      //jog up
+      mKicker.fakejogUp();
+    }else if(mJogDown.update(windPressed)){
+      //jog down
+      mKicker.fakejogDown();
+    }
+    else if (firePressed){
+      mKicker.kick2();
+    }
+    else if (mJogReset.update(resetPressed)){
+      mKicker.kickReset2();
     }
 
-    driveLoop();
+    //System.out.println("Ticks: " + mKicker.getTicks());
+
+
+
+    // if(kickPressed){
+    //   mKicker.kick();
+    // }else if(windPressed){
+    //   mKicker.windup();
+    // }else{
+    //   mKicker.stopKicker();
+    // }
+
+   //driveLoop();
   }
 
   public void driveLoop(){
@@ -105,10 +126,18 @@ public class Robot extends TimedRobot {
     mDrive.setDrive(driveThrottle, driveTurn, false);
   }
 
+  /*
+private LatchedBoolean mJogUp = new LatchedBoolean();
+  private LatchedBoolean mJogDown = new LatchedBoolean();
+  private LatchedBoolean mJogReset = new LatchedBoolean();
+  private LatchedBoolean mJogFire = new LatchedBoolean();
+
+  */
   @Override
   public void testPeriodic() {
     boolean jogDownPressed = mOperatorInterface.jogDown();
     boolean jogUpPressed = mOperatorInterface.jogUp();
+    boolean jogResetPressed = mOperatorInterface.jogReset();
     if(mJogUp.update(jogUpPressed)){
       //jog up
       mKicker.jogUp();
@@ -116,10 +145,14 @@ public class Robot extends TimedRobot {
       //jog down
       mKicker.jogDown();
     }
+
+    System.out.println("Ticks: " + mKicker.getTicks());
+
   }
 
   @Override
   public void testInit() {
+    mKicker.zeroTicks();
 
   }
 

@@ -238,6 +238,18 @@ public class OperatorInterface {
     return OperatorController.getButton(NykoController.Button.BUTTON_4);
   }
 
+  public boolean jogReset() {
+    return OperatorController.getButton(NykoController.Button.BUTTON_2);
+  }
+
+  public boolean jogMovement(){
+    return OperatorController.getButton(NykoController.Button.BUTTON_3);
+  }
+
+  public boolean fireTrigger(){
+    return OperatorController.getButton(NykoController.Button.RIGHT_BUMPER);
+  }
+
   public boolean isKick(){
     return false;
   }
