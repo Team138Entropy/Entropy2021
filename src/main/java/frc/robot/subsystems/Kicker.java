@@ -29,7 +29,7 @@ public class Kicker {
     int selectedMotor = 0;
     AtomicInteger mTicksPerRotation = new AtomicInteger(2048);
     AtomicInteger mRotations = new AtomicInteger(1);
-    AtomicInteger mTargetSpeed = new AtomicInteger(1);
+    double mTargetSpeed = 1.0;
     Encoder revEncoder = new Encoder(0, 1);
     private boolean mWoundUp = false;
     private int resetPos;
@@ -75,9 +75,8 @@ public class Kicker {
 
         CurrentNetworkTable.addEntryListener("TargetSpeed", (table, key, entry, value, flags) -> {
             System.out.println("targetSpeed changed value: " + value.getValue());
-            int val = (int) value.getDouble();
-            mTargetSpeed.set(val);
-            System.out.println("changed to: " + val);
+            mTargetSpeed = value.getDouble();
+            System.out.println("changed to: " + mTargetSpeed);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         mNetTable.startClientTeam(138);
         mNetTable.startDSClient();
@@ -98,7 +97,7 @@ public class Kicker {
         double distancePerPulse = revEncoder.getDistancePerPulse();
         double velocity = currentRate * distancePerPulse;
         int encoderPos = mTicksPerRotation.intValue() * mRotations.intValue();
-        jagSpeed = mTargetSpeed.intValue();
+        jagSpeed = mTargetSpeed;
         if (Math.abs(currentPos - resetPos) < encoderPos){
             updateSpeed();
         }
@@ -221,7 +220,7 @@ public class Kicker {
         SmartDashboard.putNumber("Ticks", getTicks());
         SmartDashboard.putNumber("Target Ticks", mTicksPerRotation.intValue());
         SmartDashboard.putNumber("Target Rotations", mRotations.intValue());
-        SmartDashboard.putNumber("Target Speed", mTargetSpeed.intValue());
+        SmartDashboard.putNumber("Target Speed", mTargetSpeed);
         //Update Mode
         SmartDashboard.putString("Mode", "Test Jogging");
    

@@ -127,6 +127,9 @@ public class Robot extends TimedRobot {
     else if (mJogReset.update(resetPressed)){
       mKicker.kickReset2();
     }
+    else{
+      mKicker.stop();
+    }
 
     //System.out.println("Ticks: " + mKicker.getTicks());
 
