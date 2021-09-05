@@ -2,9 +2,16 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.math.*;
+import java.nio.channels.NetworkChannel;
+
 import edu.wpi.first.wpilibj.Encoder;
 import com.playingwithfusion.TimeOfFlight;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.concurrent.atomic.AtomicInteger;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.EntryListenerFlags;
 
 import edu.wpi.first.wpilibj.Jaguar;
 import frc.robot.Constants;
@@ -14,15 +21,19 @@ public class Kicker {
     private TimeOfFlight mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     List<Jaguar> allJags = new ArrayList<Jaguar>();
     //TODO: Test for actual range
-    int detectionDistancee = 150;
-    int totalTicksInKick = 5000;
+    final int detectionDistancee = 150;
+    final int totalTicksInKick = 2048;
     //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
     double jagSpeed = 0;
     int selectedMotor = 0;
+    AtomicInteger mTicksPerRotation = new AtomicInteger(2048);
+    AtomicInteger mRotations = new AtomicInteger(1);
+    AtomicInteger mTargetSpeed = new AtomicInteger(1);
     Encoder revEncoder = new Encoder(0, 1);
     private boolean mWoundUp = false;
     private int resetPos;
+
 
     
     private static Kicker sInstance;
@@ -35,10 +46,34 @@ public class Kicker {
     }
 
     public Kicker(){
+        System.out.println("Kicker Setup!");
+        NetworkTableInstance mNetTable = NetworkTableInstance.getDefault();
+        NetworkTable CurrentNetworkTable = mNetTable.getTable("MotorConfig");
+        NetworkTableEntry tickersPerRotation = CurrentNetworkTable.getEntry("ticksPerRotation");
+        NetworkTableEntry numRotations = CurrentNetworkTable.getEntry("numRotations");
+        System.out.println("SETUP LISTENERS!");
+        CurrentNetworkTable.addEntryListener("ticksPerRotation", (table, key, entry, value, flags) -> {
+            System.out.println("Ticks changed value: " + value.getValue());
+            int val = (int) value.getDouble();
+            mTicksPerRotation.set(val);
+            System.out.println("changed to: " + val);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+        CurrentNetworkTable.addEntryListener("numRotations", (table, key, entry, value, flags) -> {
+            System.out.println("Rotations changed value: " + value.getValue());
+            int val = (int) value.getDouble();
+            mRotations.set(val);
+            System.out.println("changed to: " + val);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        mNetTable.startClientTeam(138);
+        mNetTable.startDSClient();
+
+
         for(int i = 0; i < totalJags; i++){
             try{
                 allJags.add(new Jaguar(i)); 
             } catch (Exception e){
+                System.out.println("Exception adding Jaguar: " + e.getLocalizedMessage());
             }
         }
     }
@@ -48,15 +83,15 @@ public class Kicker {
         double currentRate = revEncoder.getRate();
         double distancePerPulse = revEncoder.getDistancePerPulse();
         double velocity = currentRate * distancePerPulse;
-        int targetEncoderPosition = 2048;
-        if (Math.abs(currentPos - resetPos) < targetEncoderPosition){
+        int encoderPos = mTicksPerRotation.intValue() * mRotations.intValue();
+        jagSpeed = mTargetSpeed.intValue();
+        if (Math.abs(currentPos - resetPos) < encoderPos){
             updateSpeed();
         }
         else {
             stop();
         }
-        System.out.println("Ticks: " + getTicks());
-        SmartDashboard.putNumber("Kicker Speed", velocity);
+ 
 
     }
 
@@ -98,15 +133,17 @@ public class Kicker {
         resetPos = Math.abs(getTicks());
     }
 
+    //update speed on all motors
     private void updateSpeed(){
-        //If selectMotor is 6, all jugs run
         for(int i = 0; i < totalJags; i++){
             allJags.get(i).set(jagSpeed);
         }
 
     }
 
+    //stop all motors
     public void stop(){
+        jagSpeed = 0;
         for(int i = 0; i < totalJags; i++){
             allJags.get(i).set(0);
         }
@@ -160,29 +197,19 @@ public class Kicker {
         revEncoder.reset();
     }
 
-    public void selectMotorUp(){
-        selectedMotor = selectedMotor + 1;
-        if (selectedMotor > totalJags){
-            selectedMotor = 0;
-        }
-        if(selectedMotor != 6){
-            System.out.println("Motor selected: " + selectedMotor);
-        }
-        else{
-            System.out.println("All motors");
-        }
-    }
-
-    public void selectMotorDown(){
-        selectedMotor = selectedMotor - 1;
-        if (selectedMotor < 0){
-            selectedMotor = totalJags;
-        }
-        if(selectedMotor != 6){
-            System.out.println("Motor selected: " + selectedMotor);
-        }
-        else{
-            System.out.println("All motors");
-        }
+    // update the smartdashboard with relevant info
+    public void updateSmartdashboard(){
+        double currentRate = revEncoder.getRate();
+        double distancePerPulse = revEncoder.getDistancePerPulse();
+        double velocity = currentRate * distancePerPulse;
+        SmartDashboard.putNumber("Kicker Velocity", velocity);
+        SmartDashboard.putNumber("Jag Speed", jagSpeed);
+        SmartDashboard.putNumber("Ticks", getTicks());
+        SmartDashboard.putNumber("Target Ticks", mTicksPerRotation.intValue());
+        SmartDashboard.putNumber("Target Rotations", mRotations.intValue());
+        SmartDashboard.putNumber("Target Speed", mTargetSpeed.intValue());
+        //Update Mode
+        SmartDashboard.putString("Mode", "Test Jogging");
+   
     }
 }

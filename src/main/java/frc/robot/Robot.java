@@ -117,6 +117,7 @@ public class Robot extends TimedRobot {
     //   mKicker.stopKicker();
     // }
 
+   mKicker.updateSmartdashboard();
    //driveLoop();
   }
 
@@ -126,13 +127,6 @@ public class Robot extends TimedRobot {
     mDrive.setDrive(driveThrottle, driveTurn, false);
   }
 
-  /*
-private LatchedBoolean mJogUp = new LatchedBoolean();
-  private LatchedBoolean mJogDown = new LatchedBoolean();
-  private LatchedBoolean mJogReset = new LatchedBoolean();
-  private LatchedBoolean mJogFire = new LatchedBoolean();
-
-  */
   @Override
   public void testPeriodic() {
     boolean jogDownPressed = mOperatorInterface.jogDown();
@@ -144,10 +138,11 @@ private LatchedBoolean mJogUp = new LatchedBoolean();
     }else if(mJogDown.update(jogDownPressed)){
       //jog down
       mKicker.jogDown();
+    }else if(mJogReset.update(jogResetPressed)){
+      //jog stop
+      mKicker.stop();
     }
-
-    System.out.println("Ticks: " + mKicker.getTicks());
-
+    mKicker.updateSmartdashboard();
   }
 
   @Override
