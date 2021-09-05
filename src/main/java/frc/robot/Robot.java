@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.Relay;
@@ -79,13 +80,35 @@ public class Robot extends TimedRobot {
 
   }
 
+  NetworkTableEntry xEntry;
+  NetworkTableEntry yEntry;
+
   @Override
   public void teleopInit() {
     mKicker.zeroTicks();
+
+
+    ///remove 
+     //when your program starts
+     NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
+     //Get the table within that instance that contains the data. There can
+     //be as many tables as you like and exist to make it easier to organize
+     //your data. In this case, it's a table called datatable.
+     NetworkTable table = inst.getTable("datatable");
+
+     //Get the entries within that table that correspond to the X and Y values
+     //for some operation in your program.
+     xEntry = table.getEntry("X");
+     yEntry = table.getEntry("Y");
   }
+
+
 
   @Override
   public void teleopPeriodic() {
+    xEntry.setDouble(0);
+    yEntry.setDouble(0);
     boolean firePressed = mOperatorInterface.fireTrigger();
     boolean kickPressed = mOperatorInterface.jogUp();
     boolean windPressed = mOperatorInterface.jogDown();

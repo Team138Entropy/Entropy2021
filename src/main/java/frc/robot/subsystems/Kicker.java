@@ -50,7 +50,14 @@ public class Kicker {
         NetworkTableInstance mNetTable = NetworkTableInstance.getDefault();
         NetworkTable CurrentNetworkTable = mNetTable.getTable("MotorConfig");
         NetworkTableEntry tickersPerRotation = CurrentNetworkTable.getEntry("ticksPerRotation");
-        NetworkTableEntry numRotations = CurrentNetworkTable.getEntry("numRotations");
+        NetworkTableEntry numRotations = CurrentNetworkTable.getEntry("NumberRotations");
+        NetworkTableEntry TargetSpeed = CurrentNetworkTable.getEntry("TargetSpeed");
+
+        //defaults
+        tickersPerRotation.setDouble(2048);
+        numRotations.setDouble(1);
+        TargetSpeed.setDouble(1);
+
         System.out.println("SETUP LISTENERS!");
         CurrentNetworkTable.addEntryListener("ticksPerRotation", (table, key, entry, value, flags) -> {
             System.out.println("Ticks changed value: " + value.getValue());
@@ -59,10 +66,17 @@ public class Kicker {
             System.out.println("changed to: " + val);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-        CurrentNetworkTable.addEntryListener("numRotations", (table, key, entry, value, flags) -> {
+        CurrentNetworkTable.addEntryListener("NumberRotations", (table, key, entry, value, flags) -> {
             System.out.println("Rotations changed value: " + value.getValue());
             int val = (int) value.getDouble();
             mRotations.set(val);
+            System.out.println("changed to: " + val);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+        CurrentNetworkTable.addEntryListener("TargetSpeed", (table, key, entry, value, flags) -> {
+            System.out.println("targetSpeed changed value: " + value.getValue());
+            int val = (int) value.getDouble();
+            mTargetSpeed.set(val);
             System.out.println("changed to: " + val);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         mNetTable.startClientTeam(138);

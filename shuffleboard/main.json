@@ -42,28 +42,6 @@
               "Visuals/Show text": true
             }
           },
-          "8,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Target Rotations",
-              "_title": "Target Rotations"
-            }
-          },
-          "9,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Target Ticks",
-              "_title": "Target Ticks"
-            }
-          },
           "1,2": {
             "size": [
               4,
@@ -91,6 +69,28 @@
               "_title": "Mode"
             }
           },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///MotorConfig/TargetSpeed",
+              "_title": "Target Speed"
+            }
+          },
+          "8,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///MotorConfig/numRotations",
+              "_title": "Num Rotations"
+            }
+          },
           "9,1": {
             "size": [
               1,
@@ -98,8 +98,8 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Target Speed",
-              "_title": "Target Speed"
+              "_source0": "network_table:///MotorConfig/ticksPerRotation",
+              "_title": "/MotorConfig/ticksPerRotation"
             }
           }
         }
@@ -107,8 +107,8 @@
     }
   ],
   "windowGeometry": {
-    "x": 601.5999755859375,
-    "y": 168.0,
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
     "width": 1550.4000244140625,
     "height": 838.4000244140625
   }
