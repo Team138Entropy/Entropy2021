@@ -20,9 +20,6 @@
               "_source0": "network_table:///SmartDashboard/Kicker Velocity",
               "_title": "Kicker Velocity",
               "Graph/Visible time": 30.0,
-              "Y-axis/Automatic bounds": true,
-              "Y-axis/Upper bound": 1.0,
-              "Y-axis/Lower bound": -1.0,
               "Visible data/SmartDashboard/Kicker Velocity": true
             }
           },
@@ -38,7 +35,7 @@
               "Range/Min": -1.0,
               "Range/Max": 1.0,
               "Range/Center": 0.0,
-              "Visuals/Num tick marks": 5,
+              "Visuals/Num tick marks": 5.0,
               "Visuals/Show text": true
             }
           },
@@ -52,9 +49,6 @@
               "_source0": "network_table:///SmartDashboard/Ticks",
               "_title": "Kicker Ticks",
               "Graph/Visible time": 30.0,
-              "Y-axis/Automatic bounds": true,
-              "Y-axis/Upper bound": 1.0,
-              "Y-axis/Lower bound": -1.0,
               "Visible data/SmartDashboard/Ticks": true
             }
           },
@@ -107,9 +101,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.199999809265137,
-    "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 838.4000244140625
+    "x": -7.0,
+    "y": 0.0,
+    "width": 1551.0,
+    "height": 851.0
   }
 }
