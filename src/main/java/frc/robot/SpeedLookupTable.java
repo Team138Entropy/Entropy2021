@@ -12,19 +12,14 @@ public class SpeedLookupTable {
 
   // note: This MUST be sorted by lowest distance first
   double[][] mPracticeLookupTable = {
-    // {distance in meters, speed in whatever our system uses}
-    {10d, 1150d},
-    {20d, 1150d},
-    {30d, 1150d},
-    {40d, 1150d}
-  };
-
-  double[][] mProductionLookupTable = {
-    // {distance in meters, speed in whatever our system uses}
-    {10d, 3250d},
-    {20d, 3250d},
-    {30d, 3250d},
-    {40d, 3250d}
+    // {distance in yards, motor output}
+    {5, 1},
+    {10, 1},
+    {15, 1},
+    {20, 1},
+    {25, 1},
+    {30 , 1},
+    {35, 1}
   };
 
   SpeedLookupTable() {}
@@ -37,11 +32,7 @@ public class SpeedLookupTable {
   public double getSpeedFromDistance(double distance) {
     double[][] ourTable;
 
-    if (Robot.getIsPracticeBot()) {
-      ourTable = mPracticeLookupTable;
-    } else {
-      ourTable = mProductionLookupTable;
-    }
+    ourTable = mPracticeLookupTable;
 
     double lowerBoundDistance = 0;
     double lowerBoundSpeed = 0;

@@ -15,13 +15,22 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 
 import edu.wpi.first.wpilibj.Jaguar;
 import frc.robot.Constants;
+import frc.robot.SpeedLookupTable;
 
 public class Kicker {
 
+    enum KickerMode {
+        Jog, //test mode... jogging
+        Wind, //winding up
+        ReadyToKick, //wound up, ready to kick
+        Kick,  //currently kicking
+        Idle  //doing nothing
+    };
+    private SpeedLookupTable mSpeedLookupTable = SpeedLookupTable.getInstance();
     private TimeOfFlight mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     List<Jaguar> allJags = new ArrayList<Jaguar>();
     //TODO: Test for actual range
-    final int detectionDistancee = 150;
+    final double detectionDistancee = 150;
     final int totalTicksInKick = 2048;
     //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
@@ -33,6 +42,8 @@ public class Kicker {
     Encoder revEncoder = new Encoder(0, 1);
     private boolean mWoundUp = false;
     private int resetPos;
+
+    public KickerMode mCurrentMode = KickerMode.Idle;
 
 
     
@@ -88,6 +99,95 @@ public class Kicker {
             } catch (Exception e){
                 System.out.println("Exception adding Jaguar: " + e.getLocalizedMessage());
             }
+        }
+    }
+
+    //constant update loop
+    public void updateLoop(){
+        if(mCurrentMode == KickerMode.Idle){
+            //Do Nothing
+            stop();
+        }else if(mCurrentMode == KickerMode.Wind){
+            //Winding
+            windKicker();
+        }else if(mCurrentMode == KickerMode.ReadyToKick){
+            //Ready to Kink...wait
+            stop();
+        }else if(mCurrentMode == KickerMode.Kick){
+            //Kicking
+            performKick();
+        }else if(mCurrentMode == KickerMode.Jog){
+            //Test Mode.. Manually jogging
+        }
+    }
+
+
+
+    // wind up 
+    // allow double wind
+    public void tryWind(){
+        if(
+            mCurrentMode == KickerMode.Idle ||
+            mCurrentMode == KickerMode.ReadyToKick
+        
+        ){
+            mCurrentMode = KickerMode.Wind;
+        }else{
+            System.out.println("Not Ready to Wind");
+        }
+    }
+
+    //Kick Mode if in wind
+    public void tryKick(){
+        if(mCurrentMode == KickerMode.ReadyToKick){
+            //ready to kick, go to kick!
+            mCurrentMode = KickerMode.Kick;
+            zeroTicks();
+        }else{
+            System.out.println("Not Ready to Kick!");
+        }
+    }
+
+    //performs the actual kick, called from update loop
+    private void performKick(){
+        int currentPos = Math.abs(getTicks());
+        double currentRate = revEncoder.getRate();
+        double distancePerPulse = revEncoder.getDistancePerPulse();
+        double velocity = currentRate * distancePerPulse;
+        int encoderPos = mTicksPerRotation.intValue() * mRotations.intValue();
+        jagSpeed = mTargetSpeed;
+
+        //lookup speed 
+        //jagSpeed = mSpeedLookupTable.getSpeedFromDistance(selectedDistance);
+
+        if (Math.abs(currentPos - resetPos) < encoderPos){
+            //Continue to Kick
+            updateSpeed();
+        }
+        else {
+            //Kick Complete, back to idle
+            mCurrentMode = KickerMode.Idle;
+        }
+    }
+
+    public double encoderRate(){
+        return revEncoder.getRate();
+    }
+
+    //windKicker
+    private void windKicker(){
+
+        //Test Code until lider sensor:
+
+
+        if(mLidar.getRange() > detectionDistancee){
+            //continue winding up
+            jagSpeed = -.1;
+            updateSpeed();
+        }else{
+            //stop, wound up, ready to kick
+            zeroTicks(); 
+            mCurrentMode = KickerMode.ReadyToKick;
         }
     }
 
@@ -162,8 +262,10 @@ public class Kicker {
         }
     }
 
+
+
     public void windup(){
-        if(mLidar.getRange() > detectionDistancee){
+        if( getLidarRange() > detectionDistancee){
             //continue winding up
             jagSpeed = -.1;
             mWoundUp = false;
@@ -173,6 +275,11 @@ public class Kicker {
             zeroTicks(); 
         }
         updateSpeed();
+    }
+
+    public double getLidarRange(){
+        return mLidar.getRange();
+
     }
 
     public void kick(){

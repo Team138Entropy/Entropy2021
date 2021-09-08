@@ -21,12 +21,18 @@ import frc.robot.util.LatchedBoolean;
 import frc.robot.util.loops.Looper;
 import frc.robot.vision.VisionPacket;
 import edu.wpi.first.wpilibj.Jaguar;
+
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.InetAddress;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.text.SimpleDateFormat;
+
 
 /**
  * The VM is configured to automatically run this class. If you change the name of this class or the
@@ -44,6 +50,10 @@ public class Robot extends TimedRobot {
   private LatchedBoolean mJogDown = new LatchedBoolean();
   private LatchedBoolean mJogReset = new LatchedBoolean();
   private LatchedBoolean mJogFire = new LatchedBoolean();
+
+  FileWriter mCSVFile;
+  boolean FileOpened = false;
+
 
   
   /**
@@ -87,6 +97,24 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     mKicker.zeroTicks();
 
+    //Create a New Output CSV
+    try{
+      //close previous file 
+      if(FileOpened){
+        try{
+          mCSVFile.close();
+        }catch(IOException exception){
+          //issue closing file
+        }
+      }
+
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      mCSVFile = new FileWriter("OutputData-" + timestamp + ".csv");
+      mCSVFile.write("Milliseconds, Encoder Velocity, Encoder Ticks\n");  
+      FileOpened = true;
+    }catch (IOException exception){
+
+    }
 
     ///remove 
      //when your program starts
@@ -131,7 +159,27 @@ public class Robot extends TimedRobot {
       mKicker.stop();
     }
 
-    //System.out.println("Ticks: " + mKicker.getTicks());
+    System.out.println(mKicker.getLidarRange());
+
+
+    /*
+      // Start State Machine Based Logic
+      boolean kickPressed = mOperatorInterface.jogUp();
+      boolean windPressed = mOperatorInterface.jogDown();
+      if(mJogDown.update(windPressed)){
+        //attempt wind if mode allows
+        //allows a double wind
+        mKicker.tryWind();
+      }else if(mJogUp.update(kickPressed)){
+        //attempt kick if mode allows
+        mKicker.tryKick();
+      }i
+      mKicker.updateLoop()
+      // End State Machine Based Logic
+    */
+
+
+    //End Logic
 
 
 
@@ -143,8 +191,28 @@ public class Robot extends TimedRobot {
     //   mKicker.stopKicker();
     // }
 
+    
+
+
+   driveLoop();
    mKicker.updateSmartdashboard();
-   //driveLoop();
+   updateDataFile();
+  }
+
+  public void updateDataFile(){
+    if(FileOpened){
+      try{
+        mCSVFile.write(String.valueOf(System.currentTimeMillis()));
+        mCSVFile.write(",");
+        mCSVFile.write(String.valueOf(mKicker.encoderRate()));
+        mCSVFile.write(",");
+        mCSVFile.write(String.valueOf(mKicker.getTicks()));
+        mCSVFile.write("\n");
+        mCSVFile.flush();
+      }catch(IOException e){
+        
+      }
+    }
   }
 
   public void driveLoop(){
