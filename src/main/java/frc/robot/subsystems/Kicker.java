@@ -58,6 +58,7 @@ public class Kicker {
 
     public Kicker(){
         System.out.println("Kicker Setup!");
+        mCurrentMode = KickerMode.Idle;
         NetworkTableInstance mNetTable = NetworkTableInstance.getDefault();
         NetworkTable CurrentNetworkTable = mNetTable.getTable("MotorConfig");
         NetworkTableEntry tickersPerRotation = CurrentNetworkTable.getEntry("ticksPerRotation");
@@ -315,6 +316,14 @@ public class Kicker {
 
     public void zeroTicks(){
         revEncoder.reset();
+    }
+
+    public void setIdle(){
+        mCurrentMode = KickerMode.Idle;
+    }
+
+    public void setJog(){
+        mCurrentMode = KickerMode.Jog;
     }
 
     // update the smartdashboard with relevant info

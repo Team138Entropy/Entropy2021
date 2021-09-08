@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    mKicker.setIdle();
     mKicker.zeroTicks();
 
     //Create a New Output CSV
@@ -241,6 +242,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
+    mKicker.setJog();
     mKicker.zeroTicks();
 
   }
