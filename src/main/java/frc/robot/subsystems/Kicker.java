@@ -30,7 +30,7 @@ public class Kicker {
     private TimeOfFlight mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     List<Jaguar> allJags = new ArrayList<Jaguar>();
     //TODO: Test for actual range
-    final double detectionDistancee = 150;
+    final double detectionDistancee = 30;
     final int totalTicksInKick = 2048;
     //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
@@ -157,6 +157,7 @@ public class Kicker {
         double velocity = currentRate * distancePerPulse;
         int encoderPos = mTicksPerRotation.intValue() * mRotations.intValue();
         jagSpeed = mTargetSpeed;
+        jagSpeed = .1;
 
         //lookup speed 
         //jagSpeed = mSpeedLookupTable.getSpeedFromDistance(selectedDistance);
@@ -177,13 +178,9 @@ public class Kicker {
 
     //windKicker
     private void windKicker(){
-
-        //Test Code until lider sensor:
-
-
         if(mLidar.getRange() > detectionDistancee){
             //continue winding up
-            jagSpeed = -.1;
+            jagSpeed = -.08;
             updateSpeed();
         }else{
             //stop, wound up, ready to kick
@@ -337,6 +334,7 @@ public class Kicker {
         SmartDashboard.putNumber("Target Ticks", mTicksPerRotation.intValue());
         SmartDashboard.putNumber("Target Rotations", mRotations.intValue());
         SmartDashboard.putNumber("Target Speed", mTargetSpeed);
+        SmartDashboard.putNumber("Lidar Sensor Range", getLidarRange());
         //Update Mode
         SmartDashboard.putString("Mode", "Test Jogging");
    

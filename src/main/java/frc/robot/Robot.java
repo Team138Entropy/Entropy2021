@@ -138,6 +138,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     xEntry.setDouble(0);
     yEntry.setDouble(0);
+    /*
     boolean firePressed = mOperatorInterface.fireTrigger();
     boolean kickPressed = mOperatorInterface.jogUp();
     boolean windPressed = mOperatorInterface.jogDown();
@@ -159,25 +160,27 @@ public class Robot extends TimedRobot {
     else{
       mKicker.stop();
     }
+*/
+   // System.out.println(mKicker.getLidarRange());
 
-    System.out.println(mKicker.getLidarRange());
 
-
-    /*
+    
       // Start State Machine Based Logic
       boolean kickPressed = mOperatorInterface.jogUp();
       boolean windPressed = mOperatorInterface.jogDown();
       if(mJogDown.update(windPressed)){
         //attempt wind if mode allows
         //allows a double wind
+        System.out.println("Wind Pressed");
         mKicker.tryWind();
       }else if(mJogUp.update(kickPressed)){
+        System.out.println("Kick Pressed");
         //attempt kick if mode allows
         mKicker.tryKick();
-      }i
-      mKicker.updateLoop()
+      }
+      mKicker.updateLoop();
       // End State Machine Based Logic
-    */
+  
 
 
     //End Logic
