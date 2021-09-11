@@ -49,7 +49,11 @@ public class Robot extends TimedRobot {
   private LatchedBoolean mJogUp = new LatchedBoolean();
   private LatchedBoolean mJogDown = new LatchedBoolean();
   private LatchedBoolean mJogReset = new LatchedBoolean();
-  private LatchedBoolean mJogFire = new LatchedBoolean();
+  private LatchedBoolean mJogFire = new LatchedBoolean(); 
+  private LatchedBoolean mYardsUp = new LatchedBoolean();
+  private LatchedBoolean mYardsDown = new LatchedBoolean();
+  private LatchedBoolean mSpeedUp = new LatchedBoolean();
+  private LatchedBoolean mSpeedDown = new LatchedBoolean();
 
   FileWriter mCSVFile;
   boolean FileOpened = false;
@@ -168,6 +172,10 @@ public class Robot extends TimedRobot {
       // Start State Machine Based Logic
       boolean kickPressed = mOperatorInterface.jogUp();
       boolean windPressed = mOperatorInterface.jogDown();
+      boolean speedDownPressed = mOperatorInterface.speedDown();
+      boolean speedUpPressed = mOperatorInterface.speedUp();
+      boolean yardageUp = mOperatorInterface.yardsUp();
+      boolean yardageDown = mOperatorInterface.yardsDown();
       if(mJogDown.update(windPressed)){
         //attempt wind if mode allows
         //allows a double wind
@@ -178,14 +186,25 @@ public class Robot extends TimedRobot {
         //attempt kick if mode allows
         mKicker.tryKick();
       }
-      mKicker.updateLoop();
-      // End State Machine Based Logic
+
+     //control yardage
+     if(mYardsUp.update((yardageUp))){
+       mKicker.incrimentYardline();
+     }else if(mYardsDown.update(yardageDown)){
+       mKicker.decrementYardLine();
+     }
+
+     //control custom speed
+     if(mSpeedUp.update(speedUpPressed)){
+       mKicker.incrimentSpeed();
+     }else if(mSpeedDown.update(speedDownPressed)){
+       mKicker.decrementSpeed();
+     }
+
+     mKicker.updateLoop();
+     // End State Machine Based Logic
   
-
-
-    //End Logic
-
-
+   //End Logic
 
     // if(kickPressed){
     //   mKicker.kick();
@@ -230,6 +249,10 @@ public class Robot extends TimedRobot {
     boolean jogDownPressed = mOperatorInterface.jogDown();
     boolean jogUpPressed = mOperatorInterface.jogUp();
     boolean jogResetPressed = mOperatorInterface.jogReset();
+    boolean speedDownPressed = mOperatorInterface.speedDown();
+    boolean speedUpPressed = mOperatorInterface.speedUp();
+    boolean yardageUp = mOperatorInterface.yardsUp();
+    boolean yardageDown = mOperatorInterface.yardsDown();
     if(mJogUp.update(jogUpPressed)){
       //jog up
       mKicker.jogUp();

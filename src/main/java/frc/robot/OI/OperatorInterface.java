@@ -5,6 +5,7 @@ import frc.robot.OI.NykoController.Axis;
 import frc.robot.OI.NykoController.DPad;
 import frc.robot.OI.XboxController.Side;
 import frc.robot.Robot;
+import frc.robot.Constants.Controllers.Operator;
 import frc.robot.util.LatchedBoolean;
 
 // Main Control Class
@@ -248,6 +249,22 @@ public class OperatorInterface {
 
   public boolean fireTrigger(){
     return OperatorController.getButton(NykoController.Button.RIGHT_BUMPER);
+  }
+
+  public boolean yardsDown(){
+    return OperatorController.getDPad() == DPad.DOWN;
+  }
+
+  public boolean yardsUp(){
+    return OperatorController.getDPad() == DPad.UP;
+  }
+
+  public boolean speedDown(){
+    return OperatorController.getDPad() == DPad.LEFT;
+  }
+
+  public boolean speedUp(){
+    return OperatorController.getDPad() == DPad.RIGHT;
   }
 
   public boolean isKick(){

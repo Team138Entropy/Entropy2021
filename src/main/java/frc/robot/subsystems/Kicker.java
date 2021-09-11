@@ -30,7 +30,7 @@ public class Kicker {
     private TimeOfFlight mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     List<Jaguar> allJags = new ArrayList<Jaguar>();
     //TODO: Test for actual range
-    final double detectionDistancee = 30;
+    final double lidarDetectionDistance = 30;
     final int totalTicksInKick = 2048;
     //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
@@ -39,6 +39,7 @@ public class Kicker {
     AtomicInteger mTicksPerRotation = new AtomicInteger(2048);
     AtomicInteger mRotations = new AtomicInteger(1);
     double mTargetSpeed = 1.0;
+    double mTargetYardline = 20;
     Encoder revEncoder = new Encoder(0, 1);
     private boolean mWoundUp = false;
     private int resetPos;
@@ -157,10 +158,10 @@ public class Kicker {
         double velocity = currentRate * distancePerPulse;
         int encoderPos = mTicksPerRotation.intValue() * mRotations.intValue();
         jagSpeed = mTargetSpeed;
-        jagSpeed = .1;
+        
 
         //lookup speed 
-        //jagSpeed = mSpeedLookupTable.getSpeedFromDistance(selectedDistance);
+        jagSpeed = mSpeedLookupTable.getSpeedFromDistance(mTargetYardline);
 
         if (Math.abs(currentPos - resetPos) < encoderPos){
             //Continue to Kick
@@ -178,7 +179,7 @@ public class Kicker {
 
     //windKicker
     private void windKicker(){
-        if(mLidar.getRange() > detectionDistancee){
+        if(mLidar.getRange() > lidarDetectionDistance){
             //continue winding up
             jagSpeed = -.08;
             updateSpeed();
@@ -263,7 +264,7 @@ public class Kicker {
 
 
     public void windup(){
-        if( getLidarRange() > detectionDistancee){
+        if( getLidarRange() > lidarDetectionDistance){
             //continue winding up
             jagSpeed = -.1;
             mWoundUp = false;
@@ -323,6 +324,34 @@ public class Kicker {
         mCurrentMode = KickerMode.Jog;
     }
 
+    public void incrimentYardline(){
+        mTargetYardline += 5;
+        if(mTargetYardline > 100){
+            mTargetYardline = 100;
+        }
+    }
+
+    public void decrementYardLine(){
+        mTargetYardline -= 5;
+        if(mTargetYardline < 0){
+            mTargetYardline = 0;
+        }
+    }
+
+    public void incrimentSpeed(){
+        mTargetSpeed += .05;
+        if(mTargetSpeed >= 1){
+            mTargetSpeed = 1;
+        }
+    }
+
+    public void decrementSpeed(){
+        mTargetSpeed -= .05;
+        if(mTargetSpeed < 0){
+            mTargetSpeed = 0;
+        }
+    }
+
     // update the smartdashboard with relevant info
     public void updateSmartdashboard(){
         double currentRate = revEncoder.getRate();
@@ -335,8 +364,8 @@ public class Kicker {
         SmartDashboard.putNumber("Target Rotations", mRotations.intValue());
         SmartDashboard.putNumber("Target Speed", mTargetSpeed);
         SmartDashboard.putNumber("Lidar Sensor Range", getLidarRange());
-        //Update Mode
-        SmartDashboard.putString("Mode", "Test Jogging");
-   
+        SmartDashboard.putNumber("Target Yardage", mTargetYardline);
+        SmartDashboard.putNumber("Selected Speed", mSpeedLookupTable.getSpeedFromDistance(mTargetYardline));       
+
     }
 }
