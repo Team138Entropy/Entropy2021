@@ -30,13 +30,13 @@ public class Kicker {
     private TimeOfFlight mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
     List<Jaguar> allJags = new ArrayList<Jaguar>();
     //TODO: Test for actual range
-    final double lidarDetectionDistance = 30;
-    final int totalTicksInKick = 2048;
+    final double lidarDetectionDistance = 48;
+    final int totalTicksInKick = 4100; //normal rotation is around 2048, this is to ensure kick through
     //Two jags per PWM slot, 12 Jags and motors total
     int totalJags = 6;
     double jagSpeed = 0;
     int selectedMotor = 0;
-    AtomicInteger mTicksPerRotation = new AtomicInteger(2048);
+    AtomicInteger mTicksPerRotation = new AtomicInteger(totalTicksInKick);
     AtomicInteger mRotations = new AtomicInteger(1);
     double mTargetSpeed = 1.0;
     double mTargetYardline = 20;
@@ -161,7 +161,7 @@ public class Kicker {
         
 
         //lookup speed 
-        jagSpeed = mSpeedLookupTable.getSpeedFromDistance(mTargetYardline);
+        //jagSpeed = mSpeedLookupTable.getSpeedFromDistance(mTargetYardline);
 
         if (Math.abs(currentPos - resetPos) < encoderPos){
             //Continue to Kick
@@ -181,7 +181,7 @@ public class Kicker {
     private void windKicker(){
         if(mLidar.getRange() > lidarDetectionDistance){
             //continue winding up
-            jagSpeed = -.08;
+            jagSpeed = -.09;
             updateSpeed();
         }else{
             //stop, wound up, ready to kick

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.Kinematics;
@@ -211,11 +212,9 @@ public class Drive extends Subsystem {
           mDriveControlState = DriveControlState.OPEN_LOOP;
       }
 
-  
-
       signal.PrintLog();
       mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
-  mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
+      mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
 
   }
 
@@ -398,4 +397,82 @@ public class Drive extends Subsystem {
   public double getRightLinearVelocity() {
     return 0;
   }
+
+
+  // auto drive related variables
+  private int auto_cruise;
+  private double auto_feet;
+  private int auto_accel;
+  private int auto_targetPosition;
+  private int auto_min;
+  private int auto_max;
+  private int auto_acceptableError;
+  private int auto_debounce_count;
+
+  // Autonomously drive distance
+  // as soon as button is let go it will zero and go back to open loop
+   public void driveDistance(
+      double feet, int cruise, int acceleration, boolean forward){
+        // must be going from open loop -> path following
+        // otherwise you can't restart the segment
+        boolean initalLoop = DriveControlState.OPEN_LOOP == mDriveControlState;
+        if(initalLoop){
+          System.out.println("Inital Auto Drive Loop!");
+          // init
+          //set to path following 
+          mDriveControlState = DriveControlState.PATH_FOLLOWING;
+
+          //flip feet if oposite direction
+          if(!forward){
+            feet = feet * -1;
+          }
+
+          auto_targetPosition = feetToTicks(feet);
+          auto_feet = feet;
+          auto_accel = acceleration;
+          auto_cruise = cruise;
+          auto_acceptableError = 50;
+          auto_min = auto_targetPosition - auto_acceptableError;
+          auto_max = auto_targetPosition + auto_acceptableError;
+          auto_debounce_count = 0;
+
+          //zero the encoders and set a target
+          zeroEncoders();
+          setCruiseAndAcceleration(auto_cruise, auto_accel);
+
+          //this will set motion magic and set output
+          setMotionMagicTarget(auto_targetPosition, auto_targetPosition);
+        }
+
+        // tick
+        int left = getLeftEncoderDistance();
+        int right = getRightEncoderDistance();
+        SmartDashboard.putNumber("Average encoder distance", (left + right) / 2.0);
+
+        //check if drive loop is finished
+        if(auto_acceptable(left) && auto_acceptable(right)){
+          System.out.println("  Both Acceptable!");
+          auto_debounce_count++;
+          if(auto_debounce_count >= Constants.Auto.debounceTicks){
+            System.out.println("  Done!");
+            // stop driving
+            setOpenLoop(DriveSignal.BRAKE);
+          }
+        }
+
+
+   }
+
+   public boolean auto_acceptable(int ticks){
+    return (ticks > auto_min && ticks < auto_max);
+   }
+
+   public void UpdateSmartdashboard(){
+    SmartDashboard.putNumber("Left Drive Encoder Ticks", getLeftEncoderDistance());
+    SmartDashboard.putNumber("Right Drive Encoder Ticks", getRightEncoderDistance());
+    SmartDashboard.putNumber("Auto Target Position", auto_targetPosition);
+    SmartDashboard.putNumber("Auto Feet", auto_feet);
+    SmartDashboard.putNumber("Cruise Velocity", Constants.Auto.defaultCruiseVelocity);
+    SmartDashboard.putNumber("Cruise Acceleration", Constants.Auto.defaultAccel);
+   }
 }

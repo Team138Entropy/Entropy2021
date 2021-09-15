@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI.OperatorInterface;
+import frc.robot.auto.DriveSegment;
 import frc.robot.auto.IntakeSegment;
 import frc.robot.auto.Path;
 import frc.robot.auto.Paths;
@@ -239,9 +240,22 @@ public class Robot extends TimedRobot {
   }
 
   public void driveLoop(){
+    boolean driveForwardFiveYards = mOperatorInterface.driveForwardFiveYards();
+    boolean driveBackwardsFiveYards = mOperatorInterface.driveBackwardsFiveYards();
     double driveThrottle = mOperatorInterface.getDriveThrottle();
     double driveTurn = mOperatorInterface.getDriveTurn();
-    mDrive.setDrive(driveThrottle, driveTurn, false);
+
+    if(driveForwardFiveYards || driveBackwardsFiveYards){
+      //Auto Drive +/- 5 Yards
+      //this must be held to allow the path to continue
+      mDrive.driveDistance(15, 
+        Constants.Auto.defaultCruiseVelocity,
+         Constants.Auto.defaultAccel, driveForwardFiveYards);
+    }else{
+      //Normal Drive
+      mDrive.setDrive(driveThrottle, driveTurn, false);
+    }
+    mDrive.UpdateSmartdashboard();
   }
 
   @Override

@@ -3,6 +3,7 @@ package frc.robot.OI;
 import frc.robot.Constants;
 import frc.robot.OI.NykoController.Axis;
 import frc.robot.OI.NykoController.DPad;
+import frc.robot.OI.XboxController.Button;
 import frc.robot.OI.XboxController.Side;
 import frc.robot.Robot;
 import frc.robot.Constants.Controllers.Operator;
@@ -266,6 +267,17 @@ public class OperatorInterface {
   public boolean speedUp(){
     return OperatorController.getDPad() == DPad.RIGHT;
   }
+
+
+  public boolean driveForwardFiveYards() {
+    return DriverController.getButton(XboxController.Button.Y);
+  }
+
+  public boolean driveBackwardsFiveYards() {
+    return DriverController.getButton(XboxController.Button.A);
+  }
+
+
 
   public boolean isKick(){
     return false;
