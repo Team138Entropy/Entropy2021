@@ -173,9 +173,9 @@ public class Constants {
   }
 
   public static class Auto {
-    public static final int debounceTicks = 10; // ~0.2 seconds
-    public static final int defaultAccel = 750;
-    public static final int defaultCruiseVelocity = 900;
+    public static final int debounceTicks = 4; // ~0.2 seconds
+    public static final int defaultAccel = 740/2;
+    public static final int defaultCruiseVelocity = 900/2;
 
     public static class TurnPID {
       public static final double P = .4;

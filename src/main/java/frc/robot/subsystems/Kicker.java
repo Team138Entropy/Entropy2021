@@ -23,6 +23,7 @@ public class Kicker {
         Jog, //test mode... jogging
         Wind, //winding up
         ReadyToKick, //wound up, ready to kick
+        Rewind,
         Kick,  //currently kicking
         Idle  //doing nothing
     };
@@ -38,11 +39,12 @@ public class Kicker {
     int selectedMotor = 0;
     AtomicInteger mTicksPerRotation = new AtomicInteger(totalTicksInKick);
     AtomicInteger mRotations = new AtomicInteger(1);
-    double mTargetSpeed = 1.0;
+    double mTargetSpeed = 0;
     double mTargetYardline = 20;
     Encoder revEncoder = new Encoder(0, 1);
     private boolean mWoundUp = false;
     private int resetPos;
+    int debounceWound = 10;
 
     public KickerMode mCurrentMode = KickerMode.Idle;
 
@@ -119,6 +121,7 @@ public class Kicker {
             //Kicking
             performKick();
         }else if(mCurrentMode == KickerMode.Jog){
+            
             //Test Mode.. Manually jogging
         }
     }
@@ -133,6 +136,8 @@ public class Kicker {
             mCurrentMode == KickerMode.ReadyToKick
         
         ){
+            debounceWound = 30;
+            System.out.println("Debounce Wound: " + debounceWound);
             mCurrentMode = KickerMode.Wind;
         }else{
             System.out.println("Not Ready to Wind");
@@ -157,11 +162,18 @@ public class Kicker {
         double distancePerPulse = revEncoder.getDistancePerPulse();
         double velocity = currentRate * distancePerPulse;
         int encoderPos = mTicksPerRotation.intValue() * mRotations.intValue();
-        jagSpeed = mTargetSpeed;
         
-
         //lookup speed 
-        //jagSpeed = mSpeedLookupTable.getSpeedFromDistance(mTargetYardline);
+        jagSpeed = mSpeedLookupTable.getSpeedFromDistance(mTargetYardline);
+        jagSpeed -= mTargetSpeed;
+
+        //pull within range
+        if(jagSpeed > 1){
+            jagSpeed = 1;
+        }
+        if(jagSpeed < -1){
+            jagSpeed = -1;
+        }
 
         if (Math.abs(currentPos - resetPos) < encoderPos){
             //Continue to Kick
@@ -179,15 +191,19 @@ public class Kicker {
 
     //windKicker
     private void windKicker(){
-        if(mLidar.getRange() > lidarDetectionDistance){
+        if(mLidar.getRange() > lidarDetectionDistance
+        ){
+            System.out.println("KEEP WIND");
             //continue winding up
-            jagSpeed = -.09;
+            jagSpeed = -.1;
             updateSpeed();
-        }else{
+        }else if (debounceWound <= 0){
+            System.out.println("STOP WINDING");
             //stop, wound up, ready to kick
             zeroTicks(); 
             mCurrentMode = KickerMode.ReadyToKick;
         }
+        debounceWound--;
     }
 
     public void kick2(){
@@ -264,7 +280,9 @@ public class Kicker {
 
 
     public void windup(){
-        if( getLidarRange() > lidarDetectionDistance){
+        if( getLidarRange() > lidarDetectionDistance
+            && debounceWound <= 0
+        ){
             //continue winding up
             jagSpeed = -.1;
             mWoundUp = false;
@@ -273,6 +291,7 @@ public class Kicker {
             mWoundUp = true;
             zeroTicks(); 
         }
+        debounceWound--;
         updateSpeed();
     }
 

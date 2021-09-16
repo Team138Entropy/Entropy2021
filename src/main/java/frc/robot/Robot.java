@@ -100,6 +100,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    mDrive.zeroEncoders();
     mKicker.setIdle();
     mKicker.zeroTicks();
 
@@ -248,9 +249,13 @@ public class Robot extends TimedRobot {
     if(driveForwardFiveYards || driveBackwardsFiveYards){
       //Auto Drive +/- 5 Yards
       //this must be held to allow the path to continue
-      mDrive.driveDistance(15, 
+      /*
+      mDrive.driveDistance(5, 
         Constants.Auto.defaultCruiseVelocity,
          Constants.Auto.defaultAccel, driveForwardFiveYards);
+      */      
+
+         
     }else{
       //Normal Drive
       mDrive.setDrive(driveThrottle, driveTurn, false);

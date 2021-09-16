@@ -20,6 +20,9 @@
               "_source0": "network_table:///SmartDashboard/Kicker Velocity",
               "_title": "Kicker Velocity",
               "Graph/Visible time": 30.0,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
               "Visible data/SmartDashboard/Kicker Velocity": true
             }
           },
@@ -35,7 +38,7 @@
               "Range/Min": -1.0,
               "Range/Max": 1.0,
               "Range/Center": 0.0,
-              "Visuals/Num tick marks": 5.0,
+              "Visuals/Num tick marks": 5,
               "Visuals/Show text": true
             }
           },
@@ -49,18 +52,10 @@
               "_source0": "network_table:///SmartDashboard/Ticks",
               "_title": "Kicker Ticks",
               "Graph/Visible time": 30.0,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
               "Visible data/SmartDashboard/Ticks": true
-            }
-          },
-          "8,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Mode",
-              "_title": "Mode"
             }
           },
           "9,0": {
@@ -85,7 +80,7 @@
               "_title": "Num Rotations"
             }
           },
-          "9,1": {
+          "9,2": {
             "size": [
               1,
               1
@@ -93,7 +88,73 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///MotorConfig/ticksPerRotation",
-              "_title": "/MotorConfig/ticksPerRotation"
+              "_title": "Ticks Per Rotation"
+            }
+          },
+          "5,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Left Drive Encoder Ticks",
+              "_title": "/SmartDashboard/Left Drive Encoder Ticks"
+            }
+          },
+          "5,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Right Drive Encoder Ticks",
+              "_title": "/SmartDashboard/Right Drive Encoder Ticks"
+            }
+          },
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Target Ticks",
+              "_title": "/SmartDashboard/Target Ticks"
+            }
+          },
+          "9,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Lidar Sensor Range",
+              "_title": "/SmartDashboard/Lidar Sensor Range"
+            }
+          },
+          "5,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Selected Speed",
+              "_title": "/SmartDashboard/Selected Speed"
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Target Yardage",
+              "_title": "/SmartDashboard/Target Yardage"
             }
           }
         }
@@ -101,9 +162,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
+    "x": -7.199999809265137,
     "y": 0.0,
-    "width": 1551.0,
-    "height": 851.0
+    "width": 1551.199951171875,
+    "height": 851.2000122070312
   }
 }

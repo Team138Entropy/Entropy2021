@@ -13,10 +13,10 @@ public class SpeedLookupTable {
   // note: This MUST be sorted by lowest distance first
   double[][] mPracticeLookupTable = {
     // {distance in yards, motor output}
-    {5, 1},
-    {10, 1},
-    {15, 1},
-    {20, 1},
+    {5, .7},
+    {10, .7},
+    {15, .8},
+    {20, .9},
     {25, 1},
     {30 , 1},
     {35, 1}
