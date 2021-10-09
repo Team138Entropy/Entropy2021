@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Entropy2020</name>
-	<comment>Project Entropy2020 created by Buildship.</comment>
+	<name>Trajectory2021</name>
+	<comment>Project Trajectory2021 created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -22,7 +22,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1604632925954</id>
+			<id>1633791050290</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
