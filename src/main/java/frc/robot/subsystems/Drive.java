@@ -10,10 +10,20 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 
+
 public class Drive extends SubsystemBase {
+
+  private static Drive sInstance;
+  public static synchronized Drive getInstance() {
+    if (sInstance == null) {
+        sInstance = new Drive();
+    }
+    return sInstance;
+  }
+
   //avery:  motors on the left side of the robot
   private final SpeedControllerGroup m_leftMotors =
       new SpeedControllerGroup(new Talon(DriveConstants.kLeftMotor1Port),
@@ -179,5 +189,17 @@ public class Drive extends SubsystemBase {
    */
   public double getTurnRate() {
     return -m_gyro.getRate();
+  }
+
+  public void zeroGyro(){
+    // Reset the gyro
+    m_gyro.reset();
+  }
+
+  // update the smartdashboard
+  public void updateSmartdashboard(){
+    //SmartDashboard.putBoolean("Gyro Connected", m_gyro.isConnected());  // Commented because its stupid and doesn't work
+    SmartDashboard.putNumber("Gyro Degrees/2D Rotation", m_gyro.getRotation2d().getDegrees());
+    SmartDashboard.putNumber("Gyro Rate", m_gyro.getRate());  
   }
 }
