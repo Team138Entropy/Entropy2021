@@ -1422,7 +1422,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public ErrorCode setSelectedSensorPosition(int sensorPos, int pidIdx, int timeoutMs) {
+  public ErrorCode setSelectedSensorPosition(double sensorPos, int pidIdx, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.setSelectedSensorPosition(sensorPos, pidIdx, timeoutMs);
     } else {
@@ -1682,7 +1682,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public ErrorCode configForwardSoftLimitThreshold(int forwardSensorLimit, int timeoutMs) {
+  public ErrorCode configForwardSoftLimitThreshold(double forwardSensorLimit, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.configForwardSoftLimitThreshold(forwardSensorLimit, timeoutMs);
     } else {
@@ -1710,7 +1710,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public ErrorCode configReverseSoftLimitThreshold(int reverseSensorLimit, int timeoutMs) {
+  public ErrorCode configReverseSoftLimitThreshold(double reverseSensorLimit, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.configReverseSoftLimitThreshold(reverseSensorLimit, timeoutMs);
     } else {
@@ -1924,7 +1924,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public ErrorCode config_IntegralZone(int slotIdx, int izone, int timeoutMs) {
+  public ErrorCode config_IntegralZone(int slotIdx, double izone, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.config_IntegralZone(slotIdx, izone, timeoutMs);
     } else {
@@ -1957,7 +1957,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
   }
 
   public ErrorCode configAllowableClosedloopError(
-      int slotIdx, int allowableClosedLoopError, int timeoutMs) {
+      int slotIdx, double allowableClosedLoopError, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.configAllowableClosedloopError(slotIdx, allowableClosedLoopError, timeoutMs);
     } else {
@@ -2271,6 +2271,8 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
   }
   */
 
+  //TODO: Fix
+  /*
   public double getActiveTrajectoryArbFeedFwd() {
     if (Robot.isReal()) {
       return thisTalon.getActiveTrajectoryArbFeedFwd();
@@ -2279,6 +2281,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
       return 0;
     }
   }
+  */
 
   public double getActiveTrajectoryArbFeedFwd(int pidIdx) {
     if (Robot.isReal()) {
@@ -2290,7 +2293,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public ErrorCode configMotionCruiseVelocity(int sensorUnitsPer100ms, int timeoutMs) {
+  public ErrorCode configMotionCruiseVelocity(double sensorUnitsPer100ms, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.configMotionCruiseVelocity(sensorUnitsPer100ms, timeoutMs);
     } else {
@@ -2318,7 +2321,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public ErrorCode configMotionAcceleration(int sensorUnitsPer100msPerSec, int timeoutMs) {
+  public ErrorCode configMotionAcceleration(double sensorUnitsPer100msPerSec, int timeoutMs) {
     if (Robot.isReal()) {
       return thisTalon.configMotionAcceleration(sensorUnitsPer100msPerSec, timeoutMs);
     } else {
