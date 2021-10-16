@@ -95,6 +95,8 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
+  //TODO: Probably fix?
+  /*
   public void set(ControlMode mode, double demand0, double demand1) {
     if (Robot.isReal()) {
       thisTalon.set(mode, demand0, demand1);
@@ -110,6 +112,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
               + ")");
     }
   }
+  */
 
   public void set(ControlMode mode, double demand0, DemandType demand1Type, double demand1) {
     if (Robot.isReal()) {
@@ -318,6 +321,8 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
+  //TODO: Fix
+  /*
   public void set(TalonSRXControlMode mode, double value) {
     if (Robot.isReal()) {
       throw new RuntimeException("Not implemented!");
@@ -326,7 +331,9 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
           deviceNumber + ": set(" + String.valueOf(mode) + ", " + String.valueOf(value) + ")");
     }
   }
+  */
 
+  /*
   public void set(
       TalonSRXControlMode mode, double demand0, DemandType demand1Type, double demand1) {
     if (Robot.isReal()) {
@@ -345,6 +352,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
               + ")");
     }
   }
+  */
 
   public SensorCollection getSensorCollection() {
     if (Robot.isReal()) {
@@ -813,6 +821,8 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
+  //TODO: Fix
+  /*
   public void enableHeadingHold(boolean enable) {
     if (Robot.isReal()) {
       thisTalon.enableHeadingHold(enable);
@@ -820,7 +830,10 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
       mLogger.verbose(deviceNumber + ": enableHeadingHold(" + String.valueOf(enable) + ")");
     }
   }
+  */
 
+  //TODO: Fix
+  /*
   public void selectDemandType(boolean value) {
     if (Robot.isReal()) {
       thisTalon.selectDemandType(value);
@@ -828,6 +841,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
       mLogger.verbose(deviceNumber + ": selectDemandType(" + String.valueOf(value) + ")");
     }
   }
+  */
 
   public void setSensorPhase(boolean PhaseSensor) {
     if (Robot.isReal()) {
@@ -1372,7 +1386,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getSelectedSensorPosition(int pidIdx) {
+  public double getSelectedSensorPosition(int pidIdx) {
     if (Robot.isReal()) {
       return thisTalon.getSelectedSensorPosition(pidIdx);
     } else {
@@ -1381,7 +1395,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getSelectedSensorPosition() {
+  public double getSelectedSensorPosition() {
     if (Robot.isReal()) {
       return thisTalon.getSelectedSensorPosition();
     } else {
@@ -1390,7 +1404,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getSelectedSensorVelocity(int pidIdx) {
+  public double getSelectedSensorVelocity(int pidIdx) {
     if (Robot.isReal()) {
       return thisTalon.getSelectedSensorVelocity(pidIdx);
     } else {
@@ -1399,7 +1413,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getSelectedSensorVelocity() {
+  public double getSelectedSensorVelocity() {
     if (Robot.isReal()) {
       return thisTalon.getSelectedSensorVelocity();
     } else {
@@ -2121,7 +2135,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getClosedLoopError(int pidIdx) {
+  public double getClosedLoopError(int pidIdx) {
     if (Robot.isReal()) {
       return thisTalon.getClosedLoopError(pidIdx);
     } else {
@@ -2130,7 +2144,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getClosedLoopError() {
+  public double getClosedLoopError() {
     if (Robot.isReal()) {
       return thisTalon.getClosedLoopError();
     } else {
@@ -2207,7 +2221,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getActiveTrajectoryPosition() {
+  public double getActiveTrajectoryPosition() {
     if (Robot.isReal()) {
       return thisTalon.getActiveTrajectoryPosition();
     } else {
@@ -2216,7 +2230,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getActiveTrajectoryPosition(int pidIdx) {
+  public double getActiveTrajectoryPosition(int pidIdx) {
     if (Robot.isReal()) {
       return thisTalon.getActiveTrajectoryPosition(pidIdx);
     } else {
@@ -2226,7 +2240,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getActiveTrajectoryVelocity() {
+  public double getActiveTrajectoryVelocity() {
     if (Robot.isReal()) {
       return thisTalon.getActiveTrajectoryVelocity();
     } else {
@@ -2235,7 +2249,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
-  public int getActiveTrajectoryVelocity(int pidIdx) {
+  public double getActiveTrajectoryVelocity(int pidIdx) {
     if (Robot.isReal()) {
       return thisTalon.getActiveTrajectoryVelocity(pidIdx);
     } else {
@@ -2245,6 +2259,8 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
     }
   }
 
+  //TODO: Fix
+  /*
   public double getActiveTrajectoryHeading() {
     if (Robot.isReal()) {
       return thisTalon.getActiveTrajectoryHeading();
@@ -2253,6 +2269,7 @@ public class OurWPITalonSRX implements IMotorController, SpeedController, Sendab
       return 0;
     }
   }
+  */
 
   public double getActiveTrajectoryArbFeedFwd() {
     if (Robot.isReal()) {
