@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import frc.robot.Logger.SupportedLevels;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -31,6 +35,37 @@ public final class Constants {
         }
       }
     
+
+  public enum Loggers {
+    VISION(SupportedLevels.VERBOSE),
+    POT(SupportedLevels.DEBUG),
+    PID(SupportedLevels.INFO),
+    ROBOT(SupportedLevels.WARN),
+    TURRET(SupportedLevels.VERBOSE),
+    DRIVE(SupportedLevels.INFO),
+    SUBSYSTEM(SupportedLevels.INFO),
+    BALL_STORED(SupportedLevels.INFO),
+    EVENT_WATCHER_THREAD(SupportedLevels.INFO),
+    VISION_MANAGER(SupportedLevels.INFO),
+    PATH(SupportedLevels.DEBUG),
+    OI(SupportedLevels.VERBOSE),
+    ROBOT_STATE(SupportedLevels.INFO),
+    BALL_DETECTED(SupportedLevels.INFO),
+    CAMERA_MANAGER(SupportedLevels.INFO),
+    CONFIG(SupportedLevels.INFO),
+    STORAGE(SupportedLevels.INFO),
+    INTAKE(SupportedLevels.VERBOSE),
+    SHOOTER(SupportedLevels.INFO),
+    SIMULATEDTALON(SupportedLevels.WARN),
+    CLIMBER(SupportedLevels.WARN);
+
+    public SupportedLevels minLevel;
+
+    Loggers(SupportedLevels minLevel) {
+      this.minLevel = minLevel;
+    }
+  }
+
     public static final class DriveConstants {
         public static final int kLeftMotor1Port = 1;
         public static final int kLeftMotor2Port = 2;
