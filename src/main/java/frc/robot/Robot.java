@@ -7,11 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.OI.OperatorInterface;
 
 import frc.robot.subsystems.Drive;
 
 public class Robot extends TimedRobot {
 
+  private final OperatorInterface mOperatorInterface = OperatorInterface.getInstance();
   private final Drive mDrive = Drive.getInstance();
   private Command m_autonomousCommand;
 
@@ -46,11 +48,11 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
   public void disabledPeriodic() {
-    System.out.println("Robot is disabled!");
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -74,6 +76,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    System.out.println("Teleop activated");
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -83,8 +86,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    System.out.println("Teleop activated");
     mDrive.updateSmartdashboard();
+    // and then drive?
+    mDrive.arcadeDrive(mOperatorInterface.getDriveThrottle(), mOperatorInterface.getDriveTurn());
   }
 
   @Override

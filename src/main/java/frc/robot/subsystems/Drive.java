@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
-
+import frc.robot.OI.OperatorInterface;
 
 public class Drive extends SubsystemBase {
 
@@ -23,6 +23,9 @@ public class Drive extends SubsystemBase {
     }
     return sInstance;
   }
+
+  private final OperatorInterface mOperatorInterface = OperatorInterface.getInstance();
+
 
   //avery:  motors on the left side of the robot
   private final SpeedControllerGroup m_leftMotors =
@@ -36,7 +39,6 @@ public class Drive extends SubsystemBase {
 
   //avery: robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
-
   // avery: The left encoder
   private final Encoder m_leftEncoder =
       new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1],
@@ -200,6 +202,8 @@ public class Drive extends SubsystemBase {
   public void updateSmartdashboard(){
     //SmartDashboard.putBoolean("Gyro Connected", m_gyro.isConnected());  // Commented because its stupid and doesn't work
     SmartDashboard.putNumber("Gyro Degrees/2D Rotation", m_gyro.getRotation2d().getDegrees());
-    SmartDashboard.putNumber("Gyro Rate", m_gyro.getRate());  
+    SmartDashboard.putNumber("Gyro Rate", m_gyro.getRate());
+    SmartDashboard.putNumber("Controller Throttle", mOperatorInterface.getDriveThrottle());
+    SmartDashboard.putNumber("Controller Turn", mOperatorInterface.getDriveTurn());
   }
 }

@@ -14,14 +14,31 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final class DriveConstants {
-        public static final int kLeftMotor1Port = 0;
-        public static final int kLeftMotor2Port = 1;
-        public static final int kRightMotor1Port = 2;
-        public static final int kRightMotor2Port = 3;
+    public static class Controllers {
+        public static final boolean ignore = true;
     
-        public static final int[] kLeftEncoderPorts = new int[] {0, 1};
-        public static final int[] kRightEncoderPorts = new int[] {2, 3};
+        public static final double joystickDeadband = 0.15;
+        public static final double triggerDeadband = 0.15;
+    
+        public static class Driver {
+          public static final int port = 0;
+          public static final String name = "Controller (Xbox One For Windows)";
+        }
+    
+        public static class Operator {
+          public static final int port = 1;
+          public static final String name = "AIRFLO";
+        }
+      }
+    
+    public static final class DriveConstants {
+        public static final int kLeftMotor1Port = 1;
+        public static final int kLeftMotor2Port = 2;
+        public static final int kRightMotor1Port = 3;
+        public static final int kRightMotor2Port = 4;
+    
+        public static final int[] kLeftEncoderPorts = new int[] {1, 2};
+        public static final int[] kRightEncoderPorts = new int[] {3, 4};
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = true;
     
