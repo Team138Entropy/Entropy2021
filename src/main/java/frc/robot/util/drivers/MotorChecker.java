@@ -43,7 +43,7 @@ public abstract class MotorChecker<T> {
   protected boolean checkMotorsImpl(
       Subsystem subsystem, ArrayList<MotorConfig<T>> motorsToCheck, CheckerConfig checkerConfig) {
     boolean failure = false;
-    System.out.println("////////////////////////////////////////////////");
+    //System.out.println("////////////////////////////////////////////////");
     System.out.println(
         "Checking subsystem " + subsystem.getClass() + " for " + motorsToCheck.size() + " motors.");
 
@@ -58,7 +58,7 @@ public abstract class MotorChecker<T> {
     }
 
     for (MotorConfig<T> config : motorsToCheck) {
-      System.out.println("Checking: " + config.mName);
+      //System.out.println("Checking: " + config.mName);
 
       setMotorOutput(config.mMotor, checkerConfig.mRunOutputPercentage);
       Timer.delay(checkerConfig.mRunTimeSec);
@@ -104,7 +104,7 @@ public abstract class MotorChecker<T> {
       double average = currents.stream().mapToDouble(val -> val).average().getAsDouble();
 
       if (!Util.allCloseTo(currents, average, checkerConfig.mCurrentEpsilon)) {
-        System.out.println("Currents varied!!!!!!!!!!!");
+        //System.out.println("Currents varied!!!!!!!!!!!");
         failure = true;
       }
     }
@@ -113,7 +113,7 @@ public abstract class MotorChecker<T> {
       double average = rpms.stream().mapToDouble(val -> val).average().getAsDouble();
 
       if (!Util.allCloseTo(rpms, average, checkerConfig.mRPMEpsilon)) {
-        System.out.println("RPMs varied!!!!!!!!");
+        //System.out.println("RPMs varied!!!!!!!!");
         failure = true;
       }
     }

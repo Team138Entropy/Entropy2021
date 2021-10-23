@@ -12,7 +12,7 @@ public class Shooter extends Subsystem {
   // private static final double SPEED_DEADBAND = 20;
   private final double SPEED_DEADBAND = 5;
   private final double DROP_DEADBAND = 500;
-  private final int SPEED_DEADBAND_DELAY = 15;
+  private final int SPEED_DEADBAND_DELAY = 5;
   private final double FEEDFORWARD = 1023d / MAX_SPEED;
   // private static final double P = (.3 * 1023) / 50;
   // private static final double I = 0.2;
@@ -96,10 +96,16 @@ public class Shooter extends Subsystem {
     // allow velocity to be sliughtly lower, but operate as a floor
     boolean isAtVelocity = (mRoller.getVelocity() - (getAdjustedVelocitySetpoint() - 50) >= 0);
 
+    
     SmartDashboard.putNumber("Velocity Countdown", mTimeSinceWeWereAtVelocity);
     SmartDashboard.putBoolean("Has Had Current Drop", mHasHadCurrentDrop);
 
+    //System.out.println("Roller Velocity: " + mRoller.getVelocity());
+    //System.out.println("Vecoity Setpoint: " + getAdjustedVelocitySetpoint());
+
+
     if (isAtVelocity) {
+      //System.out.println("At Velocity");
       // decrement
       mTimeSinceWeWereAtVelocity--;
     } else {
@@ -110,11 +116,11 @@ public class Shooter extends Subsystem {
     boolean isAtVelocityDebounced = mTimeSinceWeWereAtVelocity <= 0;
 
     //just sample this
-    System.out.println("IF Velocity: " + mRoller.getVelocity());
+    ////System.out.println("IF Velocity: " + mRoller.getVelocity());
     int velocity = mRoller.getVelocity();
-    //System.out.println("AT Velcoicty to shoot: " + (velocity >= 15600));
-    return (velocity >= 15600);
-   // return isAtVelocityDebounced;
+    ////System.out.println("AT Velcoicty to shoot: " + (velocity >= 15600));
+   // return (velocity >= 15600);
+     return isAtVelocityDebounced;
 
     // return false;
   }
@@ -124,9 +130,9 @@ public class Shooter extends Subsystem {
         Math.abs(mRoller.getVelocity() - 15600) >= (DROP_DEADBAND);
     boolean ballFired = didDropVelocity;
     if (ballFired) {
-      System.out.println("BALL FIRED!");
+      //System.out.println("BALL FIRED!");
     }
-    return ballFired;
+    return false;
   }
 
   // Used in TEST mode only
@@ -139,4 +145,6 @@ public class Shooter extends Subsystem {
 
   @Override
   public void checkSubsystem() {}
+
+
 }

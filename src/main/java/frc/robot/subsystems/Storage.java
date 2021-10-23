@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class Storage extends Subsystem {
 
   private final int ROLLER_BOTTOM_PORT = Constants.Talons.Storage.bottom;
-  private final int ROLLER_TOP_PORT;
+  private final int ROLLER_TOP_PORT = Constants.Talons.Storage.compTop;
 
   private final int STORAGE_CAPICTY = 5;
 
@@ -50,11 +50,7 @@ public class Storage extends Subsystem {
   }
 
   private Storage() {
-      mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
-    ROLLER_TOP_PORT =
-        Robot.getIsPracticeBot()
-            ? Constants.Talons.Storage.practiceTop
-            : Constants.Talons.Storage.compTop;
+    mLidar = new TimeOfFlight(Constants.Talons.Storage.lidarCanID);
 
     mBottomRoller = new OurWPITalonSRX(ROLLER_BOTTOM_PORT);
     mTopRoller = new OurWPITalonSRX(ROLLER_TOP_PORT);
@@ -70,6 +66,8 @@ public class Storage extends Subsystem {
 
     mBottomRoller.configContinuousCurrentLimit(Constants.Storage.currentLimit);
     mBottomRoller.configPeakCurrentLimit(Constants.Storage.currentLimit);
+
+
 
     if (Robot.getIsPracticeBot()) {
       BALL_DISTANCE_IN_ENCODER_TICKS = Constants.Storage.BallDistances.practice;
@@ -141,6 +139,9 @@ public class Storage extends Subsystem {
     int encoderDistance = getEncoder();
     SmartDashboard.putNumber("Encoder Distance", encoderDistance);
     SmartDashboard.putNumber("Encoder Distance Raw", getEncoder());
+
+    //System.out.println("Encoder Distance: " + encoderDistance);
+    //System.out.println("Ball Distance Required " + BALL_DISTANCE_IN_ENCODER_TICKS);
 
     // if we've hit our encoder distance target
     return encoderDistance >= BALL_DISTANCE_IN_ENCODER_TICKS;

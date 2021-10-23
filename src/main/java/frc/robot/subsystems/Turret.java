@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -32,7 +33,7 @@ public class Turret extends Subsystem {
 
   // Default to Aiming State
   // this turret state should remain local to the turret class
-  private TurretState mCurrentState = TurretState.AUTO_AIM;
+  private TurretState mCurrentState = TurretState.MANUAL_AIM;
 
   protected PeriodicIO mPeriodicIO = new PeriodicIO();
 
@@ -47,6 +48,7 @@ public class Turret extends Subsystem {
     public double demand; // motor output, could be a position, or percent
     public double angle;
     public double feedforward;
+    public boolean validAngle;
   }
 
   public static Turret getInstance() {
@@ -75,11 +77,11 @@ public class Turret extends Subsystem {
 
     // double[] angles = {-40, -20, -10, -1, 0, 1, 10, 20, 40};
     // for (double angle : angles) {
-    //   System.out.println("vision " + angle + "\t" + getSpeed(angle));
+    //   //System.out.println("vision " + angle + "\t" + getSpeed(angle));
     // }
 
     for(double angle = -40; angle < 41; angle++){
-      System.out.println("vision " + angle + "\t" + getSpeed(angle));
+      //System.out.println("vision " + angle + "\t" + getSpeed(angle));
     }
   }
 
@@ -96,13 +98,13 @@ public class Turret extends Subsystem {
     double speed = angle * Constants.Vision.kP;
     SmartDashboard.putNumber("vision.rawSpeed", speed);
     SmartDashboard.putNumber("vision.kP", Constants.Vision.kP);
+    SmartDashboard.putNumber("versionError", angle);
 
     double maxAngle = 15;
     double minAngle = Constants.Vision.autoAimDeadband;
     double slope = (Constants.Vision.maxSpeed - Constants.Vision.minSpeed)/(maxAngle - minAngle);
     speed = angle * slope;
-    System.out.println("Slope: " + slope);
-    System.out.println("Slope: " + speed);
+
 
     
     if(speed > 0){
@@ -141,18 +143,19 @@ public class Turret extends Subsystem {
     
       SmartDashboard.putNumber("vision.aimDeadband", AutoAimDeadband);
       SmartDashboard.putBoolean("vision.isOutOfDeadband", Math.abs(mPeriodicIO.angle) > AutoAimDeadband);
-      System.out.println("error ange: " + mPeriodicIO.angle);
-      System.out.println("Deadband: " + AutoAimDeadband);
+      System.out.println("error angle: " + mPeriodicIO.angle);
+      //System.out.println("Deadband: " + AutoAimDeadband);
 
       // deadband: Angle error must be greater than 1 degree
-      if (Math.abs(mPeriodicIO.angle) > AutoAimDeadband) {
+      if (Math.abs(mPeriodicIO.angle) > AutoAimDeadband && mPeriodicIO.validAngle) {
         // mTurretTalon.set(ControlMode.Position, mPeriodicIO.demand);
 
         double speed = getSpeed(mPeriodicIO.angle);
+        System.out.println("   speed: " + speed);
         mTurretTalon.set(ControlMode.PercentOutput, speed);
       }else{
         SmartDashboard.putNumber("vision.processedSpeed", 0);
-        mTurretTalon.set(ControlMode.PercentOutput, 0);
+        //mTurretTalon.set(ControlMode.PercentOutput, 0);
       }
 
     } else if (mCurrentState == TurretState.HOME) {
@@ -203,8 +206,8 @@ public class Turret extends Subsystem {
   }
 
   // Vision Aim System
-  public synchronized void SetAimError(double angle) {
-
+  public synchronized void SetAimError(double angle, boolean hasValue) {
+    //System.out.println("angle: " + angle);
     double velocity = mPeriodicIO.Velocity;
     velocity = Math.abs(velocity);
 
@@ -214,6 +217,7 @@ public class Turret extends Subsystem {
       double setpoint = mPeriodicIO.CurrentPosition - (angle * TicksPerDegree);
       mPeriodicIO.demand = setpoint;
       mPeriodicIO.feedforward = 0;
+      mPeriodicIO.validAngle = hasValue;
 
       if (mCurrentState != TurretState.AUTO_AIM) {
         // change pid slot if needed
@@ -231,6 +235,10 @@ public class Turret extends Subsystem {
       Test all Sensors in the Subsystem
   */
   public void checkSubsystem() {}
+
+  public void setManual(){
+    mCurrentState = TurretState.MANUAL_AIM;
+  }
 
   @Override
   public void stopSubsytem() {}

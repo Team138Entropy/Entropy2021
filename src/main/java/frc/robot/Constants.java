@@ -50,7 +50,6 @@ public class Constants {
       public static final int lidarCanID = 0;
       // 2 different tops depending on the bot
       public static final int compTop = 5;
-      public static final int practiceTop = 5;
       public static final int bottom = 8;
     }
 
@@ -130,13 +129,13 @@ public class Constants {
     public static final double bottomRollerSpeedFactor = 1.15;
 
     // minimum distance for the lidar sensor for to count something as a ball
-    public static final int lidarMinDistance = 180;
-    public static final int minTripCount = 3;
+    public static final int lidarMinDistance = 195;
+    public static final int minTripCount = 6;
     
     // in encoder ticks
     public static class BallDistances {
-      public static final double practice = 400;
-      public static final double competition = 400;
+      public static final double practice = 520;
+      public static final double competition = 520;
     }
   }
 
@@ -231,9 +230,9 @@ public class Constants {
 
     // these are percent outputs
     public static final double minSpeed = .15;
-    public static final double maxSpeed = 1;
+    public static final double maxSpeed = .7;
 
-    public static final double autoAimDeadband = 3;
+    public static final double autoAimDeadband = 5;
   }
 
   public static class Cameras {

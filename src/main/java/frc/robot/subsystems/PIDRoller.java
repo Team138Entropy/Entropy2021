@@ -104,13 +104,13 @@ class PIDRoller {
   }
 
   void setPercentOutput(double output) {
-    // System.out.println(getVelocity() + " velocity at output " + output); 
+    // //System.out.println(getVelocity() + " velocity at output " + output); 
     if(output == 0){
       FalconMotor1.set(ControlMode.PercentOutput, 0);
       speedSetPoint = 0;
       atSetpointTarget = false;
     }else{
-      System.out.println("SETTING PERC OUTPUT: " + output);
+      //System.out.println("SETTING PERC OUTPUT: " + output);
 
       /*
      if(getVelocity() < 3000){
@@ -134,7 +134,7 @@ class PIDRoller {
       FalconMotor1.set(ControlMode.PercentOutput, speedSetPoint);
     }
 
-     // System.out.println("setPercentOutput: " + output;)
+     // //System.out.println("setPercentOutput: " + output;)
      // FalconMotor1.set(ControlMode.PercentOutput, speedSetPoint);
     }
     //mTalon.set(ControlMode.PercentOutput, -output);

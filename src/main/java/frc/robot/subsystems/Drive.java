@@ -206,8 +206,8 @@ public class Drive extends Subsystem {
     public synchronized void setOpenLoop(DriveSignal signal) {
       if (mDriveControlState != DriveControlState.OPEN_LOOP) {
           //setBrakeMode(true);
-          System.out.println("switching to open loop");
-          System.out.println(signal);
+          //System.out.println("switching to open loop");
+          //System.out.println(signal);
           mDriveControlState = DriveControlState.OPEN_LOOP;
       }
 
@@ -215,7 +215,8 @@ public class Drive extends Subsystem {
 
       signal.PrintLog();
       mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
-  mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
+    mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
+  
 
   }
 
@@ -226,7 +227,7 @@ public class Drive extends Subsystem {
       if(throttle >= 0){
       }
       */
-      System.out.println(throttle);
+      //System.out.println(throttle);
 
       if (Util.epsilonEquals(throttle, 0.0, 0.05)) {
           throttle = 0.0;

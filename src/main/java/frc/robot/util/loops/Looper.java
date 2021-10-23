@@ -63,7 +63,7 @@ public class Looper implements ILooper {
 
   public synchronized void start() {
     if (!mRunning) {
-      System.out.println("Starting loops");
+      //System.out.println("Starting loops");
 
       synchronized (mTaskRunningLock) {
         mTimestamp = Timer.getFPGATimestamp();
@@ -79,14 +79,14 @@ public class Looper implements ILooper {
 
   public synchronized void stop() {
     if (mRunning) {
-      System.out.println("Stopping loops");
+      //System.out.println("Stopping loops");
       mNotifier.stop();
 
       synchronized (mTaskRunningLock) {
         mRunning = false;
         mTimestamp = Timer.getFPGATimestamp();
         for (Loop loop : mLoops) {
-          System.out.println("Stopping " + loop);
+          //System.out.println("Stopping " + loop);
           loop.onStop(mTimestamp);
         }
       }

@@ -31,7 +31,7 @@ class UDPReciever {
       recievePacket = new DatagramPacket(receiveData, receiveData.length);
       recieveSocket.setSoTimeout(10);
     } catch (IOException e) {
-      System.out.println("Error: Cannot set up UDP reciever socket: " + e.getMessage());
+      //System.out.println("Error: Cannot set up UDP reciever socket: " + e.getMessage());
       recieveSocket = null;
     }
   }
@@ -130,7 +130,7 @@ public class VisionManager extends Subsystem {
         // Reconvert Field information
         ti.CalculateFields();
 
-        // System.out.println("Recieved Packet: z: " + ti.getZ() + "  y: " + ti.getY());
+        // //System.out.println("Recieved Packet: z: " + ti.getZ() + "  y: " + ti.getY());
 
         // Pass to executor to not block up this field
         RobotTrackerExecutor.execute(
@@ -150,9 +150,9 @@ public class VisionManager extends Subsystem {
                     mRobotTracker.UpdateDriveVision(Timer.getFPGATimestamp(), ti);
                   }
                 } catch (Exception e) {
-                  System.out.println("CATCH EXCEPTION!");
-                  System.out.println(e.getMessage());
-                  System.out.println("PRINTING STACK TRACE");
+                  //System.out.println("CATCH EXCEPTION!");
+                  //System.out.println(e.getMessage());
+                  //System.out.println("PRINTING STACK TRACE");
                   e.printStackTrace();
                   int stop = 0;
                 }
@@ -161,12 +161,12 @@ public class VisionManager extends Subsystem {
 
       } catch (Exception Targ) {
         // Exception Thrown when Trying to retrieve values from json object
-        // System.out.println("Packet Storing Exception: " + Targ.getMessage());
+        // //System.out.println("Packet Storing Exception: " + Targ.getMessage());
         return;
       }
     } catch (Exception e) {
       // Other Exception
-      System.out.println("Parse Packet Exception: " + e.getMessage());
+      //System.out.println("Parse Packet Exception: " + e.getMessage());
     }
   }
 
@@ -196,7 +196,7 @@ public class VisionManager extends Subsystem {
               });
 
         } catch (Exception e) {
-          System.out.println("Error: Cannot parse recieved UDP json data: " + e.toString());
+          //System.out.println("Error: Cannot parse recieved UDP json data: " + e.toString());
           e.printStackTrace();
         }
       } catch (Exception e) {

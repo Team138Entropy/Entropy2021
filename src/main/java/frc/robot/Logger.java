@@ -98,7 +98,7 @@ public class Logger {
           DriverStation.reportWarning(getLogMsg(mThisLogger, level, message), false);
         }
       } else {
-        System.out.println(getLogMsg(mThisLogger, level, message));
+        //System.out.println(getLogMsg(mThisLogger, level, message));
       }
     }
   }

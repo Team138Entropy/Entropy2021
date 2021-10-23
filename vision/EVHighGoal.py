@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-# ----------------------------------------------------------------------------
-# Copyright (c) 2018 FIRST. All Rights Reserved.
-# Open Source Software - may be modified and shared by FRC teams. The code
-# must be accompanied by the FIRST BSD license file in the root directory of
-# the project.
-
-# My 2019 license: use it as much as you want. Crediting is recommended because it lets me know that I am being useful.
-# Credit to Screaming Chickens 3997
-
-# This is meant to be used in conjuction with WPILib Raspberry Pi image: https://github.com/wpilibsuite/FRCVision-pi-gen
-# ----------------------------------------------------------------------------
-
 
 '''
 [{"name":"connect_verbose","value":1},{"name":"contrast","value":12},{"name":"saturation","value":89},{"name":"hue","value":35},{"name":"white_balance_automatic","value":false},{"name":"exposure","value":1},{"name":"gain_automatic","value":false},{"name":"gain","value":31},{"name":"horizontal_flip","value":false},{"name":"vertical_flip","value":false},{"name":"power_line_frequency","value":0},{"name":"sharpness","value":0},{"name":"auto_exposure","value":1}]
@@ -19,19 +7,11 @@ joes setings
 [{"name":"connect_verbose","value":1},{"name":"contrast","value":44},{"name":"saturation","value":64},{"name":"hue","value":18},{"name":"white_balance_automatic","value":false},{"name":"exposure","value":1},{"name":"gain_automatic","value":false},{"name":"gain","value":31},{"name":"horizontal_flip","value":false},{"name":"vertical_flip","value":false},{"name":"power_line_frequency","value":0},{"name":"sharpness","value":0},{"name":"auto_exposure","value":1}]
 '''
 
-import json
-import time
-import sys
+import json, time, sys, os 
 from threading import Thread
-import socket
-import queue
-import threading
-from cscore import CameraServer, VideoSource
-import cv2
+import socket, queue, threading, cv2, math 
 import numpy as np
 from numpy import mean
-import math
-
 
 # Image Camera Size (Pixels)
 Camera_Image_Width = 640
@@ -1156,12 +1136,101 @@ def startCamera(config):
     return cs, camera
 
 
+# TEST FUNCTION for high goal
+def ProcessFrameTest(frame):
+    source0 = frame
+
+    # Step HSV_Threshold0:
+    __hsv_threshold_0_input = source0
+    (hsv_threshold_0_output) = __hsv_threshold(__hsv_threshold_0_input, __hsv_threshold_0_hue, __hsv_threshold_0_saturation, __hsv_threshold_0_value)
+
+    # Step HSV_Threshold1:
+    __hsv_threshold_1_input = source0
+    (hsv_threshold_1_output) = __hsv_threshold(__hsv_threshold_1_input, __hsv_threshold_1_hue, __hsv_threshold_1_saturation, __hsv_threshold_1_value)
+
+    # Step CV_bitwise_not0:
+    __cv_bitwise_not_src1 = hsv_threshold_1_output
+    (cv_bitwise_not_output) = __cv_bitwise_not(__cv_bitwise_not_src1)
+
+    # Step Mask0:
+    __mask_input = hsv_threshold_0_output
+    __mask_mask = cv_bitwise_not_output
+    (mask_output) = __mask(__mask_input, __mask_mask)
+
+    # Step Find_Contours0:
+    __find_contours_input = mask_output
+    (find_contours_output) = __find_contours(__find_contours_input, __find_contours_external_only)
+
+    # Step Filter_Contours0:
+    __filter_contours_contours = find_contours_output
+    (filter_contours_output) = __filter_contours(__filter_contours_contours, __filter_contours_min_area, __filter_contours_min_perimeter, __filter_contours_min_width, __filter_contours_max_width, __filter_contours_min_height, __filter_contours_max_height, __filter_contours_solidity, __filter_contours_max_vertices, __filter_contours_min_vertices, __filter_contours_min_ratio, __filter_contours_max_ratio)
+
+    # Step Convex_Hulls0:
+    __convex_hulls_contours = filter_contours_output
+    (convex_hulls_output) = __convex_hulls(__convex_hulls_contours)
+
+    rect1 = cv2.rectangle(frame, (0, 300), (640, 480), (0,0,0), -1)
+    processedValues = findTargets(rect1, mask_output, vals_to_send, centerX, centerY)
+
+    highGoal = {}
+    highGoal['y'] = processedValues[0]
+    highGoal['z'] = processedValues[1]
+    highGoal['yaw'] = processedValues[2]
+    if processedValues[3] != None:
+        processedValues[3] = abs(round(processedValues[3], 2))
+    highGoal['dis'] = processedValues[3]
+    highGoal['targid'] = 0
+    return highGoal
+
+
+
+# Check if Test Playback Mode
+def isTestMode(value):
+    if(str(value).strip() == "test"):
+        return True 
+    return False 
+
+# reads jpgs from directory
+def runTestMode(folder):
+    # read all images 
+    images = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder,filename))
+        if img is not None:
+            images.append(img)
+    
+    print("Found " + str(len(images)) + " Images")
+
+    for img in images:
+        processedInfo = ProcessFrameTest(img)
+
+
+
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         configFile = sys.argv[1]
+
+        # check for test mode!
+        if(isTestMode(sys.argv[1])):
+            print("Test Mode Detected")
+            if(len(sys.argv) > 2):
+                # Has a Directories to process
+                targetDirectory = sys.argv[2]
+                runTestMode(targetDirectory)
+            else:
+                print("No Directory Found!")
+
+
+            exit()
+
+
     # read configuration
     if not readConfig():
         sys.exit(1)
+
+
+    # Normal Operation
+    from cscore import CameraServer, VideoSource
 
     # start cameras
     cameras = []

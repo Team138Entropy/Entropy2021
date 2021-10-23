@@ -486,7 +486,7 @@ public class RobotTracker {
     distance = 1;
     Rotation2d angle = new Rotation2d(x, y, true);
 
-    // System.out.println("Camera's Angle to Vision Target: " + angle.getDegrees());
+    // //System.out.println("Camera's Angle to Vision Target: " + angle.getDegrees());
     Translation2d t = new Translation2d(distance * angle.cos(), distance * angle.sin());
     t.StoreDistance = target.getDistance();
     return t;
@@ -543,7 +543,7 @@ public class RobotTracker {
     Translation2d td = angle.toTranslation();
     td.translateBy(new Translation2d(0, 10));
 
-    // System.out.println("Camera's Angle to Vision Target: " + angle.getDegrees());
+    // //System.out.println("Camera's Angle to Vision Target: " + angle.getDegrees());
     Translation2d t = new Translation2d(distance * angle.cos(), distance * angle.sin());
     t.StoreDistance = target.getDistance();
     angle = td.direction();
@@ -688,7 +688,7 @@ public class RobotTracker {
 
       // return empty if nothing
       if (reports.isEmpty()) {
-        // System.out.println("Returning Optional!");
+        // //System.out.println("Returning Optional!");
         return Optional.empty();
       }
 
@@ -765,7 +765,7 @@ public class RobotTracker {
               turret_error,
               mLatestAimingParameters.get().GetVisionRange());
 
-      // System.out.println("REQ DEG: " + rtr.turret_error.getDegrees());
+      // //System.out.println("REQ DEG: " + rtr.turret_error.getDegrees());
 
       return rtr;
     } else {
@@ -832,7 +832,7 @@ public class RobotTracker {
               turret_error,
               mLatestAimingParameters.get().GetVisionRange());
 
-      // System.out.println("REQ DEG: " + rtr.turret_error.getDegrees());
+      // //System.out.println("REQ DEG: " + rtr.turret_error.getDegrees());
 
       return rtr;
 
