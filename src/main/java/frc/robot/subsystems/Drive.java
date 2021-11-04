@@ -13,6 +13,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.OI.OperatorInterface;
+import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.util.DriveSignal;
+import frc.robot.Constants;
+import frc.robot.OurWPITalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Drive extends SubsystemBase {
 
@@ -54,6 +59,9 @@ public class Drive extends SubsystemBase {
 
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
+
+  private OurWPITalonSRX mLeftMaster = new OurWPITalonSRX(Constants.DriveConstants.kLeftMotor1Port);
+  private OurWPITalonSRX mRightMaster = new OurWPITalonSRX(Constants.DriveConstants.kRightMotor1Port);
 
   /**
    * Creates a new Drive.
@@ -109,7 +117,72 @@ public class Drive extends SubsystemBase {
    * @param rot the commanded rotation
    */
   public void arcadeDrive(double fwd, double rot) {
-    m_drive.arcadeDrive(fwd, rot);
+    //We do a little trolling
+    //m_drive.arcadeDrive(fwd, rot);
+    arcadeHack(fwd, rot, false);
+  }
+
+  // Used for arcade turning during auto
+  public void setSimplePercentOutput(DriveSignal signal) {
+    mLeftMaster.set(ControlMode.PercentOutput, signal.getLeft());
+    mRightMaster.set(ControlMode.PercentOutput, signal.getRight() * -1);
+  }
+
+  /**
+   * WPILib's arcade drive. We need this for auto turning because it allows us to set a rotation
+   * speed. Note that the deadband functionality has been removed, since we don't have to worry
+   * about driver error during auto. If we were using WPILib's {@link
+   * edu.wpi.first.wpilibj.drive.DifferentialDrive DifferentialDrive} we wouldn't need to copy this
+   * over. The output is also clamped so that we don't lose control.
+   *
+   * @param xSpeed The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
+   * @param zRotation The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is
+   *     positive.
+   * @param squareInputs If set, decreases the input sensitivity at low speeds.
+   */
+  public void arcadeHack(double xSpeed, double zRotation, boolean squareInputs) {
+    xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
+
+    zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
+
+    // Square the inputs (while preserving the sign) to increase fine control
+    // while permitting full power.
+    if (squareInputs) {
+      xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
+      zRotation = Math.copySign(zRotation * zRotation, zRotation);
+    }
+
+    double leftMotorOutput;
+    double rightMotorOutput;
+
+    double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
+
+    if (xSpeed >= 0.0) {
+      // First quadrant, else second quadrant
+      if (zRotation >= 0.0) {
+        leftMotorOutput = maxInput;
+        rightMotorOutput = xSpeed - zRotation;
+      } else {
+        leftMotorOutput = xSpeed + zRotation;
+        rightMotorOutput = maxInput;
+      }
+    } else {
+      // Third quadrant, else fourth quadrant
+      if (zRotation >= 0.0) {
+        leftMotorOutput = xSpeed + zRotation;
+        rightMotorOutput = maxInput;
+      } else {
+        leftMotorOutput = maxInput;
+        rightMotorOutput = xSpeed - zRotation;
+      }
+    }
+
+    final double max = 0.7;
+
+    setSimplePercentOutput(
+        new DriveSignal(
+            MathUtil.clamp(leftMotorOutput, -max, max),
+            MathUtil.clamp(rightMotorOutput, -max, max)));
   }
 
   /**
