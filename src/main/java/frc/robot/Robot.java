@@ -87,6 +87,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     mDrive.updateSmartdashboard();
+    System.out.println("Left encoder: " + mDrive.m_leftFalcon.getSelectedSensorPosition() + " and " + mDrive.m_leftFalcon.getSelectedSensorVelocity());
+    System.out.println("Right encoder: " + mDrive.m_rightFalcon.getSelectedSensorPosition() + " and " + mDrive.m_rightFalcon.getSelectedSensorVelocity());
     // and then drive?
     mDrive.arcadeDrive(mOperatorInterface.getDriveThrottle(), mOperatorInterface.getDriveTurn());
   }

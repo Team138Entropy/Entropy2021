@@ -18,6 +18,8 @@ import frc.robot.util.DriveSignal;
 import frc.robot.Constants;
 import frc.robot.OurWPITalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Drive extends SubsystemBase {
 
@@ -31,6 +33,8 @@ public class Drive extends SubsystemBase {
 
   private final OperatorInterface mOperatorInterface = OperatorInterface.getInstance();
 
+  public final WPI_TalonFX m_leftFalcon = new WPI_TalonFX(DriveConstants.kLeftMotor1Port);
+  public final WPI_TalonFX m_rightFalcon = new WPI_TalonFX(DriveConstants.kRightMotor1Port);
 
   //avery:  motors on the left side of the robot
   private final SpeedControllerGroup m_leftMotors =
@@ -45,12 +49,12 @@ public class Drive extends SubsystemBase {
   //avery: robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
   // avery: The left encoder
-  private final Encoder m_leftEncoder =
+  public final Encoder m_leftEncoder = 
       new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1],
                   DriveConstants.kLeftEncoderReversed);
 
   // avery: The right encoder
-  private final Encoder m_rightEncoder =
+  public final Encoder m_rightEncoder =
       new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1],
                   DriveConstants.kRightEncoderReversed);
 
@@ -68,7 +72,9 @@ public class Drive extends SubsystemBase {
    */
   public Drive() {
     // Sets the distance per pulse for the encoders
-    m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    //m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    m_leftFalcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    m_rightFalcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
     m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
 
     resetEncoders();
